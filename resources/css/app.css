@@ -12,17 +12,17 @@
 
 /* Your custom CSS variables */
 :root {
-    --app-primary: #6576ff;
-    --app-secondary: #364a63;
+    /* --app-primary: #6576ff;
+    --app-secondary: #364a63; */
     /* Add more custom variables as needed */
 }
 
 /* Your custom styles here */
 
 /* Example: Custom utility classes if needed */
-.text-brand {
-    color: var(--app-primary);
-}
+/* .text-brand { */
+/* color: var(--app-primary); */
+/* } */
 
 /* Example: Component overrides */
 /* Uncomment and customize as needed
