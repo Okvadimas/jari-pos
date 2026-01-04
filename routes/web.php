@@ -11,8 +11,8 @@ use App\Http\Controllers\Management\RoleController  as RoleManagementController;
 
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
-Route::get('/login',            [AuthController::class, 'login'])->name('login');
-Route::post('/login',           [AuthController::class, 'processLogin']);
+Route::get('/login',            [AuthController::class, 'login'])->middleware('redirect-if-authenticated')->name('login');
+Route::post('/login',           [AuthController::class, 'processLogin'])->middleware('ajax-request');
 Route::get('/register',         [AuthController::class, 'register'])->name('register');
 Route::post('/register',        [AuthController::class, 'processRegister']);
 Route::get('/reset-password',   [AuthController::class, 'resetPassword'])->name('reset-password');

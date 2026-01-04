@@ -143,10 +143,14 @@
     <script>var NioApp = window.NioApp || {};</script>
     
     <!-- JavaScript -->
-    @vite(['resources/css/pages/auth/register.css', 'resources/js/bundle.js', 'resources/js/scripts.js', 'resources/js/app.js'])
+    <script src="{{ asset('js/bundle.js') }}"></script>
+    @vite(['resources/js/scripts.js', 'resources/js/app.js', 'resources/css/app.css'])
 
-    <!-- custom js -->
-    @if(isset($js))
-        
+    @if ($css)
+        @vite($css)
+    @endif
+
+    @if ($js)
+        @vite($js)
     @endif
 </html>
