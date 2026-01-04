@@ -122,9 +122,17 @@
     <!-- app-root @e -->
     
     <!-- Initialize NioApp before DashLite scripts -->
-    <script>var NioApp = window.NioApp || {};</script>
+    <!-- <script>var NioApp = window.NioApp || {};</script> -->
     
     <!-- JavaScript -->
-    @vite(['resources/js/bundle.js', 'resources/js/scripts.js'])
-    @vite(['resources/css/pages/auth/login.css', 'resources/js/app.js', 'resources/js/pages/auth/login.js'])
+    <script src="{{ asset('js/bundle.js') }}"></script>
+    @vite(['resources/js/scripts.js', 'resources/js/app.js', 'resources/css/app.css'])
+
+    @if ($css)
+        @vite($css)
+    @endif
+
+    @if ($js)
+        @vite($js)
+    @endif
 </html>

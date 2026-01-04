@@ -19,10 +19,11 @@ use App\Models\Campaign;
 class IndexController extends Controller
 {
     public function login() {
-        $title = 'Login | Jari POS';
-        $sliders = Campaign::where('type', 'slider')->where('status', 'active')->get();      
-        $js = 'resource/js/pages/auth/login.js';  
-        return view('auth.login', compact('title', 'sliders', 'js'));
+        $title      = 'Login | Jari POS';
+        $sliders    = Campaign::where('type', 'slider')->where('status', 'active')->get();  
+        $css        = 'resources/css/pages/auth/login.css';
+        $js         = 'resources/js/pages/auth/login.js';  
+        return view('auth.login', compact('css', 'js', 'title', 'sliders'));
     }
 
     public function processLogin(Request $request) {
@@ -30,8 +31,8 @@ class IndexController extends Controller
             'username' => 'required',
             'password' => 'required',
         ], [
-            'username' => 'Username wajib diisi',
-            'password' => 'Kata Sandi wajib diisi',
+            'username.required' => 'Username wajib diisi',
+            'password.required' => 'Kata Sandi wajib diisi',
         ]);
    
         if($validator->stopOnFirstFailure()->fails()){
@@ -51,27 +52,41 @@ class IndexController extends Controller
     }
 
     public function register() {
-        $title = 'Register | Jari POS';
-        $sliders = Campaign::where('type', 'slider')->where('status', 'active')->get();
-        return view('auth.register', compact('title', 'sliders'));
+        $title      = 'Register | Jari POS';
+        $sliders    = Campaign::where('type', 'slider')->where('status', 'active')->get();
+        $css        = 'resources/css/pages/auth/register.css';
+        $js         = 'resources/js/pages/auth/register.js';  
+        return view('auth.register', compact('css', 'js', 'title', 'sliders'));
     }
 
     public function processRegister(Request $request) {
         $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:4',
+            'name'      => 'required',
+            'username'  => 'required',
+            'email'     => 'required|email|unique:users,email',
+            'password'  => 'required|min:4',
+        ], [
+            'name.required'     => 'Nama Lengkap wajib diisi',
+            'username.required' => 'Username wajib diisi',
+            'email.required'    => 'Email wajib diisi',
+            'email.email'       => 'Email tidak valid',
+            'email.unique'      => 'Email sudah terdaftar',
+            'password.required' => 'Kata Sandi wajib diisi',
+            'password.min'      => 'Kata Sandi minimal 4 karakter',
         ]);
 
         $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'name'      => $request->name,
+            'username'  => $request->username,
+            'email'     => $request->email,
+            'password'  => Hash::make($request->password),
+            'status'    => 'active',
         ]);
 
-        auth()->login($user);
+        // Auto Login
+        Auth::login($user);
 
-        return redirect()->route('dashboard');
+        return $this->ajaxResponse(true, 'Berhasil mendaftar');
     }
 
     public function resetPassword() {
@@ -101,7 +116,7 @@ class IndexController extends Controller
     }
 
     public function logout() {
-        auth()->logout();
+        Auth::logout();
         return redirect()->route('login');
     }
 }

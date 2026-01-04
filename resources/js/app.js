@@ -16,20 +16,23 @@ $(document).ready(function() {
         }
     });
 
-    // Show Online/Offline Notification
-    $(window).on('online', function() {
-        NioApp.Toast('You are now online', 'success', {
-            position: 'top-right',
-            duration: 2000
+    // Show Online/Offline Notification        
+    if (!navigator.onLine) {
+        // User is offline, show SweetAlert notification
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'You are currently offline. Please check your internet connection and try again.',
+        });
+    }
+
+    window.addEventListener('online', () => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Great!',
+            text: 'You are back online. Welcome back!',
         });
     });
-    $(window).on('offline', function() {
-        NioApp.Toast('You are now offline', 'error', {
-            position: 'top-right',
-            duration: 2000
-        });
-    });
-        
 
     // Add your global JavaScript here
     console.log('App.js loaded - jQuery ready!');
