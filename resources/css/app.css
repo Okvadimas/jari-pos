@@ -1,0 +1,33 @@
+/**
+ * Custom Application Styles
+ * 
+ * This file is for your custom CSS that extends DashLite/Bootstrap 5.
+ * DashLite already includes Bootstrap 5, so we don't need Tailwind here.
+ * 
+ * Use this for:
+ * - Custom component overrides
+ * - Project-specific utility classes
+ * - Brand-specific styling
+ */
+
+/* Your custom CSS variables */
+:root {
+    --app-primary: #6576ff;
+    --app-secondary: #364a63;
+    /* Add more custom variables as needed */
+}
+
+/* Your custom styles here */
+
+/* Example: Custom utility classes if needed */
+.text-brand {
+    color: var(--app-primary);
+}
+
+/* Example: Component overrides */
+/* Uncomment and customize as needed
+.custom-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+*/

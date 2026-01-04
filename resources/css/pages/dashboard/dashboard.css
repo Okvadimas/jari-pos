@@ -1,0 +1,49 @@
+/**
+ * Dashboard Page Styles (SCSS)
+ * 
+ * Page-specific SCSS for the dashboard.
+ * Load this in your dashboard blade template with:
+ * @vite('resources/css/pages/dashboard/dashboard.scss')
+ */
+
+/* Dashboard-specific card customizations */
+.dashboard-stats-card {
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Dashboard chart containers */
+.dashboard-chart-wrapper {
+    position: relative;
+    min-height: 300px;
+}
+
+/* Dashboard specific colors */
+.dashboard-revenue {
+    color: #6576ff;
+}
+
+.dashboard-orders {
+    color: #13c9f2;
+}
+
+.dashboard-customers {
+    color: #ff82b7;
+}
+
+/* Quick stats layout */
+.dashboard-quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
