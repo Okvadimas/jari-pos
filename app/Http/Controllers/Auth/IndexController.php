@@ -15,6 +15,7 @@ use App\Mail\ResetPasswordMail;
 
 use App\Models\User;
 use App\Models\Campaign;
+use App\Models\Menu;
 
 class IndexController extends Controller
 {
@@ -42,8 +43,9 @@ class IndexController extends Controller
         $credential = $request->only('username', 'password');
         $credential['status'] = 'active';
         if(Auth::attempt($credential)) {
-            // $menu = $this->menu->menu();
-            // $request->session()->push('menu', $menu);
+
+            $menu = Menu::menu();
+            $request->session()->push('menu', $menu);
 
             return $this->ajaxResponse(true, 'Berhasil masuk dashboard');
         } else {
