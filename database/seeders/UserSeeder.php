@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
             'username' => 'admin',
             'email' => 'admin@jaripos.com',
             'password' => Hash::make('55555'),
+            'role' => 'super-admin',
         ]);
 
         User::create([
@@ -23,6 +24,7 @@ class UserSeeder extends Seeder
             'username' => 'user',
             'email' => 'user@jaripos.com',
             'password' => Hash::make('00000'),
+            'role' => 'basic',
         ]);
     }
 }

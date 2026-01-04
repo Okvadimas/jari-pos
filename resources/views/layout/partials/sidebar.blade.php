@@ -1,4 +1,4 @@
-<div class="nk-sidebar nk-sidebar-fixed is-light is-compact" data-content="sidebarMenu">
+<div class="nk-sidebar nk-sidebar-fixed is-light" data-content="sidebarMenu">
     <div class="nk-sidebar-element nk-sidebar-head">
         <div class="nk-sidebar-brand">
             <a href="/dashboard" class="logo-link nk-sidebar-logo">
@@ -24,6 +24,7 @@
                     </li><!-- .nk-menu-item -->
 
                     <!-- List Menu (Session) -->
+                    {!! session()->get('menu')[0] !!}
 
                 </ul>
             </div><!-- .nk-sidebar-menu -->

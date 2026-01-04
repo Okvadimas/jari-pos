@@ -25,7 +25,7 @@
             <!-- wrap @s -->
             <div class="nk-wrap ">
                 <!-- main header @s -->
-                <div class="nk-header nk-header-fixed is-light">
+                <div class="nk-header nk-header-fixed bg-primary is-light">
                     <div class="container-fluid">
                         <div class="nk-header-wrap">
                             <div class="nk-menu-trigger d-xl-none ms-n1">
@@ -46,9 +46,13 @@
                                                 <div class="user-avatar sm">
                                                     <em class="icon ni ni-user-alt"></em>
                                                 </div>
+
                                                 <div class="user-info d-none d-xl-block">
-                                                    <div class="user-name dropdown-indicator">{{ Auth::user()->name }}</div>
+                                                    <div class="user-status user-status-unverified text-white fw-lighter">
+                                                        ({{ ucwords(str_replace('-', ' ', Auth::user()->role)) }})</div>
+                                                    <div class="user-name dropdown-indicator text-white fw-bold">{{ Auth::user()->name }}</div>
                                                 </div>
+
                                             </div>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-md dropdown-menu-end">
