@@ -19,17 +19,20 @@
     <div class="nk-app-root">
         <!-- main @s -->
         <div class="nk-main ">
-                <!-- sidebar @s -->
-                @include('layout.partials.sidebar')
-                <!-- sidebar @e -->
+
+            <!-- sidebar @s -->
+            @include('layout.partials.sidebar')
+            <!-- sidebar @e -->
+
             <!-- wrap @s -->
             <div class="nk-wrap ">
+
                 <!-- main header @s -->
                 <div class="nk-header nk-header-fixed bg-primary is-light">
                     <div class="container-fluid">
                         <div class="nk-header-wrap">
                             <div class="nk-menu-trigger d-xl-none ms-n1">
-                                <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
+                                <a href="#" class="nk-nav-toggle nk-quick-nav-icon text-light" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
                             </div>
                             <div class="nk-header-brand d-xl-none">
                                 <a href="/dashboard" class="logo-link">
@@ -86,12 +89,15 @@
                     </div><!-- .container-fliud -->
                 </div>
                 <!-- main header @e -->
+
                 <!-- content @s -->
                 @yield('content')
                 <!-- content @e -->
+
                 <!-- footer @s -->
                 @include('layout.partials.footer')
                 <!-- footer @e -->
+
             </div>
             <!-- wrap @e -->
         </div>

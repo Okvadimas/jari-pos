@@ -10,6 +10,7 @@ class Role extends Model
     protected $table = 'role';
     protected $fillable = [
         'id',
+        'tipe',
         'nama',
         'slug',
         'insert_at',
@@ -21,6 +22,6 @@ class Role extends Model
 
     public function dataTableRole()
     {
-        return self::select('id', 'nama', 'status')->where('status', 'active');
+        return self::select('id', 'slug', 'nama', 'status')->where('status', 'active');
     }
 }
