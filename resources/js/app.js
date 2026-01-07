@@ -34,6 +34,9 @@ $(document).ready(function() {
         });
     });
 
+    // Select2
+    $('.select2').select2();
+
     // Add your global JavaScript here
     console.log('App.js loaded - jQuery ready!');
 });
