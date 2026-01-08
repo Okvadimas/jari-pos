@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="js">
 
 <head>
-    @include('layout.partials.header')
+    @include('layouts.partials.header')
 </head>
 
 <body class="nk-body bg-white npc-default pg-auth">

@@ -1,7 +1,7 @@
 <div class="nk-footer">
     <div class="container-fluid">
         <div class="nk-footer-wrap">
-            <div class="nk-footer-copyright"> &copy; {{ date('Y') }} <a href="https://ocsabron.com/" target="_blank"> ocsabron.com </a>
+            <div class="nk-footer-copyright"> &copy; {{ date('Y') }} <a href="https://jaripos.com/" target="_blank"> jaripos.com </a>
             </div>
             <div class="nk-footer-links">
                 

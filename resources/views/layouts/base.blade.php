@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="js">
 
 <head>
-    @include('layout.partials.header')
+    @include('layouts.partials.header')
 
     @if(isset($css_library))
         @vite($css_library)
@@ -21,7 +21,7 @@
         <div class="nk-main ">
 
             <!-- sidebar @s -->
-            @include('layout.partials.sidebar')
+            @include('layouts.partials.sidebar')
             <!-- sidebar @e -->
 
             <!-- wrap @s -->
@@ -95,7 +95,7 @@
                 <!-- content @e -->
 
                 <!-- footer @s -->
-                @include('layout.partials.footer')
+                @include('layouts.partials.footer')
                 <!-- footer @e -->
 
             </div>
