@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Management;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 // Load Repository
 use App\Repositories\Management\UserRepository;
@@ -26,6 +27,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+
 
         $data = [
             'title' => $this->pageTitle,

@@ -24,7 +24,7 @@
                     </li><!-- .nk-menu-item -->
 
                     <!-- List Menu (Session) -->
-                    {!! session()->get('menu')[0] !!}
+                    {!! session()->get('menu') !!}
 
                 </ul>
             </div><!-- .nk-sidebar-menu -->

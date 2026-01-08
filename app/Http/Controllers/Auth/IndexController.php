@@ -45,7 +45,7 @@ class IndexController extends Controller
         if(Auth::attempt($credential)) {
 
             $menu = Menu::menu();
-            $request->session()->push('menu', $menu);
+            $request->session()->put('menu', $menu);
 
             return $this->ajaxResponse(true, 'Berhasil masuk dashboard');
         } else {
