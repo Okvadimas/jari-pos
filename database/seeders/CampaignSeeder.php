@@ -24,21 +24,18 @@ class CampaignSeeder extends Seeder
                 'description' => 'Rasakan masa depan manajemen POS dengan pelacakan dan analitik yang komprehensif.',
                 'image' => 'images/slides/slide-a.jpg', // Ensure this image exists or use a placeholder
                 'type' => 'slider',
-                'status' => 'active',
             ],
             [
                 'title' => 'Manage Your Business',
                 'description' => 'Kelola bisnis Anda dengan mudah dan efisien.',
                 'image' => 'images/slides/slide-b.jpg', 
                 'type' => 'slider',
-                'status' => 'active',
             ],
             [
                 'title' => 'Track Your Orders',
                 'description' => 'Lacak pesanan Anda dengan mudah dan cepat.',
                 'image' => 'images/slides/slide-c.jpg', 
                 'type' => 'facebook', // Test filtering
-                'status' => 'active',
             ],
              [
                 'title' => 'Inactive Slide',

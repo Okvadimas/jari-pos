@@ -9,6 +9,12 @@ class Company extends Model
 {
     use HasFactory;
 
-    protected $table = 'company';
-    protected $fillable = ['kode', 'nama', 'status'];
+    protected $table = 'companies';
+    protected $fillable = ['nama', 'email', 'phone', 'address', 'logo', 'status', 'created_by', 'updated_by'];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'company_id');
+    }
+
 }

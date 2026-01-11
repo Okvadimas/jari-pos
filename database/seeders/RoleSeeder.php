@@ -19,39 +19,24 @@ class RoleSeeder extends Seeder
 
         $roles = [
             [
-                'nama'      => 'Super Admin',
+                'name'      => 'Super Admin',
                 'slug'      => 'super-admin',
-                'insert_at' => now(),
-                'insert_by' => 'system',
-                'status'    => 'active',
             ],
             [
-                'nama'      => 'Starter',
+                'name'      => 'Starter',
                 'slug'      => 'starter',
-                'insert_at' => now(),
-                'insert_by' => 'system',
-                'status'    => 'active',
             ],
             [
-                'nama'      => 'Basic',
+                'name'      => 'Basic',
                 'slug'      => 'basic',
-                'insert_at' => now(),
-                'insert_by' => 'system',
-                'status'    => 'active',
             ],
             [
-                'nama'      => 'Pro',
+                'name'      => 'Pro',
                 'slug'      => 'pro',
-                'insert_at' => now(),
-                'insert_by' => 'system',
-                'status'    => 'active',
             ],
             [
-                'nama'      => 'Custom Nexa', // Custom Paket
-                'slug'      => 'custom-nexa',
-                'insert_at' => now(),
-                'insert_by' => 'system',
-                'status'    => 'active',
+                'name'      => 'Custom Pro', // Custom Paket
+                'slug'      => 'custom-pro',
             ],
         ];
 

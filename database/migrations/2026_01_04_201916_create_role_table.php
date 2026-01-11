@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('role', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 100);
+            $table->string('name', 100);
             $table->string('slug', 50)->unique();
-            $table->timestamp('insert_at')->default(now());
-            $table->string('insert_by', 100)->default('system');
-            $table->timestamp('update_at')->nullable();
-            $table->string('update_by', 100)->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+
+            $table->index('slug');
         });
     }
 
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('role');
+        Schema::dropIfExists('roles');
     }
 };
