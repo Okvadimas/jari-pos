@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::create('menu', function (Blueprint $table) {
             $table->id();
-            $table->string('kode', 50)->unique();
+            $table->string('code', 50)->unique();
             $table->string('parent', 50)->default('0');
-            $table->string('nama', 100);
-            $table->string('icon', 100)->nullable();
-            $table->string('url', 255)->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->timestamp('insert_at')->nullable();
-            $table->string('insert_by', 100)->nullable();
-            $table->timestamp('update_at')->nullable();
-            $table->string('update_by', 100)->nullable();
+            $table->string('name', 100);
+            $table->text('icon')->nullable();
+            $table->text('url')->nullable();
+            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
+            $table->index('code');
             $table->index('parent');
-            $table->index('status');
         });
     }
 

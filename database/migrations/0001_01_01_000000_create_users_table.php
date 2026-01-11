@@ -16,12 +16,21 @@ return new class extends Migration
             $table->string('name');
             $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('role');
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->foreignId('role_id')->default(1)->constrained('roles')->cascadeOnDelete();
+            $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+
+            $table->index('username');
+            $table->index('email');
+            $table->index('role_id');
+            $table->index('company_id');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

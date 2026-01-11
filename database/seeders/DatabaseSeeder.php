@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             CampaignSeeder::class,
             MenuSeeder::class,
             RoleSeeder::class,
-            AksesSeeder::class,
+            PermissionSeeder::class,
         ]);
     }
 }

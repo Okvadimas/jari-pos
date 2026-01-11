@@ -47,8 +47,8 @@ class UserController extends Controller
         $data = [
             'title' => $this->pageTitle,
             'js' => 'resources/js/pages/management/user/form.js',
-            'company' => Company::select('kode', 'nama')->get(),
-            'paket' => Role::select('slug', 'nama')->get(),
+            'company' => Company::select('id', 'nama')->get(),
+            'paket' => Role::select('id', 'nama')->get(),
         ];
 
         return view('management.user.form', $data);

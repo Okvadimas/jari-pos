@@ -8,24 +8,28 @@ use Illuminate\Support\Facades\DB;
 
 class Menu extends Model
 {
-    public $timestamps = false;
     protected $table = 'menu';
     protected $fillable = [
         'id',
-        'kode',
+        'code',
         'parent',
-        'nama',
+        'name',
         'icon',
         'url',
         'status',
-        'insert_at',
-        'insert_by',
-        'update_at',
-        'update_by'
+        'created_at',
+        'created_by',
+        'updated_by',
+        'updated_by'
     ];
 
+    public function permissions()
+    {
+        return $this->hasMany(Permission::class, 'menu_id');
+    }
+
     public function dataTableMenu() {
-        return self::select('id', 'kode', 'parent', 'nama', 'icon', 'url', 'status')->where('status', 'active');
+        return self::select('id', 'code', 'parent', 'name', 'icon', 'url', 'status')->where('status', 1);
     }
 
     public function viewMenuTemplate($parent = '0', $level = '0', $role = '') {
@@ -40,7 +44,7 @@ class Menu extends Model
 
         if (!empty($result)) {
             foreach ($result as $row => $val) {
-                $id_menu = $val->kode;
+                $id_menu = $val->code;
 
                 if (empty($role)) {
                     // Semua action, default-nya unchecked saat akan membuat role baru.
@@ -48,9 +52,9 @@ class Menu extends Model
                     $state_fullAccess   = '';
                     $state_noAccess     = '';
                 } else {
-                    $state_readOnly     = ($val->flag_access == 0) ? 'checked' : '';
-                    $state_fullAccess   = ($val->flag_access == 1) ? 'checked' : '';
-                    $state_noAccess     = ($val->flag_access == 9) ? 'checked' : '';
+                    $state_readOnly     = ($val->status == 0) ? 'checked' : '';
+                    $state_fullAccess   = ($val->status == 1) ? 'checked' : '';
+                    $state_noAccess     = ($val->status == 9) ? 'checked' : '';
                 }
 
                 $id_readOnly    = 'ro_' . $id_menu;
@@ -64,7 +68,7 @@ class Menu extends Model
                 $action =  '<div class="g-3 align-center flex-wrap">' . $chk_readOnly . $chk_fullAccess . $chk_noAccess . '</div>';
 
                 $arr[$row] = array(
-                    'text'  => $val->nama,
+                    'text'  => $val->name,
                     'id'    => $id_menu
                 );
 
@@ -108,44 +112,57 @@ class Menu extends Model
     }
 
     public function menuTemplate($parent = '0') {
-        $sql = "SELECT a.*, IFNULL(jumlah_menu.jumlah, 0) AS hitung
-                FROM menu a
-                    LEFT JOIN (
-                        SELECT parent, COUNT(*) AS jumlah
-                        FROM menu
-                        WHERE status = 'active'
-                        GROUP BY parent
-                    ) AS jumlah_menu ON a.kode = jumlah_menu.parent
-                WHERE a.parent = '$parent' AND a.status = 'active'
-                ";
-
-        $data = DB::select($sql);
-        return $data;
+        return DB::table('menu as a')
+            ->select([
+                'a.id',
+                'a.code',
+                'a.parent',
+                'a.name',
+                'a.icon',
+                'a.url',
+                'a.status',
+                DB::raw('IFNULL(jumlah_menu.jumlah, 0) as hitung')
+            ])
+            ->leftJoinSub(function ($query) {
+                $query->select('parent', DB::raw('COUNT(*) as jumlah'))
+                    ->from('menu')
+                    ->where('status', 1)
+                    ->groupBy('parent');
+            }, 'jumlah_menu', 'a.code', '=', 'jumlah_menu.parent')
+            ->where('a.parent', $parent)
+            ->where('a.status', 1)
+            ->get()
+            ->toArray();
     }
 
     public function menuTemplateByRole($parent = '0', $role = '') {
-        $sql = "SELECT a.*, IFNULL(jumlah_menu.jumlah, 0) AS hitung,
-                    CASE WHEN (c.kode_menu <> '') 
-                        THEN TRUE 
-                        ELSE FALSE 
-                    END AS checked,
-                    c.flag_access
-                FROM menu a
-                LEFT JOIN (
-                    SELECT parent, COUNT(*) AS jumlah
-                    FROM menu
-                    WHERE status = 'active'
-                    GROUP BY parent
-                ) AS jumlah_menu ON a.kode = jumlah_menu.parent
-                LEFT JOIN (
-                    SELECT kode_menu, flag_access
-                    FROM akses_role 
-                    WHERE role = '$role'
-                ) AS c ON c.kode_menu = a.kode
-                WHERE a.parent = '$parent' AND a.status = 'active'";
-
-        $data = DB::select($sql);
-        return $data;
+        return DB::table('menu as a')
+            ->select([
+                'a.id',
+                'a.code',
+                'a.parent',
+                'a.name',
+                'a.icon',
+                'a.url',
+                'a.status as menu_status',
+                DB::raw('IFNULL(jumlah_menu.jumlah, 0) as hitung'),
+                DB::raw("CASE WHEN c.menu_id IS NOT NULL THEN 1 ELSE 0 END as checked"),
+                'c.status'
+            ])
+            ->leftJoinSub(function ($query) {
+                $query->select('parent', DB::raw('COUNT(*) as jumlah'))
+                    ->from('menu')
+                    ->where('status', 1)
+                    ->groupBy('parent');
+            }, 'jumlah_menu', 'a.code', '=', 'jumlah_menu.parent')
+            ->leftJoin('permissions as c', function ($join) use ($role) {
+                $join->on('c.menu_id', '=', 'a.id')
+                    ->where('c.role_id', '=', $role);
+            })
+            ->where('a.parent', $parent)
+            ->where('a.status', 1)
+            ->get()
+            ->toArray();
     }
 
     public function custom_checkbox($id, $nama = '', $value = '', $state = '', $label_text = '') {
@@ -166,64 +183,72 @@ class Menu extends Model
 
     public static function menu() {
         $user = Auth::user();
-        $header_menu = DB::select("SELECT m.id, m.parent, m.kode, m.nama, m.icon, m.url
-                        from menu m 
-                        join (
-                            select m.parent as kode
-                            from users u 
-                            join `role` r on u.role = r.slug
-                            join akses ar on r.slug = ar.role 
-                            join menu m on ar.kode_menu = m.kode 
-                            where ar.flag_access != 9 and u.role = '$user->role' and m.status = 'active' and r.status = 'active'
-                            group by m.parent 
-                        ) sq on m.kode = sq.kode
-                        where m.status = 'active'
-                        union all
-                        SELECT m.id, m.parent, m.kode, m.nama, m.icon, m.url
-                        from menu m 
-                        join (
-                            select m.kode
-                            from users u 
-                            join `role` r on u.role = r.slug
-                            join akses ar on r.slug = ar.role
-                            join menu m on ar.kode_menu = m.kode 
-                            where ar.flag_access != 9 and u.role = '$user->role' and m.status = 'active' and m.parent = '0' and r.status = 'active'
-                        ) sq on m.kode = sq.kode
-                        where m.status = 'active'
-                        order by id");
 
-        $menu = '';
-        foreach($header_menu as $row) {
+        if (!$user) {
+            return '';
+        }
 
-            $detail_menu = DB::select("SELECT m.parent, m.kode, m.nama, m.url, m.icon
-                                from users u 
-                                join `role` r on u.role = r.slug
-                                join akses ar on r.slug = ar.role 
-                                join menu m on ar.kode_menu = m.kode 
-                                where ar.flag_access != 9 and u.role = '$user->role' and m.parent = '$row->kode' and m.status = 'active' and r.status = 'active'
-                                order by m.id");
+        $roleId = $user->role_id;
 
-            if(!empty($detail_menu)) {
+        // 1. Get Parents of accessible children
+        $parents = DB::table('menu as p')
+            ->join('menu as c', 'c.parent', '=', 'p.code')
+            ->join('permissions as perm', 'perm.menu_id', '=', 'c.id')
+            ->join('roles as r', 'r.id', '=', 'perm.role_id')
+            ->where('perm.role_id', $roleId)
+            ->where('perm.status', 1)
+            ->where('p.status', 1)
+            ->where('r.status', 1)
+            ->select('p.id', 'p.parent', 'p.code', 'p.name', 'p.icon', 'p.url')
+            ->distinct();
 
-                $menu .= '<li class="nk-menu-heading">
-                    <h6 class="overline-title text-primary-alt">'.$row->nama.'</h6>
+        // 2. Get Accessible Roots (Union with Parents)
+        $headers = DB::table('menu as m')
+            ->join('permissions as perm', 'perm.menu_id', '=', 'm.id')
+            ->join('roles as r', 'r.id', '=', 'perm.role_id')
+            ->where('perm.role_id', $roleId)
+            ->where('perm.status', 1)
+            ->where('m.parent', '0')
+            ->where('m.status', 1)
+            ->where('r.status', 1)
+            ->select('m.id', 'm.parent', 'm.code', 'm.name', 'm.icon', 'm.url')
+            ->union($parents)
+            ->orderBy('id')
+            ->get();
+
+        $menuHtml = '';
+
+        foreach ($headers as $header) {
+            $children = DB::table('menu as c')
+                ->join('permissions as perm', 'perm.menu_id', '=', 'c.id')
+                ->join('roles as r', 'r.id', '=', 'perm.role_id')
+                ->where('perm.role_id', $roleId)
+                ->where('perm.status', 1)
+                ->where('c.parent', $header->code)
+                ->where('c.status', 1)
+                ->where('r.status', 1)
+                ->select('c.id', 'c.parent', 'c.code', 'c.name', 'c.url', 'c.icon')
+                ->orderBy('c.id')
+                ->get();
+
+            if ($children->isNotEmpty()) {
+                $menuHtml .= '<li class="nk-menu-heading">
+                    <h6 class="overline-title text-primary-alt">' . $header->name . '</h6>
                 </li>';
 
-                foreach ($detail_menu as $detail) {
-    
-                    $menu .= '<li class="nk-menu-item active current-page">
-                        <a href="'.$detail->url.'" class="nk-menu-link ">
+                foreach ($children as $detail) {
+                    $menuHtml .= '<li class="nk-menu-item active current-page">
+                        <a href="' . $detail->url . '" class="nk-menu-link ">
                             <span class="nk-menu-icon">
-                                <em class="icon '.$detail->icon.'"></em>
+                                <em class="icon ' . $detail->icon . '"></em>
                             </span>
-                            <span class="nk-menu-text">'.$detail->nama.'</span>
+                            <span class="nk-menu-text">' . $detail->name . '</span>
                         </a>
                     </li>';
                 }
-
             }
         }
 
-        return $menu;
+        return $menuHtml;
     }
 }
