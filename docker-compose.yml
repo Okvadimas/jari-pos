@@ -1,0 +1,76 @@
+services:
+  # PHP Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jaripos-app
+    container_name: jaripos-app
+    platform: linux/arm64 # Optimasi Mac M3
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - laravel-network
+    depends_on:
+      - db
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: jaripos-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - laravel-network
+    depends_on:
+      - app
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: jaripos-db
+    platform: linux/arm64 # Optimasi Mac M3
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      # PENTING: Jangan gunakan MYSQL_USER="root" untuk menghindari Access Denied
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - laravel-network
+
+  # Vite Development Server
+  vite:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jaripos-vite
+    platform: linux/arm64
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    ports:
+      - "5173:5173"
+    networks:
+      - laravel-network
+    # Menjalankan Vite langsung tanpa entrypoint
+    command: npm run dev -- --host
+    depends_on:
+      - app
+
+networks:
+  laravel-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

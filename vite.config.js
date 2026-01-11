@@ -21,9 +21,14 @@ export default defineConfig({
         },
     },
     server: {
+        host: '0.0.0.0',
+        hmr: {
+            host: 'localhost',
+        },
         watch: {
             // Prevent infinite reload from Laravel's compiled views
             ignored: ['**/storage/framework/views/**'],
+            usePolling: true,
         },
     },
 });
