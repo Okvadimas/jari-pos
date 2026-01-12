@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Management;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class AksesController extends Controller
+class RoleController extends Controller
 {
     public function index(Request $request) {
-        return view('management.akses.index');
+        return view('management.permission.index');
     }
 
 }

@@ -6,7 +6,7 @@ use App\Http\Controllers\Landing\IndexController    as LandingController;
 use App\Http\Controllers\Auth\IndexController       as AuthController;
 use App\Http\Controllers\Dashboard\IndexController  as DashboardController;
 use App\Http\Controllers\Management\UserController  as UserManagementController;
-use App\Http\Controllers\Management\AksesController  as AksesManagementController;
+use App\Http\Controllers\Management\RoleController  as RoleManagementController;
 
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
@@ -38,8 +38,8 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::post('/user/update/{id}', [UserManagementController::class, 'update'])->name('user-management-update');
         Route::post('/user/destroy/{id}', [UserManagementController::class, 'destroy'])->name('user-management-destroy');
 
-        // Akses Management
-        Route::get('/akses',  [AksesManagementController::class, 'index'])->name('akses-management');
+        // Role Management
+        Route::get('/role',  [RoleManagementController::class, 'index'])->name('akses-management');
     });
     // End Management
     
