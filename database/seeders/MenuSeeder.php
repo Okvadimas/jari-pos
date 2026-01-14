@@ -14,9 +14,6 @@ class MenuSeeder extends Seeder
      */
     public function run()
     {
-        // Clear existing data
-        Menu::truncate();
-
         $menus = [
             // Parent Menus (parent = '0')
             [
@@ -45,7 +42,10 @@ class MenuSeeder extends Seeder
         ];
 
         foreach ($menus as $menu) {
-            Menu::create($menu);
+            Menu::updateOrCreate(
+                ['code' => $menu['code']],
+                $menu
+            );
         }
     }
 }

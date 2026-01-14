@@ -15,9 +15,6 @@ class CampaignSeeder extends Seeder
      */
     public function run()
     {
-        // Clear existing data
-        Campaign::truncate();
-
         $campaigns = [
             [
                 'title' => 'Welcome to Jari POS',
@@ -42,12 +39,15 @@ class CampaignSeeder extends Seeder
                 'description' => 'Slide ini tidak aktif.',
                 'image' => 'images/slides/slide-c.jpg', 
                 'type' => 'slider', 
-                'status' => 'inactive', // Test status filtering
+                'status' => 0, // 0 = inactive
             ],
         ];
 
         foreach ($campaigns as $campaign) {
-            Campaign::create($campaign);
+            Campaign::updateOrCreate(
+                ['title' => $campaign['title']],
+                $campaign
+            );
         }
     }
 }
