@@ -14,12 +14,12 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        Permission::create([
+        Permission::updateOrCreate([
             'role_id' => 1,
             'menu_id' => 2,
         ]);
 
-        Permission::create([
+        Permission::updateOrCreate([
             'role_id' => 1,
             'menu_id' => 3
         ]);

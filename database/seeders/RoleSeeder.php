@@ -14,9 +14,6 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        // Clear existing data
-        Role::truncate();
-
         $roles = [
             [
                 'name'      => 'Super Admin',
@@ -41,7 +38,10 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($roles as $role) {
-            Role::create($role);
+            Role::updateOrCreate(
+                ['slug' => $role['slug']],
+                ['name' => $role['name']]
+            );
         }
     }
 }
