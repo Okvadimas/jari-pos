@@ -8,6 +8,7 @@ const datatable = () => {
         processing: true,
         responsive: false,
         scrollX: true,
+        destroy: true,
         ajax: {
             url: '/management/user/datatable',
             type: 'GET',
@@ -19,8 +20,11 @@ const datatable = () => {
             { data: 'name', name: 'name' },
             { data: 'nama_role', name: 'nama_role' },
             { data: 'status', name: 'status', orderable: false, searchable: false, render: function(data) {
-                return data === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
+                return data == 1 ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Tidak Aktif</span>';
             }},
+        ],
+        columnDefs: [
+            { targets: '_all', className: 'nk-tb-col' },
         ],
     });
 }
@@ -31,6 +35,8 @@ function hapus(id) {
         text: "Data user akan dihapus!",
         icon: 'warning',
         showCancelButton: true,
+        confirmButtonColor: '#e85347',
+        cancelButtonColor: '#6c757d',
         confirmButtonText: 'Ya, hapus!',
         cancelButtonText: 'Batal',
     }).then((result) => {
@@ -38,21 +44,22 @@ function hapus(id) {
             $.ajax({
                 url: '/management/user/destroy/' + id,
                 type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
                 dataType: 'JSON',
                 success: function(response) {
                     if (response.status) {
-                        $('#table-data').DataTable().ajax.reload();
                         NioApp.Toast(response.message, 'success', { position: 'top-right' });
+                        datatable();
                     } else {
                         NioApp.Toast(response.message, 'warning', { position: 'top-right' });
                     }
                 },
-                error: function(error) {
-                    console.log(error);
-                    NioApp.Toast('Error while fetching data', 'error', { position: 'top-right' });
+                error: function(response) {
+                    let statusCode = response.status;
+                    if(statusCode >= 500) {
+                        NioApp.Toast('Terjadi kesalahan', 'error', { position: 'top-right' });
+                    } else {
+                        NioApp.Toast(response.responseJSON.message, 'warning', { position: 'top-right' });
+                    }
                 }
             });
         }

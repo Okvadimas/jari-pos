@@ -19,7 +19,6 @@ use App\Models\User;
 
 // Load Request
 use App\Http\Requests\Management\User\StoreUserRequest;
-use App\Http\Requests\Management\User\UpdateUserRequest;
 
 class UserController extends Controller
 {
@@ -27,11 +26,9 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-
-
         $data = [
             'title' => $this->pageTitle,
-            'js' => 'resources/js/pages/management/user/index.js',
+            'js'    => 'resources/js/pages/management/user/index.js',
         ];
 
         return view('management.user.index', $data);
@@ -45,10 +42,23 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $data = [
-            'title' => $this->pageTitle,
-            'js' => 'resources/js/pages/management/user/form.js',
-            'company' => Company::select('id', 'nama')->get(),
-            'paket' => Role::select('id', 'nama')->get(),
+            'title'     => $this->pageTitle,
+            'js'        => 'resources/js/pages/management/user/form.js',
+            'company'   => Company::select('id', 'name')->get(),
+            'paket'     => Role::select('id', 'name')->get(),
+        ];
+
+        return view('management.user.form', $data);
+    }
+
+    public function edit($id)
+    {
+        $data = [
+            'title'     => $this->pageTitle,
+            'js'        => 'resources/js/pages/management/user/form.js',
+            'company'   => Company::select('id', 'name')->get(),
+            'paket'     => Role::select('id', 'name')->get(),
+            'user'      => User::find($id),
         ];
 
         return view('management.user.form', $data);
@@ -58,53 +68,18 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        $user = UserService::store($validated);
+        UserService::store($validated);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User berhasil ditambahkan',
-            'data' => $user,
-        ]);
-    }
+        $message = !empty($validated['id']) ? 'User berhasil diupdate' : 'User berhasil ditambahkan';
 
-    public function edit($id)
-    {
-        $data = [
-            'title' => $this->pageTitle,
-            'js' => 'resources/js/pages/management/user/form.js',
-            'company' => Company::select('kode', 'nama')->get(),
-            'paket' => Role::select('slug', 'nama')->get(),
-            'user' => User::find($id),
-        ];
-
-        return view('management.user.form', $data);
-    }
-
-    public function update(UpdateUserRequest $request)
-    {
-        $validated = $request->validated();
-
-        $user = UserService::update($validated, $request->id);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'User berhasil diupdate',
-            'data' => $user,
-        ]);
+        return $this->successResponse([], $message);
     }
 
     public function destroy(Request $request)
     {
-        $user = User::find($request->id);
-        $user->update([
-            'status' => 'inactive',
-            'updated_at' => date('Y-m-d H:i:s'),
-        ]);
+        UserService::destroy($request->id);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User berhasil dihapus',
-        ]);
+        return $this->successResponse([], 'User berhasil dihapus');
     }
 
 }

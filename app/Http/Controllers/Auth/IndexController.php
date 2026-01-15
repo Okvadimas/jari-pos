@@ -37,11 +37,11 @@ class IndexController extends Controller
         ]);
    
         if($validator->stopOnFirstFailure()->fails()){
-            return $this->ajaxResponse(false, $validator->errors()->first());       
+            return $this->errorResponse($validator->errors()->first());       
         }
 
         $credential = $request->only('username', 'password');
-        $credential['status'] = 'active';
+        $credential['status'] = 1;
         if(Auth::attempt($credential)) {
             $user = Auth::user();
             $request->session()->put('user', $user);
@@ -51,9 +51,9 @@ class IndexController extends Controller
             $menu = Menu::menu();
             $request->session()->put('menu', $menu);
 
-            return $this->ajaxResponse(true, 'Berhasil masuk dashboard');
+            return $this->successResponse([], 'Berhasil masuk dashboard');
         } else {
-            return $this->ajaxResponse(false, 'Username atau kata sandi salah. Silahkan cek kembali.');
+            return $this->errorResponse('Username atau kata sandi salah. Silahkan cek kembali.');
         }
     }
 
@@ -92,7 +92,7 @@ class IndexController extends Controller
         // Auto Login
         Auth::login($user);
 
-        return $this->ajaxResponse(true, 'Berhasil mendaftar');
+        return $this->successResponse([], 'Berhasil mendaftar');
     }
 
     public function resetPassword() {

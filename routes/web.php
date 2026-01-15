@@ -29,17 +29,22 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
     // Management
     Route::group(['prefix' => 'management'], function () {
-        // User Management
-        Route::get('/user',  [UserManagementController::class, 'index'])->name('user-management');
-        Route::get('/user/datatable', [UserManagementController::class, 'datatable'])->name('user-management-datatable');
-        Route::get('/user/create', [UserManagementController::class, 'create'])->name('user-management-create');
-        Route::post('/user/store', [UserManagementController::class, 'store'])->name('user-management-store');
-        Route::get('/user/edit/{id}', [UserManagementController::class, 'edit'])->name('user-management-edit');
-        Route::post('/user/update/{id}', [UserManagementController::class, 'update'])->name('user-management-update');
-        Route::post('/user/destroy/{id}', [UserManagementController::class, 'destroy'])->name('user-management-destroy');
+        
+        // User Management (Menu Code: MJ-01)
+        Route::group(['middleware' => 'menu-access:MJ-01'], function () {
+            Route::get('/user',  [UserManagementController::class, 'index'])->name('user-management');
+            Route::get('/user/datatable', [UserManagementController::class, 'datatable'])->name('user-management-datatable');
+            Route::get('/user/create', [UserManagementController::class, 'create'])->name('user-management-create');
+            Route::get('/user/edit/{id}', [UserManagementController::class, 'edit'])->name('user-management-edit');
+            Route::post('/user/store', [UserManagementController::class, 'store'])->name('user-management-store');
+            Route::post('/user/destroy/{id}', [UserManagementController::class, 'destroy'])->name('user-management-destroy');
+        });
 
-        // Role Management
-        Route::get('/role',  [RoleManagementController::class, 'index'])->name('akses-management');
+        // Role Management (Menu Code: MJ-02)
+        Route::group(['middleware' => 'menu-access:MJ-02'], function () {
+            Route::get('/role',  [RoleManagementController::class, 'index'])->name('akses-management');
+        });
+
     });
     // End Management
     

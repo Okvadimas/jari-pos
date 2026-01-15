@@ -15,10 +15,17 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
+            CompanySeeder::class,
             UserSeeder::class,
             CampaignSeeder::class,
             MenuSeeder::class,
             PermissionSeeder::class,
+
+            // Master Data POS
+            CategorySeeder::class,
+            ProductSeeder::class,
+            ProductVariantSeeder::class,
+            ProductPriceSeeder::class,
         ]);
     }
 }

@@ -17,6 +17,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@jaripos.com',
             'password' => Hash::make('55555'),
             'role_id' => 1, // Super Admin
+            'company_id' => 1, // Jari POS Official
             'start_date' => now(),
             'end_date' => now()->addYears(5),
         ]);
@@ -27,6 +28,7 @@ class UserSeeder extends Seeder
             'email' => 'user@jaripos.com',
             'password' => Hash::make('00000'),
             'role_id' => 2, // Starter
+            'company_id' => 2, // Demo Company
             'start_date' => now(),
             'end_date' => now()->addYears(5),
         ]);

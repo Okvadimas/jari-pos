@@ -13,25 +13,15 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('unit_id')->constrained('units')->cascadeOnDelete();
-            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
-            $table->string('sku'); 
+            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->string('name');
-            $table->decimal('purchase_price', 15, 2)->default(0);
-            $table->decimal('sell_price', 15, 2)->default(0);
-            $table->integer('stock')->default(0);
-            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
+            $table->text('description')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
-            $table->index('company_id');
-            $table->index('unit_id');
-            $table->index('sku');
-
-            // SKU unik di dalam satu perusahaan saja
-            $table->unique(['company_id', 'sku']);
+            $table->index('category_id');
         });
     }
 
