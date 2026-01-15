@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('unit_price', 15, 2)->comment('Harga jual normal saat itu');
             $table->decimal('discount_auto_amount', 15, 2)->default(0)->comment('Potongan harga jika ada promo');
             $table->decimal('subtotal', 15, 2)->comment('(unit_price - discount_auto) * qty');
+            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
