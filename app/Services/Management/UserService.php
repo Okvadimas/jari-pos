@@ -13,9 +13,7 @@ use App\Repositories\Management\UserRepository;
 // Load Models
 use App\Models\User;
 
-class UserService
-{
-
+class UserService {
     public static function datatable()
     {
         $data = UserRepository::datatable();

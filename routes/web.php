@@ -6,7 +6,7 @@ use App\Http\Controllers\Landing\IndexController    as LandingController;
 use App\Http\Controllers\Auth\IndexController       as AuthController;
 use App\Http\Controllers\Dashboard\IndexController  as DashboardController;
 use App\Http\Controllers\Management\UserController  as UserManagementController;
-use App\Http\Controllers\Management\RoleController  as RoleManagementController;
+use App\Http\Controllers\Management\AksesController  as AksesManagementController;
 use App\Http\Controllers\Management\CompanyController as CompanyController;
 
 Route::get('/', [LandingController::class, 'index'])->name('root');
@@ -42,7 +42,12 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
         // Role Management (Menu Code: MJ-02)
         Route::group(['middleware' => 'menu-access:MJ-02'], function () {
-            Route::get('/role',  [RoleManagementController::class, 'index'])->name('akses-management');
+            Route::get('/akses',  [AksesManagementController::class, 'index'])->name('akses-management');
+            Route::get('/akses/datatable', [AksesManagementController::class, 'datatable'])->name('akses-management-datatable');
+            Route::get('/akses/create', [AksesManagementController::class, 'create'])->name('akses-management-create');
+            Route::get('/akses/edit/{id}', [AksesManagementController::class, 'edit'])->name('akses-management-edit');
+            Route::post('/akses/store', [AksesManagementController::class, 'store'])->name('akses-management-store');
+            Route::post('/akses/destroy/{id}', [AksesManagementController::class, 'destroy'])->name('akses-management-destroy');
         });
 
         // Company Management (Menu Code: MJ-03)
