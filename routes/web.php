@@ -30,7 +30,6 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
     // Management
     Route::group(['prefix' => 'management'], function () {
-        
         // User Management (Menu Code: MJ-01)
         Route::group(['middleware' => 'menu-access:MJ-01'], function () {
             Route::get('/user',  [UserManagementController::class, 'index'])->name('user-management');
@@ -56,7 +55,6 @@ Route::group(['middleware' => ['web', 'auth']], function () {
             Route::post('/company/update/{id}', [CompanyController::class, 'update'])->name('company-management-update');
             Route::post('/company/destroy/{id}', [CompanyController::class, 'destroy'])->name('company-management-destroy');
         });
-
     });
     // End Management
     
