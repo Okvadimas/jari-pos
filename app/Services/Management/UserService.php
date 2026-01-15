@@ -4,6 +4,8 @@ namespace App\Services\Management;
 
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 // Load Repository
 use App\Repositories\Management\UserRepository;
@@ -32,15 +34,32 @@ class UserService
 
     public static function store($validated)
     {
-        $user = User::create($validated);
+        $validated['company_id'] = $validated['company'];
+        $validated['role_id']    = $validated['paket'];
+
+        // Jika ada id, update. Jika tidak, create.
+        if (!empty($validated['id'])) {
+            $user = User::find($validated['id']);
+            $user->update($validated);
+        } else {
+            $validated['password']   = Hash::make('12345');
+            $validated['start_date'] = date('Y-m-d H:i:s');
+            $validated['end_date']   = date('Y-m-d H:i:s', strtotime('+1 month'));
+            $validated['status']     = 1;
+            $user = User::create($validated);
+        }
+
         return $user;
     }
 
-    public static function update($validated, $id)
+    public static function destroy($id)
     {
         $user = User::find($id);
-        $user->update($validated);
-        return $user;
+        $user->update([
+            'status'        => '0',
+            'updated_by'    => Auth::user()->id,
+            'updated_at'    => date('Y-m-d H:i:s'),
+        ]);
     }
 
 }

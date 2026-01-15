@@ -52,7 +52,7 @@
 
                                                 <div class="user-info d-none d-xl-block">
                                                     <div class="user-status user-status-unverified text-white fw-lighter">
-                                                        ({{ ucwords(str_replace('-', ' ', Auth::user()->role)) }})</div>
+                                                        ({{ ucwords(str_replace('-', ' ', session('role'))) }})</div>
                                                     <div class="user-name dropdown-indicator text-white fw-bold">{{ Auth::user()->name }}</div>
                                                 </div>
 

@@ -14,16 +14,16 @@ class UserRepository {
         $query = DB::table('users')
                     ->select([
                         'users.id',
-                        'c.nama as nama_company',
-                        'users.company',
+                        'c.name as nama_company',
+                        'users.company_id',
                         'users.name',
-                        'r.nama as nama_role',
-                        'users.role',
+                        'r.name as nama_role',
+                        'users.role_id',
                         'users.status',
                     ])
-                    ->join('company as c', 'users.company', '=', 'c.kode')
-                    ->join('role as r', 'users.role', '=', 'r.slug')
-                    ->where('users.status', 'active');
+                    ->join('companies as c', 'users.company_id', '=', 'c.id')
+                    ->join('roles as r', 'users.role_id', '=', 'r.id')
+                    ->where('users.status', 1);
         
         return $query;
     }

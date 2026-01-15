@@ -15,13 +15,15 @@ class PermissionSeeder extends Seeder
     public function run()
     {
         Permission::updateOrCreate([
-            'role_id' => 1,
-            'menu_id' => 2,
+            'role_id'   => 1,
+            'menu_id'   => 2,
+            'status'    => 1,
         ]);
 
         Permission::updateOrCreate([
-            'role_id' => 1,
-            'menu_id' => 3
+            'role_id'   => 1,
+            'menu_id'   => 3,
+            'status'    => 1,
         ]);
     }
 }

@@ -2,61 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+// use App\Models\Logs; // TODO: Uncomment when Logs model is created
+
 abstract class Controller
 {
     /**
-     * success response method.
+     * Return success JSON response
      *
-     * @return \Illuminate\Http\Response
+     * @param mixed $data
+     * @param string $message
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function sendResponse($result, $message)
+    protected function successResponse($data, $message, $code = 200)
     {
-    	$response = [
-            'status' => true,
-            'data'    => $result,
+        return response()->json([
+            'status'  => true,
             'message' => $message,
-        ];
-        return response()->json($response, 200);
+            'data'    => $data,
+        ], $code);
     }
 
     /**
-     * return error response.
+     * Return error JSON response
      *
-     * @return \Illuminate\Http\Response
+     * @param string $message
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function sendError($error, $code = 404)
+    protected function errorResponse($message, $code = 400)
     {
-    	$response = [
-            'status'    => false,
-            'data'      => [],
-            'message'   => $error,
-        ];
-
-        return response()->json($response, $code);
-    }
-
-    public function ajaxResponse($status, $message, $result=[])
-    {
-    	$response = [
-            'status' => $status,
-            'data'    => $result,
+        return response()->json([
+            'status'  => false,
             'message' => $message,
-        ];
-        return response()->json($response);
+            'data'    => [],
+        ], $code);
     }
 
-    public function logs($uid_order, $uid_divisi, $status = 1)
-    {
-        $user   = Auth::user();
+    /**
+     * Create activity log
+     * TODO: Enable this function when Logs model is created
+     *
+     * @param string $uid_order
+     * @param string $uid_divisi
+     * @param int $status
+     * @return mixed
+     */
+    // public function logs($uid_order, $uid_divisi, $status = 1)
+    // {
+    //     $user = Auth::user();
 
-        $logs = Logs::create([
-            'uid'           => 'L'.date('YmdHis').mt_rand(100000, 999999),
-            'uid_order'     => $uid_order,
-            'uid_divisi'    => $uid_divisi,
-            'status'        => $status,
-            'insert_by'     => $user->username
-        ]);
+    //     $logs = Logs::create([
+    //         'uid'           => 'L'.date('YmdHis').mt_rand(100000, 999999),
+    //         'uid_order'     => $uid_order,
+    //         'uid_divisi'    => $uid_divisi,
+    //         'status'        => $status,
+    //         'insert_by'     => $user->username
+    //     ]);
 
-        return $logs;
-    }
+    //     return $logs;
+    // }
 }
+
