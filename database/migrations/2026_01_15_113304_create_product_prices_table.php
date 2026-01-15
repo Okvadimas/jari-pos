@@ -15,14 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
             $table->decimal('price', 15, 2)->comment('Harga jual ke customer');
-            $table->boolean('is_active')->default(true);
+            $table->tinyInteger('status')->default(1)->comment('1 = aktif, 0 = non aktif');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             $table->index('product_variant_id');
-            $table->index('is_active');
         });
     }
 

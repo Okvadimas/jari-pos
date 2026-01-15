@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\IndexController       as AuthController;
 use App\Http\Controllers\Dashboard\IndexController  as DashboardController;
 use App\Http\Controllers\Management\UserController  as UserManagementController;
 use App\Http\Controllers\Management\RoleController  as RoleManagementController;
+use App\Http\Controllers\Management\CompanyController as CompanyController;
 
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
@@ -43,6 +44,17 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         // Role Management (Menu Code: MJ-02)
         Route::group(['middleware' => 'menu-access:MJ-02'], function () {
             Route::get('/role',  [RoleManagementController::class, 'index'])->name('akses-management');
+        });
+
+        // Company Management (Menu Code: MJ-03)
+        Route::group(['middleware' => 'menu-access:MJ-03'], function () {
+            Route::get('/company',  [CompanyController::class, 'index'])->name('company-management');
+            Route::get('/company/datatable', [CompanyController::class, 'datatable'])->name('company-management-datatable');
+            Route::get('/company/create', [CompanyController::class, 'create'])->name('company-management-create');
+            Route::post('/company/store', [CompanyController::class, 'store'])->name('company-management-store');
+            Route::get('/company/edit/{id}', [CompanyController::class, 'edit'])->name('company-management-edit');
+            Route::post('/company/update/{id}', [CompanyController::class, 'update'])->name('company-management-update');
+            Route::post('/company/destroy/{id}', [CompanyController::class, 'destroy'])->name('company-management-destroy');
         });
 
     });
