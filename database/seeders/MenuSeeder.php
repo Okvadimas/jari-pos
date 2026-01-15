@@ -39,6 +39,13 @@ class MenuSeeder extends Seeder
                 'icon'      => 'ni ni-account-setting-fill',
                 'url'       => '/management/akses',
             ],
+            [
+                'code'      => 'MJ-03',
+                'parent'    => 'MJ',
+                'name'      => 'Manajemen Perusahaan',
+                'icon'      => 'ni ni-building-fill',
+                'url'       => '/management/company',
+            ],
         ];
 
         foreach ($menus as $menu) {

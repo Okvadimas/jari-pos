@@ -8,6 +8,8 @@ export default defineConfig({
                 'resources/js/script.js',
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/pages/management/company/index.js',
+                'resources/js/pages/management/company/form.js',
             ],
             refresh: true,
         }),
