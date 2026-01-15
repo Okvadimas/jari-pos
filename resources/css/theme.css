@@ -272,6 +272,11 @@ a.text-primary:focus,
     border-color: var(--app-primary);
 }
 
+.form-check-input:checked {
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
+}
+
 .nk-order-ovwg-data.sell,
 .bg-outline-primary {
     border-color: var(--app-primary-border);

@@ -3,8 +3,10 @@
 namespace App\Repositories\Management;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
 use Carbon\Carbon;
+
+// Load Model
+use App\Models\User;
 
 class UserRepository {
 
