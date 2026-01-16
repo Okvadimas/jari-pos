@@ -96,5 +96,5 @@ Route::group(['middleware' => ['web', 'auth']], function () {
             Route::post('/unit/update/{id}', [UnitController::class, 'update'])->name('inventory-unit-update');
             Route::post('/unit/destroy/{id}', [UnitController::class, 'destroy'])->name('inventory-unit-destroy');
         });
-    })
+    });
 });
