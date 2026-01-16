@@ -11,6 +11,11 @@ use App\Http\Controllers\Management\CompanyController as CompanyController;
 
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
+// PWA Offline Page
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
+
 Route::get('/login',            [AuthController::class, 'login'])->middleware('redirect-if-authenticated')->name('login');
 Route::post('/login',           [AuthController::class, 'processLogin'])->middleware('ajax-request');
 Route::get('/register',         [AuthController::class, 'register'])->name('register');
