@@ -7,15 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $table = 'products';
-    protected $fillable = ['company_id', 'unit_id', 'name', 'sku', 'stock', 'purchase_price', 'sell_price', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['category_id', 'company_id', 'name', 'description', 'status', 'created_by', 'updated_by'];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     public function company()
     {
-        return $this->belongsTo(Company::class, 'company_id');
+        return $this->belongsTo(Company::class);
     }
 
-    public function unit()
+    public function variants()
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->hasMany(ProductVariant::class);
     }
 }

@@ -29,6 +29,7 @@ return new class extends Migration
             // Unique constraint: satu varian hanya boleh punya satu record per tanggal
             $table->unique(['product_variant_id', 'date']);
             $table->index('date');
+            $table->index('product_variant_id');
         });
     }
 
