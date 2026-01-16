@@ -5,6 +5,7 @@ namespace App\Services\Management;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 // Load Repository
@@ -12,6 +13,7 @@ use App\Repositories\Management\AksesRepository;
 
 // Load Models
 use App\Models\Role;
+use App\Models\Permission;
 
 class AksesService {     
     public static function datatable()
@@ -32,28 +34,45 @@ class AksesService {
 
     public static function store($validated)
     {
-        $validated['company_id'] = $validated['company'];
-        $validated['role_id']    = $validated['paket'];
+        try {
+            DB::beginTransaction();
 
-        // Jika ada id, update. Jika tidak, create.
-        if (!empty($validated['id'])) {
-            $user = User::find($validated['id']);
-            $user->update($validated);
-        } else {
-            $validated['password']   = Hash::make('12345');
-            $validated['start_date'] = date('Y-m-d H:i:s');
-            $validated['end_date']   = date('Y-m-d H:i:s', strtotime('+1 month'));
-            $validated['status']     = 1;
-            $user = User::create($validated);
+            if (!empty($validated['id'])) {
+                $akses = Role::find($validated['id']);
+                $akses->update($validated);
+            } else {
+                $akses = Role::create($validated);
+            }
+
+            // Delete Insert Permissions
+            Permission::where('role_id', $akses->id)->delete();
+
+            $data_permission = [];
+            foreach ($validated['menus'] as $menu) {
+                $data_permission[] = [
+                    'role_id'       => $akses->id,
+                    'menu_id'       => $menu,
+                    'status'        => 1,
+                    'created_by'    => Auth::user()->id,
+                    'created_at'    => date('Y-m-d H:i:s'),
+                ];
+            }
+
+            Permission::insert($data_permission);
+
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th->getMessage());
+            return false;
         }
-
-        return $user;
     }
 
     public static function destroy($id)
     {
-        $role = Role::find($id);
-        $role->update([
+        $akses = Role::find($id);
+        $akses->update([
             'status'        => '0',
             'updated_by'    => Auth::user()->id,
             'updated_at'    => date('Y-m-d H:i:s'),

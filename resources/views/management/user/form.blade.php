@@ -115,7 +115,7 @@
                                     <div class="row g-3">
                                         <div class="col-lg-7 offset-lg-5">
                                             <div class="form-group mt-2">
-                                                <button type="submit" class="btn btn-primary"><em class="icon ni ni-save"></em><span>Simpan</span></button>
+                                                <button type="submit" class="btn btn-primary" id="btn-save"><em class="icon ni ni-save"></em><span>Simpan</span></button>
                                             </div>
                                         </div>
                                     </div>

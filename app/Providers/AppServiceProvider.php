@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Opcodes\LogViewer\Facades\LogViewer;
 use App\Models\Permission;
 use App\Models\Menu;
 
@@ -25,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
         if($this->app->environment('production')) {
             \URL::forceScheme('https');
         }
+
+        LogViewer::auth(function ($request) {
+            // Cek apakah user authenticated dan role_id = 1 (Super Admin)
+            return $request->user() && $request->user()->role_id == 1;
+        });
 
         // Define Gate for menu access
         // Usage: Gate::allows('access-menu', 'MJ-01') or @can('access-menu', 'MJ-01')

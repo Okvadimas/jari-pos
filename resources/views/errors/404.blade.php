@@ -1,48 +1,48 @@
-@extends('layouts.base', ['title' => 'Page Not Found - 404'])
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="js">
 
-@section('body_attribute')
-     class="authentication-bg"
-@endsection
+<head>
+    @include('layouts.partials.header')
 
-@section('content')
-     <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5">
-           <div class="container">
-                 <div class="row justify-content-center">
-                       <div class="col-xl-6">
-                              <div class="card auth-card">
-                                    <div class="card-body p-0">
-                                          <div class="row align-items-center g-0">
-                                                <div class="col">
-                                                       <div class="p-4">
-                                                             <div class="mx-auto mb-4 text-center">
-                                                                   <div class="mx-auto text-center auth-logo">
-                                                                         <a href="{{ route('root') }}" class="logo-dark">
-                                                                                <img src="/images/logo-dark.png" height="30" alt="logo dark">
-                                                                         </a>
+    @if(isset($css_library))
+        @vite($css_library)
+    @endif
 
-                                                                         <a href="{{ route('root') }}" class="logo-light">
-                                                                                <img src="/images/logo-white.png" height="30" alt="logo light">
-                                                                         </a>
-                                                                   </div>
+    <style type="text/css">
+        .nk-sidebar.is-compact:not(:hover) .logo-img-small {
+            max-height: 20px;
+        }
+    </style>
+</head>
 
-                                                                   <img src="/images/404.svg" alt="auth" height="250" class="mt-5 mb-3" />
+<body class="nk-body bg-white npc-default pg-error">
+    <div class="nk-app-root">
+        <!-- main @s -->
+        <div class="nk-main ">
+            <!-- wrap @s -->
+            <div class="nk-wrap nk-wrap-nosidebar">
+                <!-- content @s -->
+                <div class="nk-content ">
+                    <div class="nk-block nk-block-middle wide-md mx-auto">
+                        <div class="nk-block-content nk-error-ld text-center">
+                            <img class="nk-error-gfx" src="{{ asset('images/error-404.svg') }}" alt="">
+                            <div class="wide-xs mx-auto">
+                                <h3 class="nk-error-title">Halaman Tidak Ditemukan!</h3>
+                                <p class="nk-error-text">Maaf, halaman yang Anda cari tidak ditemukan. Halaman mungkin telah dipindahkan, dihapus, atau alamat URL yang Anda masukkan salah.</p>
+                                <a href="{{ route('dashboard') }}" class="btn btn-lg btn-primary mt-2">Kembali ke Dashboard</a>
+                            </div>
+                        </div>
+                    </div><!-- .nk-block -->
+                </div>
+                <!-- wrap @e -->
+            </div>
+            <!-- content @e -->
+        </div>
+        <!-- main @e -->
+    </div>
+    <!-- app-root @e -->
+    <!-- JavaScript -->
+    <script src="{{ asset('js/bundle.js') }}"></script>
+    @vite(['resources/js/scripts.js', 'resources/js/app.js', 'resources/css/app.css'])
 
-                                                                   <h2 class="fs-22 lh-base fw-bold">Page Not Found !</h2>
-                                                                   <p class="text-muted mt-1 mb-4">The page you're trying to reach seems to have gone <br /> missing in the digital wilderness.</p>
-
-                                                                   <div class="text-center">
-                                                                         <a href="{{ route('root') }}" class="btn btn-success">Back to Home</a>
-                                                                   </div>
-                                                             </div>
-                                                       </div>
-                                                </div> <!-- end col -->
-                                          </div> <!-- end row -->
-
-                                    </div> <!-- end card-body -->
-                              </div> <!-- end card -->
-
-                       </div> <!-- end col -->
-                 </div> <!-- end row -->
-           </div>
-     </div>
-@endsection
+</html>
