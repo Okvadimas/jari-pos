@@ -37,7 +37,7 @@ class IndexController extends Controller
         ]);
    
         if($validator->stopOnFirstFailure()->fails()){
-            return $this->errorResponse($validator->errors()->first());       
+            return $this->errorResponse($validator->errors()->first(), 422);       
         }
 
         $credential = $request->only('username', 'password');
@@ -53,7 +53,7 @@ class IndexController extends Controller
 
             return $this->successResponse('Berhasil masuk dashboard');
         } else {
-            return $this->errorResponse('Username atau kata sandi salah. Silahkan cek kembali.');
+            return $this->errorResponse('Username atau kata sandi salah. Silahkan cek kembali.', 422);
         }
     }
 
