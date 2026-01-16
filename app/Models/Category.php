@@ -8,6 +8,9 @@ class Category extends Model
 {
     protected $table = 'categories';
     protected $fillable = ['name', 'status', 'created_by', 'updated_by'];
+    protected $casts = [
+        'status' => 'boolean',
+    ];
 
     public function products()
     {

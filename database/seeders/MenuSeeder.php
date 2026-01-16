@@ -46,6 +46,31 @@ class MenuSeeder extends Seeder
                 'icon'      => 'ni ni-building-fill',
                 'url'       => '/management/company',
             ],
+            [
+                'code'      => 'MJ-04',
+                'parent'    => 'MJ',
+                'name'      => 'Manajemen Pembayaran',
+                'icon'      => 'ni ni-grid-fill',
+                'url'       => '/management/payment',
+            ],
+
+            // parent
+            [
+                'code'      => 'IN',
+                'parent'    => '0',
+                'name'      => 'INVENTORI',
+                'icon'      => 'ni ni-article',
+                'url'       => null,
+            ],
+
+            // child
+            [
+                'code'      => 'IN-01',
+                'parent'    => 'IN',
+                'name'      => 'Satuan',
+                'icon'      => 'ni ni-grid-fill',
+                'url'       => '/inventory/unit',
+            ],
         ];
 
         foreach ($menus as $menu) {

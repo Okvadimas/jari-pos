@@ -1,11 +1,11 @@
 $(document).ready(function () {
-    console.log('Company Management Form page scripts loaded');
+    console.log('Inventory - Unit Form page scripts loaded');
 
     $('#form-data').on('submit', function (e) {
         e.preventDefault();
 
         var id = $('input[name="id"]').val();
-        var url = id ? '/management/company/update/' + id : '/management/company/store';
+        var url = id ? '/inventory/unit/update/' + id : '/inventory/unit/store';
 
         $.ajax({
             url: url,
@@ -19,7 +19,7 @@ $(document).ready(function () {
                 if (response.status) {
                     NioApp.Toast(response.message, 'success', { position: 'top-right' });
                     setTimeout(function () {
-                        window.location.href = '/management/company';
+                        window.location.href = '/inventory/unit';
                     }, 1000);
                 } else {
                     NioApp.Toast(response.message, 'warning', { position: 'top-right' });

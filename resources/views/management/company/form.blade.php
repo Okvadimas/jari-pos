@@ -31,14 +31,14 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="nama">Nama Perusahaan</label>
+                                                <label class="form-label" for="name">Nama Perusahaan</label>
                                                 <span class="form-note">Masukkan nama perusahaan</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="nama" name="nama" value="{{ isset($company) ? $company->nama : '' }}" required>
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($company) ? $company->name : '' }}" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -61,14 +61,14 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="telepon">Telepon</label>
+                                                <label class="form-label" for="phone">Telepon</label>
                                                 <span class="form-note">Masukkan nomor telepon</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="telepon" name="telepon" value="{{ isset($company) ? $company->telepon : '' }}">
+                                                    <input type="text" class="form-control" id="phone" name="phone" value="{{ isset($company) ? $company->phone : '' }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -76,37 +76,41 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="alamat">Alamat</label>
+                                                <label class="form-label" for="address">Alamat</label>
                                                 <span class="form-note">Masukkan alamat perusahaan</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <textarea class="form-control" id="alamat" name="alamat">{{ isset($company) ? $company->alamat : '' }}</textarea>
+                                                    <textarea class="form-control" id="address" name="address">{{ isset($company) ? $company->address : '' }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     
-                                    @if(isset($company))
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="status">Status</label>
-                                                <span class="form-note">Status aktif perusahaan</span>
+                                                <label class="form-label" for="logo">Logo</label>
+                                                <span class="form-note">Upload logo perusahaan</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
-                                                 <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="status" name="status" value="1" {{ $company->status ? 'checked' : '' }}>
-                                                    <label class="custom-control-label" for="status">Aktif</label>
+                                                <div class="form-control-wrap">
+                                                    <input type="file" class="form-control" id="logo" name="logo">
                                                 </div>
+                                                @if(isset($company) && $company->logo)
+                                                    <div class="mt-2 text-soft">
+                                                        <p class="mb-1">Logo saat ini:</p>
+                                                        <img src="{{ asset('storage/' . $company->logo) }}" alt="Logo" class="img-thumbnail" style="max-height: 100px;">
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
-                                    @endif
+                                    
 
                                     <div class="row g-3">
                                         <div class="col-lg-7 offset-lg-5">

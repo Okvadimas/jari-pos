@@ -24,7 +24,7 @@ class StoreCompanyRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:companies,name',
             'email' => 'required|email|unique:companies,email',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
@@ -43,6 +43,7 @@ class StoreCompanyRequest extends FormRequest
             'name.required' => 'Nama perusahaan wajib diisi.',
             'name.string' => 'Nama perusahaan harus berupa string.',
             'name.max' => 'Nama perusahaan tidak boleh lebih dari 255 karakter.',
+            'name.unique' => 'Nama perusahaan sudah terdaftar.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
