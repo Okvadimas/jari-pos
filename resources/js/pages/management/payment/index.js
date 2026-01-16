@@ -1,5 +1,3 @@
-import { DataTable } from "simple-datatables";
-
 $(document).ready(function () {
     const table = $('#table-data').DataTable({
         processing: true,
