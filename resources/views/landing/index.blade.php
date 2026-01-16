@@ -4,6 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jaripos - Aplikasi Kasir UMKM Masakini</title>
+    <meta name="description" content="Jari Pos adalah platform Point of Sales (POS) yang memudahkan pengelolaan transaksi dan operasional bisnis Anda secara efisien dan terintegrasi.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Jaripos">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Jaripos">
+    <meta name="msapplication-TileColor" content="#0ea5e9">
+    <meta name="msapplication-TileImage" content="/images/pwa/icon-144x144.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Favicon & Apple Touch Icons -->
+    <link rel="shortcut icon" href="/images/brand-logo.svg">
+    <link rel="apple-touch-icon" href="/images/pwa/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/pwa/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/images/pwa/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/images/pwa/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/pwa/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/images/pwa/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/images/pwa/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x384" href="/images/pwa/icon-384x384.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/images/pwa/icon-512x512.png">
+    
+    <!-- PWA Standalone Mode Detection - Redirect to Login -->
+    <script>
+        // Check if running as PWA (standalone mode)
+        if (window.matchMedia('(display-mode: standalone)').matches || 
+            window.navigator.standalone === true) {
+            // Redirect to login page when opened as PWA
+            window.location.replace('/login');
+        }
+    </script>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -980,6 +1016,21 @@
                 });
             });
         });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registered: ', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
