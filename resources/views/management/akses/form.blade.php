@@ -37,7 +37,23 @@
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($akses) ? $akses->name : '' }}" placeholder="Contoh: Basic" autocomplete="off">
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($akses) ? $akses->name : '' }}" placeholder="Contoh: Super Admin" autocomplete="off">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-center">
+                                        <div class="col-lg-5">
+                                            <div class="form-group">
+                                                <label class="form-label" for="site-email">Slug</label>
+                                                <span class="form-note">Masukkan slug role/paket</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7">
+                                            <div class="form-group">
+                                                <div class="form-control-wrap">
+                                                    <input type="text" class="form-control" id="slug" name="slug" value="{{ isset($akses) ? $akses->slug : '' }}" placeholder="Contoh: super-admin" autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -60,7 +76,9 @@
                                                             <td width="5%" class="text-center">{{ $loop->iteration }}</td>
                                                             <td width="5%">
                                                                 <div class="form-check d-flex justify-content-center">
-                                                                    <input class="form-check-input" style="width: 1.5em; height: 1.5em;" type="checkbox" value="{{ $menu->id }}" name="menus[]" id="menu-{{ $menu->id }}">
+                                                                    <input class="form-check-input" style="width: 1.5em; height: 1.5em;" type="checkbox" 
+                                                                        value="{{ $menu->id }}" name="menus[]" id="menu-{{ $menu->id }}" 
+                                                                        {{ isset($akses) && $permissions->pluck('menu_id')->contains($menu->id) ? 'checked' : '' }}>
                                                                 </div>
                                                             </td>
                                                             <td>{{ $menu->parent_name }}</td>
@@ -75,7 +93,7 @@
                                     <div class="row g-3">
                                         <div class="col-lg-7 offset-lg-5">
                                             <div class="form-group mt-2">
-                                                <button type="submit" class="btn btn-primary"><em class="icon ni ni-save"></em><span>Simpan</span></button>
+                                                <button type="submit" class="btn btn-primary" id="btn-save"><em class="icon ni ni-save"></em><span>Simpan</span></button>
                                             </div>
                                         </div>
                                     </div>

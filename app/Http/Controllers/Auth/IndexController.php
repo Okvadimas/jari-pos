@@ -51,7 +51,7 @@ class IndexController extends Controller
             $menu = Menu::menu();
             $request->session()->put('menu', $menu);
 
-            return $this->successResponse([], 'Berhasil masuk dashboard');
+            return $this->successResponse('Berhasil masuk dashboard');
         } else {
             return $this->errorResponse('Username atau kata sandi salah. Silahkan cek kembali.');
         }
@@ -92,7 +92,7 @@ class IndexController extends Controller
         // Auto Login
         Auth::login($user);
 
-        return $this->successResponse([], 'Berhasil mendaftar');
+        return $this->successResponse('Berhasil mendaftar');
     }
 
     public function resetPassword() {

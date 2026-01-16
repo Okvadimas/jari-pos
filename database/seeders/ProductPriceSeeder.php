@@ -90,7 +90,7 @@ class ProductPriceSeeder extends Seeder
             DB::table('product_prices')->insert([
                 'product_variant_id' => $price['product_variant_id'],
                 'price' => $price['price'],
-                'is_active' => true,
+                'status' => 1,
                 'created_at' => now(),
             ]);
         }

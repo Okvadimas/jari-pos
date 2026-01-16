@@ -68,14 +68,14 @@ class UserController extends Controller
 
         $message = !empty($validated['id']) ? 'User berhasil diupdate' : 'User berhasil ditambahkan';
 
-        return $this->successResponse([], $message);
+        return $this->successResponse($message);
     }
 
     public function destroy(Request $request)
     {
         UserService::destroy($request->id);
 
-        return $this->successResponse([], 'User berhasil dihapus');
+        return $this->successResponse('User berhasil dihapus');
     }
 
 }

@@ -8,9 +8,13 @@ use App\Http\Controllers\Controller;
 // Load Model
 use App\Models\Menu;
 use App\Models\Role;
+use App\Models\Permission;
 
 // Load Service
 use App\Services\Management\AksesService;
+
+// Load Request
+use App\Http\Requests\Management\Akses\StoreAksesRequest;
 
 class AksesController extends Controller
 {
@@ -49,16 +53,20 @@ class AksesController extends Controller
     {
         $data = [
             'title'     => $this->pageTitle,
-            'js'        => 'resources/js/pages/management/user/form.js',
-            'company'   => Company::select('id', 'name')->get(),
-            'paket'     => Role::select('id', 'name')->get(),
-            'user'      => User::find($id),
+            'js'        => 'resources/js/pages/management/akses/form.js',
+            'menus'     => Menu::select('menu.id', 'menu.code', 'menu.parent', 'menu.name', 'parent.name as parent_name')
+                            ->join('menu as parent', 'menu.parent', 'parent.code')
+                            ->where('menu.parent', '!=', '0')
+                            ->where('menu.status', 1)
+                            ->get(),
+            'permissions' => Permission::select('menu_id')->where('status', 1)->where('role_id', $id)->get(),
+            'akses'     => Role::find($id),
         ];
 
-        return view('management.user.form', $data);
+        return view('management.akses.form', $data);
     }
 
-    public function store(StoreUserRequest $request)
+    public function store(StoreAksesRequest $request)
     {
         $validated = $request->validated();
 
@@ -66,13 +74,13 @@ class AksesController extends Controller
 
         $message = !empty($validated['id']) ? 'Akses berhasil diupdate' : 'Akses berhasil ditambahkan';
 
-        return $this->successResponse([], $message);
+        return $this->successResponse($message);
     }
 
     public function destroy(Request $request)
     {
         AksesService::destroy($request->id);
 
-        return $this->successResponse([], 'Akses berhasil dihapus');
+        return $this->successResponse('Akses berhasil dihapus');
     }
 }
