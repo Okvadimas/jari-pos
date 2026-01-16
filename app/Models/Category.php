@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Unit extends Model
+class Category extends Model
 {
-    protected $table = 'units';
-    protected $fillable = ['code', 'name', 'status', 'created_by', 'updated_by'];
+    protected $table = 'categories';
+    protected $fillable = ['name', 'status', 'created_by', 'updated_by'];
     protected $casts = [
         'status' => 'boolean',
     ];
@@ -16,5 +16,4 @@ class Unit extends Model
     {
         return $this->hasMany(Product::class);
     }
-
 }

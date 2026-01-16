@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    console.log('Company Management page scripts loaded');
+    console.log('Inventory - Unit page scripts loaded');
     datatable();
 });
 
@@ -9,7 +9,7 @@ const datatable = () => {
         responsive: false,
         scrollX: true,
         ajax: {
-            url: '/management/company/datatable',
+            url: '/inventory/unit/datatable',
             type: 'GET',
             error: function (xhr) {
             if (xhr.status === 419) { // Unauthorized error
@@ -23,12 +23,10 @@ const datatable = () => {
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },
             { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
+            { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
-            { data: 'phone', name: 'phone' },
-            { data: 'address', name: 'address' },
             { data: 'status', name: 'status', orderable: false, searchable: false, render: function(data) {
-                return data === true || data === 1 || data === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
+                return data === true || data === 1 || data === 'Active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
             }},
         ],
     });
@@ -37,7 +35,7 @@ const datatable = () => {
 function hapus(id) {
     Swal.fire({
         title: 'Apakah Anda yakin?',
-        text: "Data perusahaan akan dihapus!",
+        text: "Data satuan akan dihapus!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Ya, hapus!',
@@ -45,7 +43,7 @@ function hapus(id) {
     }).then((result) => {
         if (result.value) {
             $.ajax({
-                url: '/management/company/destroy/' + id,
+                url: '/inventory/unit/destroy/' + id,
                 type: 'POST',
                 dataType: 'JSON',
                 success: function(response) {

@@ -13,12 +13,12 @@
                             </div><!-- .nk-block-head-content -->
 
                             <div class="nk-block-head-content d-none d-lg-block">
-                                <a href="{{ route('company-management-create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Perusahaan</span></a>
+                                <a href="{{ route('inventory-unit-create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Satuan</span></a>
                             </div>
                             
                         </div><!-- .nk-block-between -->
                         <div class="nk-block-head-content mt-3 d-block d-lg-none">
-                            <a href="{{ route('company-management-create') }}" class="btn btn-primary mb-1"><em class="icon ni ni-plus"></em><span>Tambah Perusahaan</span></a>
+                            <a href="{{ route('inventory-unit-create') }}" class="btn btn-primary mb-1"><em class="icon ni ni-plus"></em><span>Tambah Satuan</span></a>
                         </div>
                     </div><!-- .nk-block-head -->
                     <div class="nk-block">
@@ -29,10 +29,8 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Aksi</th>
+                                            <th>Kode</th>
                                             <th>Nama</th>
-                                            <th>Email</th>
-                                            <th>Telepon</th>
-                                            <th>Alamat</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>

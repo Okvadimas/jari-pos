@@ -35,7 +35,6 @@ class UserService {
         $validated['company_id'] = $validated['company'];
         $validated['role_id']    = $validated['paket'];
 
-        // Jika ada id, update. Jika tidak, create.
         if (!empty($validated['id'])) {
             $user = User::find($validated['id']);
             $user->update($validated);

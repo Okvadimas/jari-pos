@@ -25,11 +25,11 @@ class UpdateCompanyRequest extends FormRequest
     {
         return [
             'id' => 'required|exists:companies,id',
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:companies,name,' . $this->id,
             'email' => 'required|email|unique:companies,email,' . $this->id,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
-            'logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 
@@ -41,13 +41,14 @@ class UpdateCompanyRequest extends FormRequest
             'name.required' => 'Nama perusahaan wajib diisi.',
             'name.string' => 'Nama perusahaan harus berupa string.',
             'name.max' => 'Nama perusahaan tidak boleh lebih dari 255 karakter.',
+            'name.unique' => 'Nama perusahaan sudah terdaftar.', 
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
             'phone.max' => 'Nomor telepon tidak boleh lebih dari 20 karakter.',
             'logo.file' => 'Logo harus berupa file.',
             'logo.mimes' => 'Logo harus berupa gambar dengan format: jpeg, png, jpg, gif, svg.',
-            'logo.max' => 'Ukuran logo tidak boleh lebih dari 2MB.'
+            'logo.max' => 'Ukuran logo tidak boleh lebih dari 2MB.',
         ];
     }
 }
