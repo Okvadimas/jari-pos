@@ -17,28 +17,23 @@ $(document).ready(function() {
             type: 'POST',
             data: $(this).serialize(),
             success: function(response) {
-                console.log(response)
-                if (response.status) {
-                    NioApp.Toast(response.message, 'success', {
-                        position: 'top-right',
-                        duration: 2000
-                    });
-                    setTimeout(() => {
+                if(response.status) {
+                    NioApp.Toast(response.message, 'success', { position: 'top-right' });
+                    setTimeout(function() {
                         window.location.href = '/dashboard';
-                    }, 2000);
+                    }, 1000);
                 } else {
-                    NioApp.Toast(response.message, 'error', {
-                        position: 'top-right',
-                        duration: 2000
-                    });
+                    NioApp.Toast(response.message, 'warning', { position: 'top-right' });
                 }
             },
             error: function(xhr, status, error) {
-                console.log(error);
-                NioApp.Toast(error.message, 'error', {
-                    position: 'top-right',
-                    duration: 2000
-                });
+                let statusCode = xhr.status;
+                if(statusCode >= 500) {
+                    NioApp.Toast('Terjadi kesalahan pada server', 'error', { position: 'top-right' });
+                } else {
+                    let message = xhr.responseJSON?.message || 'Terjadi kesalahan';
+                    NioApp.Toast(message, 'warning', { position: 'top-right' });
+                }
             }
         });        
     });
