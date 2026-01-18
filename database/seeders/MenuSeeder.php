@@ -71,6 +71,13 @@ class MenuSeeder extends Seeder
                 'icon'      => 'ni ni-grid-fill',
                 'url'       => '/inventory/unit',
             ],
+            [
+                'code'      => 'IN-02',
+                'parent'    => 'IN',
+                'name'      => 'Kategori',
+                'icon'      => 'ni ni-tag',
+                'url'       => '/inventory/category',
+            ],
         ];
 
         foreach ($menus as $menu) {

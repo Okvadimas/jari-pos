@@ -1,5 +1,9 @@
 $(document).ready(function () {
-    const table = $('#table-data').DataTable({
+    datatable();
+});
+
+const datatable = () => {
+    $('#table-data').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -13,13 +17,9 @@ $(document).ready(function () {
             { data: 'action', name: 'action', orderable: false, searchable: false },
         ]
     });
-});
-
-window.editData = function(id) {
-    window.location.href = `/management/payment/edit/${id}`;
 }
 
-window.deleteData = function(id) {
+function hapus(id) {
     Swal.fire({
         title: 'Apakah anda yakin?',
         text: "Data yang dihapus tidak dapat dikembalikan!",
