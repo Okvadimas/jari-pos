@@ -10,9 +10,6 @@ $(document).ready(function () {
             url: url,
             type: 'POST',
             data: $(this).serialize(),
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
             beforeSend: function() {
                 $('#btn-save').attr('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
             },

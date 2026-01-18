@@ -114,6 +114,12 @@ export default defineConfig({
                 // ================================
                 'resources/js/pages/inventory/unit/index.js',
                 'resources/js/pages/inventory/unit/form.js',
+
+                // ================================
+                // Inventory - Category
+                // ================================
+                'resources/js/pages/inventory/category/index.js',
+                'resources/js/pages/inventory/category/form.js',
             ],
             refresh: true,
         }),

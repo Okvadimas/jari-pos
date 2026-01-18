@@ -43,5 +43,11 @@ class PermissionSeeder extends Seeder
             'menu_id'   => 7,
             'status'    => 1,
         ]);
+
+        Permission::updateOrCreate([
+            'role_id'   => 1,
+            'menu_id'   => 8,
+            'status'    => 1,
+        ]);
     }
 }

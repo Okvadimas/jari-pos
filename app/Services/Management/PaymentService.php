@@ -25,8 +25,8 @@ class PaymentService {
             })
             ->addColumn('action', function ($row) {
                 $btn = '<div class="d-flex">';
-                $btn .= '<a href="javascript:void(0)" onclick="editData('.$row->id.')" class="btn btn-primary btn-sm me-2"><i class="fas fa-edit"></i> Edit</a>';
-                $btn .= '<a href="javascript:void(0)" onclick="deleteData('.$row->id.')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</a>';
+                $btn .= '<a href="/management/payment/edit" class="btn btn-primary btn-sm me-2"><i class="fas fa-edit"></i> Edit</a>';
+                $btn .= '<a href="javascript:void(0)" onclick="hapus('.$row->id.')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</a>';
                 $btn .= '</div>';
                 return $btn;
             })
@@ -36,7 +36,6 @@ class PaymentService {
 
     public static function store($data) {
         $data['created_by'] = auth()->user()->id;
-        $data['updated_by'] = auth()->user()->id;
 
         return Payment::create($data);
     }

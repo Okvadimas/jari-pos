@@ -95,6 +95,18 @@ Route::group(['middleware' => ['web', 'auth']], function () {
             Route::get('/unit/edit/{id}', [UnitController::class, 'edit'])->name('inventory-unit-edit');
             Route::post('/unit/update/{id}', [UnitController::class, 'update'])->name('inventory-unit-update');
             Route::post('/unit/destroy/{id}', [UnitController::class, 'destroy'])->name('inventory-unit-destroy');
+            Route::post('/unit/destroy/{id}', [UnitController::class, 'destroy'])->name('inventory-unit-destroy');
+        });
+
+        // Category (Menu Code: IN-02)
+        Route::group(['middleware' => 'menu-access:IN-02'], function () {
+            Route::get('/category',  [\App\Http\Controllers\Inventory\CategoryController::class, 'index'])->name('inventory-category');
+            Route::get('/category/datatable', [\App\Http\Controllers\Inventory\CategoryController::class, 'datatable'])->name('inventory-category-datatable');
+            Route::get('/category/create', [\App\Http\Controllers\Inventory\CategoryController::class, 'create'])->name('inventory-category-create');
+            Route::post('/category/store', [\App\Http\Controllers\Inventory\CategoryController::class, 'store'])->name('inventory-category-store');
+            Route::get('/category/edit/{id}', [\App\Http\Controllers\Inventory\CategoryController::class, 'edit'])->name('inventory-category-edit');
+            Route::post('/category/update/{id}', [\App\Http\Controllers\Inventory\CategoryController::class, 'update'])->name('inventory-category-update');
+            Route::post('/category/destroy/{id}', [\App\Http\Controllers\Inventory\CategoryController::class, 'destroy'])->name('inventory-category-destroy');
         });
     });
 });

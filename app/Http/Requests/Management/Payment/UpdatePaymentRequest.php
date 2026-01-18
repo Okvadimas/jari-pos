@@ -27,4 +27,17 @@ class UpdatePaymentRequest extends FormRequest
             'type' => 'required|in:cash,bank_transfer,e-wallet,other',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'id.required' => 'ID Pembayaran harus ada.',
+            'id.exists' => 'ID Pembayaran tidak valid.',
+            'name.required' => 'Nama wajib diisi.',
+            'name.string' => 'Nama harus berupa string.',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+            'type.required' => 'Tipe pembayaran wajib diisi.',
+            'type.in' => 'Tipe pembayaran tidak valid.',
+        ];
+    }
 }
