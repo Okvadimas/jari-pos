@@ -10,7 +10,6 @@ use App\Services\Inventory\UnitService;
 
 // Load Request
 use App\Http\Requests\Inventory\Unit\StoreUnitRequest;
-use App\Http\Requests\Inventory\Unit\UpdateUnitRequest;
 use App\Models\Unit;
 
 class UnitController extends Controller
@@ -42,18 +41,6 @@ class UnitController extends Controller
         return view('inventory.unit.form', $data);
     }
 
-    public function store(StoreUnitRequest $request)
-    {
-        $validated = $request->validated();
-
-        $unit = UnitService::store($validated);
-        if (!$unit) {
-            return $this->errorResponse('Satuan gagal ditambahkan');
-        }
-
-        return $this->successResponse('Satuan berhasil ditambahkan', $unit);
-    }
-
     public function edit($id)
     {
         $data = [
@@ -65,30 +52,21 @@ class UnitController extends Controller
         return view('inventory.unit.form', $data);
     }
 
-    public function update(UpdateUnitRequest $request)
+    public function store(StoreUnitRequest $request)
     {
         $validated = $request->validated();
 
-        $unit = UnitService::update($validated, $request->id);
-        if (!$unit) {
-            return $this->errorResponse('Satuan gagal diupdate');
-        }
+        UnitService::store($validated);
 
-        return $this->successResponse('Satuan berhasil diupdate', $unit);
+        $message = !empty($validated['id']) ? 'Satuan berhasil diupdate' : 'Satuan berhasil ditambahkan';
+
+        return $this->successResponse($message);
     }
 
     public function destroy(Request $request)
     {
-        $unit = Unit::find($request->id);
-        if ($unit) {
-             $unit->update([
-                'status' => 0,
-                'updated_by' => auth()->user()->id,
-             ]);
-        } else {
-            return $this->errorResponse('Satuan gagal dihapus');
-        }
+        UnitService::destroy($request->id);
 
-        return $this->successResponse('Satuan berhasil dihapus', $unit);
+        return $this->successResponse('Satuan berhasil dihapus');
     }
 }

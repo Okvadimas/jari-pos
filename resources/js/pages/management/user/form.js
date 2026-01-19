@@ -1,6 +1,10 @@
 $(document).ready(function() {
     console.log('User Management Form page scripts loaded');
 
+    $('.select-perusahaan').select2({
+        placeholder: '-- Pilih Perusahaan --',
+    });
+
     $('#form').submit(function(e) {
         e.preventDefault();
 

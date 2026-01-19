@@ -4,6 +4,9 @@ namespace App\Services\Management;
 
 use App\Repositories\Management\PaymentRepository;
 use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class PaymentService {
@@ -24,27 +27,46 @@ class PaymentService {
                 return ucfirst(str_replace('_', ' ', $row->type));
             })
             ->addColumn('action', function ($row) {
-                $btn = '<div class="d-flex">';
-                $btn .= '<a href="/management/payment/edit" class="btn btn-primary btn-sm me-2"><i class="fas fa-edit"></i> Edit</a>';
-                $btn .= '<a href="javascript:void(0)" onclick="hapus('.$row->id.')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</a>';
-                $btn .= '</div>';
-                return $btn;
+                if (!$row->status) {
+                    return '';
+                }
+
+                return '<a href="' . url('management/payment/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
+                        <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
             })
             ->rawColumns(['status', 'action'])
             ->make(true);
     }
 
     public static function store($data) {
-        $data['created_by'] = auth()->user()->id;
+        try {
+            DB::beginTransaction();
 
-        return Payment::create($data);
+            if (!empty($data['id'])) {
+                $payment = Payment::find($data['id']);
+                $data['updated_by'] = Auth::user()->id;
+                $payment->update($data);
+            } else {
+                $data['created_by'] = Auth::user()->id;
+                $payment = Payment::create($data);
+            }
+
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th->getMessage());
+            return false;
+        }
     }
 
-    public static function update($data, $id) {
-        $data['updated_by'] = auth()->user()->id;
+    public static function destroy($id)
+    {
         $payment = Payment::find($id);
-        $payment->update($data);
-
-        return $payment;
+        $payment->update([
+            'status'        => 0,
+            'updated_by'    => Auth::user()->id,
+            'updated_at'    => date('Y-m-d H:i:s'),
+        ]);
     }
 }

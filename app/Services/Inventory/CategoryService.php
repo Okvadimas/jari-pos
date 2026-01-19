@@ -4,6 +4,8 @@ namespace App\Services\Inventory;
 
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Inventory\CategoryRepository;
 
@@ -29,31 +31,36 @@ class CategoryService
             ->make(true);
     }
 
-    public static function store($request)
+    public static function store($data)
     {
-        return DB::transaction(function () use ($request) {
-            $data = [
-                'name' => $request['name'],
-                'created_by' => auth()->user()->id,
-            ];
+        try {
+            DB::beginTransaction();
 
-            return Category::create($data);
-        });
+            if (!empty($data['id'])) {
+                $category = Category::find($data['id']);
+                $data['updated_by'] = Auth::user()->id;
+                $category->update($data);
+            } else {
+                $data['created_by'] = Auth::user()->id;
+                $category = Category::create($data);
+            }
+
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th->getMessage());
+            return false;
+        }
     }
 
-    public static function update($request, $id)
+    public static function destroy($id)
     {
-        return DB::transaction(function () use ($request, $id) {
-            $category = Category::findOrFail($id);
-            
-            $data = [
-                'name' => $request['name'],
-                'updated_by' => auth()->user()->id,
-            ];
-
-            $category->update($data);
-
-            return $category;
-        });
+        $category = Category::find($id);
+        $category->update([
+            'status'        => 0,
+            'updated_by'    => Auth::user()->id,
+            'updated_at'    => date('Y-m-d H:i:s'),
+        ]);
     }
 }

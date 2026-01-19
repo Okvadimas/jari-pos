@@ -12,6 +12,14 @@ const datatable = () => {
         ajax: {
             url: '/management/user/datatable',
             type: 'GET',
+            error: function (xhr) {
+                if (xhr.status === 419) { // Unauthorized error
+                    NioApp.Toast('Sesi kamu sudah habis. Silahkan login ulang 😊', 'error', {position: 'top-right'});
+                    window.location.href = "/login"; 
+                } else {
+                    NioApp.Toast('Terjadi kesalahan saat memuat data. Silahkan coba lagi.', 'error', {position: 'top-right'});
+                }
+            }
         },
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },

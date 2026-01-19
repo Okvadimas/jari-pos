@@ -1,52 +1,40 @@
-$(document).ready(function () {
-    $('#form-data').on('submit', function (e) {
+$(document).ready(function() {
+    console.log('Payment Management Form page scripts loaded');
+
+    $('#form-data').submit(function(e) {
         e.preventDefault();
-        
-        const id = window.location.pathname.split('/').pop();
-        const isEdit = window.location.pathname.includes('edit');
-        const url = isEdit ? `/management/payment/update/${id}` : '/management/payment/store';
+
+        let $btn = $('#btn-save');
+        $btn.attr('disabled', true);
+        $btn.html('<em class="icon spinner-border spinner-border-sm" role="status" aria-hidden="true"></em><span>Menyimpan</span>');
 
         $.ajax({
-            url: url,
+            url: '/management/payment/store',
             type: 'POST',
             data: $(this).serialize(),
-            beforeSend: function() {
-                $('#btn-save').attr('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+            complete: function() {
+                $btn.attr('disabled', false);
+                $btn.html('<em class="icon ni ni-save"></em><span>Simpan</span>');
             },
-            success: function (response) {
-                $('#btn-save').attr('disabled', false).html('Simpan');
-                if (response.status) {
-                    Swal.fire(
-                        'Berhasil!',
-                        response.message,
-                        'success'
-                    ).then(() => {
+            success: function(response) {
+                if(response.status) {
+                    NioApp.Toast(response.message, 'success', { position: 'top-right' });
+                    setTimeout(function() {
                         window.location.href = '/management/payment';
-                    });
+                    }, 1000);
                 } else {
-                    Swal.fire(
-                        'Gagal!',
-                        response.message,
-                        'error'
-                    );
+                    NioApp.Toast(response.message, 'warning', { position: 'top-right' });
                 }
             },
-            error: function (xhr) {
-                $('#btn-save').attr('disabled', false).html('Simpan');
-                let message = 'Terjadi kesalahan pada server.';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    message = xhr.responseJSON.message;
+            error: function(response) {
+                let statusCode = response.status;
+                if(statusCode >= 500) {
+                    NioApp.Toast('Terjadi kesalahan', 'error', { position: 'top-right' });
+                } else {
+                    let errors = response.responseJSON.errors;
+                    let firstError = Object.values(errors)[0][0];
+                    NioApp.Toast(firstError, 'warning', { position: 'top-right' });
                 }
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errors = Object.values(xhr.responseJSON.errors).flat();
-                    message = errors.join('<br>');
-                }
-                
-                Swal.fire(
-                    'Error!',
-                    message,
-                    'error'
-                );
             }
         });
     });

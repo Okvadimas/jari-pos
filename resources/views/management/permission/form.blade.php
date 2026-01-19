@@ -22,10 +22,10 @@
                     <div class="nk-block">
                         <div class="card">
                             <div class="card-inner">
-                                <h5 class="card-title mb-1">{{ isset($akses) ? 'Edit Akses' : 'Tambah Akses' }}</h5>
-                                <p>{{ isset($akses) ? 'Mengubah data akses' : 'Menambahkan akses baru' }}</p>
+                                <h5 class="card-title mb-1">{{ isset($role) ? 'Edit Akses' : 'Tambah Akses' }}</h5>
+                                <p>{{ isset($role) ? 'Mengubah data akses' : 'Menambahkan akses baru' }}</p>
                                 <form class="gy-3 form-settings" id="form">
-                                    <input type="hidden" name="id" id="id" value="{{ isset($akses) ? $akses->id : '' }}">
+                                    <input type="hidden" name="id" id="id" value="{{ isset($role) ? $role->id : '' }}">
 
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
@@ -37,7 +37,7 @@
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($akses) ? $akses->name : '' }}" placeholder="Contoh: Super Admin" autocomplete="off">
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($role) ? $role->name : '' }}" placeholder="Contoh: Super Admin" autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -53,7 +53,7 @@
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="slug" name="slug" value="{{ isset($akses) ? $akses->slug : '' }}" placeholder="Contoh: super-admin" autocomplete="off">
+                                                    <input type="text" class="form-control" id="slug" name="slug" value="{{ isset($role) ? $role->slug : '' }}" placeholder="Contoh: super-admin" autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -78,7 +78,7 @@
                                                                 <div class="form-check d-flex justify-content-center">
                                                                     <input class="form-check-input" style="width: 1.5em; height: 1.5em;" type="checkbox" 
                                                                         value="{{ $menu->id }}" name="menus[]" id="menu-{{ $menu->id }}" 
-                                                                        {{ isset($akses) && $permissions->pluck('menu_id')->contains($menu->id) ? 'checked' : '' }}>
+                                                                        {{ isset($role) && $permissions->pluck('menu_id')->contains($menu->id) ? 'checked' : '' }}>
                                                                 </div>
                                                             </td>
                                                             <td>{{ $menu->parent_name }}</td>

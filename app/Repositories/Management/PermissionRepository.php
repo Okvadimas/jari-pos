@@ -8,7 +8,7 @@ use Carbon\Carbon;
 // Load Model
 use App\Models\Role;
 
-class AksesRepository {
+class PermissionRepository {
 
     public function __construct(Role $role) {}
 

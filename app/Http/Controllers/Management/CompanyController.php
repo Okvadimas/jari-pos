@@ -10,7 +10,6 @@ use App\Services\Management\CompanyService;
 
 // Load Request
 use App\Http\Requests\Management\Company\StoreCompanyRequest;
-use App\Http\Requests\Management\Company\UpdateCompanyRequest;
 use App\Models\Company;
 
 class CompanyController extends Controller
@@ -42,18 +41,6 @@ class CompanyController extends Controller
         return view('management.company.form', $data);
     }
 
-    public function store(StoreCompanyRequest $request)
-    {
-        $validated = $request->validated();
-
-        $company = CompanyService::store($validated);
-        if (!$company) {
-            return $this->errorResponse('Perusahaan gagal ditambahkan');
-        }
-
-        return $this->successResponse('Perusahaan berhasil ditambahkan', $company);
-    }
-
     public function edit($id)
     {
         $data = [
@@ -65,30 +52,21 @@ class CompanyController extends Controller
         return view('management.company.form', $data);
     }
 
-    public function update(UpdateCompanyRequest $request)
+    public function store(StoreCompanyRequest $request)
     {
         $validated = $request->validated();
 
-        $company = CompanyService::update($validated, $request->id);
-        if (!$company) {
-            return $this->errorResponse('Perusahaan gagal diupdate');
-        }
+        CompanyService::store($validated);
 
-        return $this->successResponse('Perusahaan berhasil diupdate', $company);
+        $message = !empty($validated['id']) ? 'Perusahaan berhasil diupdate' : 'Perusahaan berhasil ditambahkan';
+
+        return $this->successResponse($message);
     }
 
     public function destroy(Request $request)
     {
-        $company = Company::find($request->id);
-        if ($company) {
-             $company->update([
-                'status' => 0,
-                'updated_by' => auth()->user()->id,
-             ]);
-        } else {
-            return $this->errorResponse('Perusahaan gagal dihapus');
-        }
+        CompanyService::destroy($request->id);
 
-        return $this->successResponse('Perusahaan berhasil dihapus', $company);
+        return $this->successResponse('Perusahaan berhasil dihapus');
     }
 }

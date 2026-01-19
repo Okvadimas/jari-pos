@@ -1,67 +1,65 @@
 $(document).ready(function () {
+    console.log('Payment Management page scripts loaded');
     datatable();
 });
 
 const datatable = () => {
-    $('#table-data').DataTable({
+    NioApp.DataTable('#table-data', {
         processing: true,
-        serverSide: true,
+        responsive: false,
+        scrollX: true,
         ajax: {
             url: "/management/payment/datatable",
+            type: 'GET',
+            error: function (xhr) {
+                if (xhr.status === 419) { // Unauthorized error
+                    NioApp.Toast('Sesi kamu sudah habis. Silahkan login ulang 😊', 'error', {position: 'top-right'});
+                    window.location.href = "/login"; 
+                } else {
+                    NioApp.Toast('Terjadi kesalahan saat memuat data. Silahkan coba lagi.', 'error', {position: 'top-right'});
+                }
+            }
         },
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', orderable: false, searchable: false },
+            { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
             { data: 'name', name: 'name' },
             { data: 'type', name: 'type' },
             { data: 'status', name: 'status' },
-            { data: 'action', name: 'action', orderable: false, searchable: false },
-        ]
+        ],
+        columnDefs: [
+            { targets: '_all', className: 'nk-tb-col' },
+        ],
     });
 }
 
 function hapus(id) {
     Swal.fire({
-        title: 'Apakah anda yakin?',
-        text: "Data yang dihapus tidak dapat dikembalikan!",
+        title: 'Apakah Anda yakin?',
+        text: "Data perusahaan akan dihapus!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
         confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
+        cancelButtonText: 'Batal',
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.value) {
             $.ajax({
-                url: `/management/payment/destroy/${id}`,
+                url: '/management/payment/destroy/' + id,
                 type: 'POST',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (response) {
+                dataType: 'JSON',
+                success: function(response) {
                     if (response.status) {
-                        Swal.fire(
-                            'Terhapus!',
-                            response.message,
-                            'success'
-                        ).then(() => {
-                            $('#table-data').DataTable().ajax.reload();
-                        });
+                        $('#table-data').DataTable().ajax.reload();
+                        NioApp.Toast(response.message, 'success', { position: 'top-right' });
                     } else {
-                        Swal.fire(
-                            'Gagal!',
-                            response.message,
-                            'error'
-                        );
+                        NioApp.Toast(response.message, 'warning', { position: 'top-right' });
                     }
                 },
-                error: function (xhr) {
-                    Swal.fire(
-                        'Error!',
-                        'Terjadi kesalahan pada server.',
-                        'error'
-                    );
+                error: function(error) {
+                    console.log(error);
+                    NioApp.Toast('Error while fetching data', 'error', { position: 'top-right' });
                 }
             });
         }
-    })
+    });
 }

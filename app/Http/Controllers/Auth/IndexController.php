@@ -15,7 +15,8 @@ use App\Mail\ResetPasswordMail;
 
 use App\Models\User;
 use App\Models\Campaign;
-use App\Models\Menu;
+
+use App\Services\Management\MenuService;
 
 class IndexController extends Controller
 {
@@ -48,7 +49,7 @@ class IndexController extends Controller
             $request->session()->put('role', $user->role->slug);
             $request->session()->put('company', $user->company);
             
-            $menu = Menu::menu();
+            $menu = MenuService::generateMenu();
             $request->session()->put('menu', $menu);
 
             return $this->successResponse('Berhasil masuk dashboard');
