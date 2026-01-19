@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Management\Payment;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Gate;
 
 class StorePaymentRequest extends FormRequest
 {
@@ -11,7 +13,8 @@ class StorePaymentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        // Cek akses ke menu Manajemen Payment (code: MJ-04)
+        return Gate::allows('access-menu', 'MJ-04');
     }
 
     /**
@@ -21,9 +24,21 @@ class StorePaymentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $paymentId = $this->input('id');
+
         return [
-            'name' => 'required|string|max:255',
-            'type' => 'required|in:cash,bank_transfer,e-wallet,other',
+            'id'    => 'nullable|exists:payment_methods,id',
+            'name'  => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('payment_methods', 'name')
+                    ->ignore($paymentId)
+                    ->where(function ($query) {
+                        return $query->where('status', 1);
+                    }),
+            ],
+            'type'  => 'required|in:cash,bank_transfer,e-wallet,other',
         ];
     }
 
@@ -31,10 +46,11 @@ class StorePaymentRequest extends FormRequest
     {
         return [
             'name.required' => 'Nama wajib diisi.',
-            'name.string' => 'Nama harus berupa string.',
-            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+            'name.string'   => 'Nama harus berupa string.',
+            'name.max'      => 'Nama tidak boleh lebih dari 255 karakter.',
+            'name.unique'   => 'Nama metode pembayaran sudah terdaftar.',
             'type.required' => 'Tipe pembayaran wajib diisi.',
-            'type.in' => 'Tipe pembayaran tidak valid.',
+            'type.in'       => 'Tipe pembayaran tidak valid.',
         ];
     }
 }

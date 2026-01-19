@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Management\Akses;
+namespace App\Http\Requests\Management\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
 
-class StoreAksesRequest extends FormRequest
+class StorePermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

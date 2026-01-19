@@ -36,8 +36,7 @@
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <select class="select2" id="company" name="company">
-                                                        <option value="">-- Pilih Perusahaan --</option>
+                                                    <select class="select-perusahaan" id="company" name="company">
                                                         @foreach ($company as $item)
                                                             <option value="{{ $item->id }}" {{ isset($user) && $item->id == $user->company_id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                         @endforeach

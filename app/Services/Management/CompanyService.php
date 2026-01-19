@@ -5,6 +5,8 @@ namespace App\Services\Management;
 use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 use App\Repositories\Management\CompanyRepository;
@@ -31,13 +33,14 @@ class CompanyService
 
     public static function store($request)
     {
-        return DB::transaction(function () use ($request) {
+        try {
+            DB::beginTransaction();
+
             $data = [
-                'name' => $request['name'],
-                'email' => $request['email'],
-                'phone' => $request['phone'],
-                'address' => $request['address'],
-                'created_by' => auth()->user()->id,
+                'name'      => $request['name'],
+                'email'     => $request['email'],
+                'phone'     => $request['phone'] ?? null,
+                'address'   => $request['address'] ?? null,
             ];
 
             if (isset($request['logo'])) {
@@ -47,37 +50,37 @@ class CompanyService
                 $data['logo'] = $filename;
             }
 
-            return Company::create($data);
-        });
-    }
+            if (!empty($request['id'])) {
+                $company = Company::find($request['id']);
 
-    public static function update($request, $id)
-    {
-        return DB::transaction(function () use ($request, $id) {
-            $company = Company::findOrFail($id);
-            
-            $data = [
-                'name' => $request['name'],
-                'email' => $request['email'],
-                'phone' => $request['phone'],
-                'address' => $request['address'],
-                'updated_by' => auth()->user()->id,
-            ];
-
-            if (isset($request['logo'])) {
-                if ($company->logo) {
+                // Jika ada logo baru dan sebelumnya sudah ada logo, hapus logo lama
+                if (isset($request['logo']) && $company->logo) {
                     Storage::delete('public/companies/' . $company->logo);
                 }
 
-                $file = $request['logo'];
-                $filename = time() . '.' . $file->getClientOriginalExtension();
-                $file->storeAs('public/companies', $filename);
-                $data['logo'] = $filename;
+                $data['updated_by'] = Auth::user()->id;
+                $company->update($data);
+            } else {
+                $data['created_by'] = Auth::user()->id;
+                $company = Company::create($data);
             }
 
-            $company->update($data);
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
 
-            return $company;
-        });
+    public static function destroy($id)
+    {
+        $company = Company::find($id);
+        $company->update([
+            'status'        => 0,
+            'updated_by'    => Auth::user()->id,
+            'updated_at'    => date('Y-m-d H:i:s'),
+        ]);
     }
 }

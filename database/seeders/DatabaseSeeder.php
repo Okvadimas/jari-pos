@@ -20,8 +20,10 @@ class DatabaseSeeder extends Seeder
             CampaignSeeder::class,
             MenuSeeder::class,
             PermissionSeeder::class,
+            PaymentMethodSeeder::class,
 
             // Master Data POS
+            UnitSeeder::class,
             CategorySeeder::class,
             ProductSeeder::class,
             ProductVariantSeeder::class,

@@ -11,66 +11,68 @@ use App\Models\Role;
 use App\Models\Permission;
 
 // Load Service
-use App\Services\Management\AksesService;
+use App\Services\Management\PermissionService;
 
 // Load Request
-use App\Http\Requests\Management\Akses\StoreAksesRequest;
+use App\Http\Requests\Management\Permission\StorePermissionRequest;
 
-class AksesController extends Controller
+class PermissionController extends Controller
 {
     private $pageTitle = 'Manajemen Akses';
     public function index()
     {
         $data = [
             'title' => $this->pageTitle,
-            'js'    => 'resources/js/pages/management/akses/index.js',
+            'js'    => 'resources/js/pages/management/permission/index.js',
         ];
 
-        return view('management.akses.index', $data);
+        return view('management.permission.index', $data);
     }
 
     public function datatable()
     {
-        return AksesService::datatable();
+        return PermissionService::datatable();
     }
 
     public function create(Request $request)
     {
         $data = [
             'title'     => $this->pageTitle,
-            'js'        => 'resources/js/pages/management/akses/form.js',
+            'js'        => 'resources/js/pages/management/permission/form.js',
             'menus'     => Menu::select('menu.id', 'menu.code', 'menu.parent', 'menu.name', 'parent.name as parent_name')
                             ->join('menu as parent', 'menu.parent', 'parent.code')
                             ->where('menu.parent', '!=', '0')
                             ->where('menu.status', 1)
+                            ->orderBy('menu.id', 'asc')
                             ->get(),
         ];
 
-        return view('management.akses.form', $data);
+        return view('management.permission.form', $data);
     }
 
     public function edit($id)
     {
         $data = [
             'title'     => $this->pageTitle,
-            'js'        => 'resources/js/pages/management/akses/form.js',
+            'js'        => 'resources/js/pages/management/permission/form.js',
             'menus'     => Menu::select('menu.id', 'menu.code', 'menu.parent', 'menu.name', 'parent.name as parent_name')
                             ->join('menu as parent', 'menu.parent', 'parent.code')
                             ->where('menu.parent', '!=', '0')
                             ->where('menu.status', 1)
+                            ->orderBy('menu.id', 'asc')
                             ->get(),
             'permissions' => Permission::select('menu_id')->where('status', 1)->where('role_id', $id)->get(),
-            'akses'     => Role::find($id),
+            'role'      => Role::find($id),
         ];
 
-        return view('management.akses.form', $data);
+        return view('management.permission.form', $data);
     }
 
-    public function store(StoreAksesRequest $request)
+    public function store(StorePermissionRequest $request)
     {
         $validated = $request->validated();
 
-        AksesService::store($validated);
+        PermissionService::store($validated);
 
         $message = !empty($validated['id']) ? 'Akses berhasil diupdate' : 'Akses berhasil ditambahkan';
 
@@ -79,7 +81,7 @@ class AksesController extends Controller
 
     public function destroy(Request $request)
     {
-        AksesService::destroy($request->id);
+        PermissionService::destroy($request->id);
 
         return $this->successResponse('Akses berhasil dihapus');
     }

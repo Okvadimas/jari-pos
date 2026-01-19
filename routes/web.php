@@ -2,13 +2,21 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Landing\IndexController    as LandingController;
-use App\Http\Controllers\Auth\IndexController       as AuthController;
-use App\Http\Controllers\Dashboard\IndexController  as DashboardController;
-use App\Http\Controllers\Management\UserController  as UserManagementController;
-use App\Http\Controllers\Management\AksesController  as AksesManagementController;
-use App\Http\Controllers\Management\CompanyController as CompanyController;
-use App\Http\Controllers\Management\PaymentController as PaymentController;
+// Landing
+use App\Http\Controllers\Landing\IndexController            as LandingController;
+
+// Auth
+use App\Http\Controllers\Auth\IndexController               as AuthController;
+
+// Dashboard
+use App\Http\Controllers\Dashboard\IndexController          as DashboardController;
+
+// Management
+use App\Http\Controllers\Management\UserController          as UserManagementController;
+use App\Http\Controllers\Management\PermissionController    as PermissionManagementController;
+use App\Http\Controllers\Management\CompanyController       as CompanyManagementController;
+use App\Http\Controllers\Management\PaymentController       as PaymentManagementController;
+use App\Http\Controllers\Inventory\CategoryController       as CategoryManagementController;
 
 // Inventory
 use App\Http\Controllers\Inventory\UnitController as UnitController;
@@ -51,34 +59,32 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
         // Role Management (Menu Code: MJ-02)
         Route::group(['middleware' => 'menu-access:MJ-02'], function () {
-            Route::get('/akses',  [AksesManagementController::class, 'index'])->name('akses-management');
-            Route::get('/akses/datatable', [AksesManagementController::class, 'datatable'])->name('akses-management-datatable');
-            Route::get('/akses/create', [AksesManagementController::class, 'create'])->name('akses-management-create');
-            Route::get('/akses/edit/{id}', [AksesManagementController::class, 'edit'])->name('akses-management-edit');
-            Route::post('/akses/store', [AksesManagementController::class, 'store'])->name('akses-management-store');
-            Route::post('/akses/destroy/{id}', [AksesManagementController::class, 'destroy'])->name('akses-management-destroy');
+            Route::get('/akses',  [PermissionManagementController::class, 'index'])->name('akses-management');
+            Route::get('/akses/datatable', [PermissionManagementController::class, 'datatable'])->name('akses-management-datatable');
+            Route::get('/akses/create', [PermissionManagementController::class, 'create'])->name('akses-management-create');
+            Route::get('/akses/edit/{id}', [PermissionManagementController::class, 'edit'])->name('akses-management-edit');
+            Route::post('/akses/store', [PermissionManagementController::class, 'store'])->name('akses-management-store');
+            Route::post('/akses/destroy/{id}', [PermissionManagementController::class, 'destroy'])->name('akses-management-destroy');
         });
 
         // Company Management (Menu Code: MJ-03)
         Route::group(['middleware' => 'menu-access:MJ-03'], function () {
-            Route::get('/company',  [CompanyController::class, 'index'])->name('company-management');
-            Route::get('/company/datatable', [CompanyController::class, 'datatable'])->name('company-management-datatable');
-            Route::get('/company/create', [CompanyController::class, 'create'])->name('company-management-create');
-            Route::post('/company/store', [CompanyController::class, 'store'])->name('company-management-store');
-            Route::get('/company/edit/{id}', [CompanyController::class, 'edit'])->name('company-management-edit');
-            Route::post('/company/update/{id}', [CompanyController::class, 'update'])->name('company-management-update');
-            Route::post('/company/destroy/{id}', [CompanyController::class, 'destroy'])->name('company-management-destroy');
+            Route::get('/company',  [CompanyManagementController::class, 'index'])->name('company-management');
+            Route::get('/company/datatable', [CompanyManagementController::class, 'datatable'])->name('company-management-datatable');
+            Route::get('/company/create', [CompanyManagementController::class, 'create'])->name('company-management-create');
+            Route::get('/company/edit/{id}', [CompanyManagementController::class, 'edit'])->name('company-management-edit');
+            Route::post('/company/store', [CompanyManagementController::class, 'store'])->name('company-management-store');
+            Route::post('/company/destroy/{id}', [CompanyManagementController::class, 'destroy'])->name('company-management-destroy');
         });
 
         // Payment Management (Menu Code: MJ-04)
         Route::group(['middleware' => 'menu-access:MJ-04'], function () {
-            Route::get('/payment',  [PaymentController::class, 'index'])->name('management-payment');
-            Route::get('/payment/datatable', [PaymentController::class, 'datatable'])->name('management-payment-datatable');
-            Route::get('/payment/create', [PaymentController::class, 'create'])->name('management-payment-create');
-            Route::post('/payment/store', [PaymentController::class, 'store'])->name('management-payment-store');
-            Route::get('/payment/edit/{id}', [PaymentController::class, 'edit'])->name('management-payment-edit');
-            Route::post('/payment/update/{id}', [PaymentController::class, 'update'])->name('management-payment-update');
-            Route::post('/payment/destroy/{id}', [PaymentController::class, 'destroy'])->name('management-payment-destroy');
+            Route::get('/payment',  [PaymentManagementController::class, 'index'])->name('management-payment');
+            Route::get('/payment/datatable', [PaymentManagementController::class, 'datatable'])->name('management-payment-datatable');
+            Route::get('/payment/create', [PaymentManagementController::class, 'create'])->name('management-payment-create');
+        Route::get('/payment/edit/{id}', [PaymentManagemmeentController::class, 'edit'])->name('management-payment-edit');
+            Route::post('/payment/store', [PaymentManagementController::class, 'store'])->name('management-payment-store');
+            Route::post('/payment/destroy/{id}', [PaymentManagementController::class, 'destroy'])->name('management-payment-destroy');
         });
 
     });
@@ -91,22 +97,19 @@ Route::group(['middleware' => ['web', 'auth']], function () {
             Route::get('/unit',  [UnitController::class, 'index'])->name('inventory-unit');
             Route::get('/unit/datatable', [UnitController::class, 'datatable'])->name('inventory-unit-datatable');
             Route::get('/unit/create', [UnitController::class, 'create'])->name('inventory-unit-create');
-            Route::post('/unit/store', [UnitController::class, 'store'])->name('inventory-unit-store');
             Route::get('/unit/edit/{id}', [UnitController::class, 'edit'])->name('inventory-unit-edit');
-            Route::post('/unit/update/{id}', [UnitController::class, 'update'])->name('inventory-unit-update');
-            Route::post('/unit/destroy/{id}', [UnitController::class, 'destroy'])->name('inventory-unit-destroy');
+            Route::post('/unit/store', [UnitController::class, 'store'])->name('inventory-unit-store');
             Route::post('/unit/destroy/{id}', [UnitController::class, 'destroy'])->name('inventory-unit-destroy');
         });
 
         // Category (Menu Code: IN-02)
         Route::group(['middleware' => 'menu-access:IN-02'], function () {
-            Route::get('/category',  [\App\Http\Controllers\Inventory\CategoryController::class, 'index'])->name('inventory-category');
-            Route::get('/category/datatable', [\App\Http\Controllers\Inventory\CategoryController::class, 'datatable'])->name('inventory-category-datatable');
-            Route::get('/category/create', [\App\Http\Controllers\Inventory\CategoryController::class, 'create'])->name('inventory-category-create');
-            Route::post('/category/store', [\App\Http\Controllers\Inventory\CategoryController::class, 'store'])->name('inventory-category-store');
-            Route::get('/category/edit/{id}', [\App\Http\Controllers\Inventory\CategoryController::class, 'edit'])->name('inventory-category-edit');
-            Route::post('/category/update/{id}', [\App\Http\Controllers\Inventory\CategoryController::class, 'update'])->name('inventory-category-update');
-            Route::post('/category/destroy/{id}', [\App\Http\Controllers\Inventory\CategoryController::class, 'destroy'])->name('inventory-category-destroy');
+            Route::get('/category',  [CategoryManagementController::class, 'index'])->name('inventory-category');
+            Route::get('/category/datatable', [CategoryManagementController::class, 'datatable'])->name('inventory-category-datatable');
+            Route::get('/category/create', [CategoryManagementController::class, 'create'])->name('inventory-category-create');
+            Route::get('/category/edit/{id}', [CategoryManagementController::class, 'edit'])->name('inventory-category-edit');
+            Route::post('/category/store', [CategoryManagementController::class, 'store'])->name('inventory-category-store');
+            Route::post('/category/destroy/{id}', [CategoryManagementController::class, 'destroy'])->name('inventory-category-destroy');
         });
     });
 });

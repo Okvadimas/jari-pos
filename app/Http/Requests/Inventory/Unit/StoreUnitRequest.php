@@ -3,48 +3,65 @@
 namespace App\Http\Requests\Inventory\Unit;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Gate;
 
 class StoreUnitRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        return true;
+        // Cek akses ke menu Inventori Unit (code: IN-01)
+        return Gate::allows('access-menu', 'IN-01');
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules()
+    public function rules(): array
     {
+        $unitId = $this->input('id');
+
         return [
-            'code' => 'required|string|max:10|unique:units,code',
-            'name' => 'required|string|max:50',
+            'id'    => 'nullable|exists:units,id',
+            'code'  => [
+                'required',
+                'string',
+                'max:10',
+                Rule::unique('units', 'code')
+                    ->ignore($unitId)
+                    ->where(function ($query) {
+                        return $query->where('status', 1);
+                    }),
+            ],
+            'name'  => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('units', 'name')
+                    ->ignore($unitId)
+                    ->where(function ($query) {
+                        return $query->where('status', 1);
+                    }),
+            ],
         ];
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
+    public function messages(): array
     {
         return [
             'code.required' => 'Kode satuan wajib diisi.',
-            'code.string' => 'Kode satuan harus berupa string.',
-            'code.max' => 'Kode satuan tidak boleh lebih dari 10 karakter.',
-            'code.unique' => 'Kode satuan sudah terdaftar.',
+            'code.string'   => 'Kode satuan harus berupa string.',
+            'code.max'      => 'Kode satuan tidak boleh lebih dari 10 karakter.',
+            'code.unique'   => 'Kode satuan sudah terdaftar.',
             'name.required' => 'Nama satuan wajib diisi.',
-            'name.string' => 'Nama satuan harus berupa string.',
-            'name.max' => 'Nama satuan tidak boleh lebih dari 50 karakter.',
+            'name.string'   => 'Nama satuan harus berupa string.',
+            'name.max'      => 'Nama satuan tidak boleh lebih dari 50 karakter.',
+            'name.unique'   => 'Nama satuan sudah terdaftar.',
         ];
     }
-
 }

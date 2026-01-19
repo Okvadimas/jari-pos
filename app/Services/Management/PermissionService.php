@@ -9,16 +9,16 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 // Load Repository
-use App\Repositories\Management\AksesRepository;
+use App\Repositories\Management\PermissionRepository;
 
 // Load Models
 use App\Models\Role;
 use App\Models\Permission;
 
-class AksesService {     
+class PermissionService {     
     public static function datatable()
     {
-        $data = AksesRepository::datatable();
+        $data = PermissionRepository::datatable();
 
         $datatable = DataTables::of($data)
             ->addIndexColumn()
@@ -38,19 +38,19 @@ class AksesService {
             DB::beginTransaction();
 
             if (!empty($validated['id'])) {
-                $akses = Role::find($validated['id']);
-                $akses->update($validated);
+                $role = Role::find($validated['id']);
+                $role->update($validated);
             } else {
-                $akses = Role::create($validated);
+                $role = Role::create($validated);
             }
 
             // Delete Insert Permissions
-            Permission::where('role_id', $akses->id)->delete();
+            Permission::where('role_id', $role->id)->delete();
 
             $data_permission = [];
             foreach ($validated['menus'] as $menu) {
                 $data_permission[] = [
-                    'role_id'       => $akses->id,
+                    'role_id'       => $role->id,
                     'menu_id'       => $menu,
                     'status'        => 1,
                     'created_by'    => Auth::user()->id,
@@ -71,8 +71,8 @@ class AksesService {
 
     public static function destroy($id)
     {
-        $akses = Role::find($id);
-        $akses->update([
+        $role = Role::find($id);
+        $role->update([
             'status'        => '0',
             'updated_by'    => Auth::user()->id,
             'updated_at'    => date('Y-m-d H:i:s'),

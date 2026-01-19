@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Inventory\Category;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Gate;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -11,7 +13,8 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        // Cek akses ke menu Inventori Category (code: IN-02)
+        return Gate::allows('access-menu', 'IN-02');
     }
 
     /**
@@ -21,16 +24,30 @@ class StoreCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $categoryId = $this->input('id');
+
         return [
-            'name' => 'required|max:255',
+            'id'    => 'nullable|exists:categories,id',
+            'name'  => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('categories', 'name')
+                    ->ignore($categoryId)
+                    ->where(function ($query) {
+                        return $query->where('status', 1);
+                    }),
+            ],
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
-            'name.required' => 'Nama Kategori harus diisi.',
-            'name.max' => 'Nama Kategori tidak boleh lebih dari 255 karakter.',
+            'name.required' => 'Nama kategori wajib diisi.',
+            'name.string'   => 'Nama kategori harus berupa string.',
+            'name.max'      => 'Nama kategori tidak boleh lebih dari 255 karakter.',
+            'name.unique'   => 'Nama kategori sudah terdaftar.',
         ];
     }
 }

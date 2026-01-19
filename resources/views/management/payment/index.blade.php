@@ -1,35 +1,46 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
 @section('content')
-<div class="card">
-    <div class="card-header pb-0">
-        <div class="row">
-            <div class="col-6">
-                <h5>{{ $title }}</h5>
-            </div>
-            <div class="col-6 text-end">
-                <a href="{{ route('management-payment-create') }}" class="btn bg-gradient-primary btn-sm mb-0">
-                    <i class="fas fa-plus"></i>&nbsp; Tambah
-                </a>
-            </div>
+    <!-- content @s -->
+    <div class="nk-content ">
+        <div class="container-fluid">
+            <div class="nk-content-inner">
+                <div class="nk-content-body">
+                    <div class="nk-block-head nk-block-head-sm">
+                        <div class="nk-block-between">
+                            <div class="nk-block-head-content">
+                                <h3 class="nk-block-title page-title">Manajemen Pembayaran</h3>
+                            </div><!-- .nk-block-head-content -->
+
+                            <div class="nk-block-head-content d-none d-lg-block">
+                                <a href="{{ route('management-payment-create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Pembayaran</span></a>
+                            </div>
+                            
+                        </div><!-- .nk-block-between -->
+                        <div class="nk-block-head-content mt-3 d-block d-lg-none">
+                            <a href="{{ route('management-payment-create') }}" class="btn btn-primary mb-1"><em class="icon ni ni-plus"></em><span>Tambah Pembayaran</span></a>
+                        </div>
+                    </div><!-- .nk-block-head -->
+                    <div class="nk-block">
+                        <div class="card card-bordered card-preview">
+                            <div class="card-inner">
+                                <table class="table table-striped nowrap" id="table-data">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Aksi</th>
+                                            <th>Nama</th>
+                                            <th>Tipe</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div><!-- .card-preview -->
+                    </div><!-- .nk-block -->
+                </div> <!-- nk-block -->
+            </div><!-- .components-preview -->
         </div>
     </div>
-    <div class="card-body px-0 pt-0 pb-2">
-        <div class="table-responsive p-0">
-            <table class="table align-items-center mb-0" id="table-data" style="width: 100%">
-                <thead>
-                    <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" width="5%">No</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tipe</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+    <!-- content @e -->
 @endsection

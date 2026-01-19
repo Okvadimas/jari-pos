@@ -12,13 +12,13 @@ const datatable = () => {
             url: '/management/company/datatable',
             type: 'GET',
             error: function (xhr) {
-            if (xhr.status === 419) { // Unauthorized error
-                NioApp.Toast('Your session has expired. Redirecting to login...', 'error', {position: 'top-right'});
-                window.location.href = "/login"; 
-            } else {
-                NioApp.Toast('An error occurred while loading data. Please try again.', 'error', {position: 'top-right'});
+                if (xhr.status === 419) { // Unauthorized error
+                    NioApp.Toast('Sesi kamu sudah habis. Silahkan login ulang 😊', 'error', {position: 'top-right'});
+                    window.location.href = "/login"; 
+                } else {
+                    NioApp.Toast('Terjadi kesalahan saat memuat data. Silahkan coba lagi.', 'error', {position: 'top-right'});
+                }
             }
-        }
         },
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },
@@ -30,6 +30,9 @@ const datatable = () => {
             { data: 'status', name: 'status', orderable: false, searchable: false, render: function(data) {
                 return data === true || data === 1 || data === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
             }},
+        ],
+        columnDefs: [
+            { targets: '_all', className: 'nk-tb-col' },
         ],
     });
 }

@@ -27,10 +27,10 @@
                                 <table class="table table-striped nowrap" id="table-data">
                                     <thead>
                                         <tr>
-                                            <th>NO</th>
-                                            <th>AKSI</th>
-                                            <th>ROLE/PAKET</th>
-                                            <th>STATUS</th>
+                                            <th>No</th>
+                                            <th>Aksi</th>
+                                            <th>Role/Paket</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                 </table>
