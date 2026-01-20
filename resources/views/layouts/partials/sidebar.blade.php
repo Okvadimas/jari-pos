@@ -22,6 +22,12 @@
                             <span class="nk-menu-text">Dashboard</span>
                         </a>
                     </li><!-- .nk-menu-item -->
+                    <li class="nk-menu-item">
+                        <a href="/point-of-sales" class="nk-menu-link">
+                            <span class="nk-menu-icon"><em class="icon ni ni-monitor"></em></span>
+                            <span class="nk-menu-text">Point of Sales (POS)</span>
+                        </a>
+                    </li><!-- .nk-menu-item -->
 
                     <!-- List Menu (Session) -->
                     {!! session()->get('menu') !!}
