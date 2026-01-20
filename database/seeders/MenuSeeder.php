@@ -15,7 +15,7 @@ class MenuSeeder extends Seeder
     public function run()
     {
         $menus = [
-            // Parent Menus (parent = '0')
+            // Management
             [
                 'code'      => 'MJ',
                 'parent'    => '0',
@@ -24,7 +24,7 @@ class MenuSeeder extends Seeder
                 'url'       => null,
             ],
 
-            // Child Menus 
+            // Child Management 
             [
                 'code'      => 'MJ-01',
                 'parent'    => 'MJ',
@@ -54,7 +54,7 @@ class MenuSeeder extends Seeder
                 'url'       => '/management/payment',
             ],
 
-            // parent
+            // Inventory
             [
                 'code'      => 'IN',
                 'parent'    => '0',
@@ -63,7 +63,7 @@ class MenuSeeder extends Seeder
                 'url'       => null,
             ],
 
-            // child
+            // Child Inventory
             [
                 'code'      => 'IN-01',
                 'parent'    => 'IN',
@@ -77,6 +77,31 @@ class MenuSeeder extends Seeder
                 'name'      => 'Kategori',
                 'icon'      => 'ni ni-tag',
                 'url'       => '/inventory/category',
+            ],
+
+            // Transaksi
+            [
+                'code'      => 'TR',
+                'parent'    => '0',
+                'name'      => 'TRANSAKSI',
+                'icon'      => 'ni ni-article',
+                'url'       => null,
+            ],
+
+            // Child Transaksi
+            [
+                'code'      => 'TR-01',
+                'parent'    => 'TR',
+                'name'      => 'Pembelian',
+                'icon'      => 'ni ni-cart-fill',
+                'url'       => '/transaction/purchase',
+            ],
+            [
+                'code'      => 'TR-02',
+                'parent'    => 'TR',
+                'name'      => 'Penjualan',
+                'icon'      => 'ni ni-cc-alt2-fill',
+                'url'       => '/transaction/sales',
             ],
         ];
 
