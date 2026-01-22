@@ -65,7 +65,8 @@ class CompanyController extends Controller
 
     public function destroy(Request $request)
     {
-        CompanyService::destroy($request->id);
+        $company = Company::find($request->id);
+        $company->delete();
 
         return $this->successResponse('Perusahaan berhasil dihapus');
     }

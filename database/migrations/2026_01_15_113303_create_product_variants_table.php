@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletesWithUser();
 
             $table->index('product_id');
             $table->index('sku');

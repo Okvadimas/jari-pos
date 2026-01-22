@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\SoftDeletesWithUser;
 
 class Role extends Model
 {
+    use SoftDeletesWithUser;
     protected $table = 'roles';
     protected $fillable = [
         'id',

@@ -27,6 +27,12 @@ class AppServiceProvider extends ServiceProvider
             \URL::forceScheme('https');
         }
 
+        \Illuminate\Database\Schema\Blueprint::macro('softDeletesWithUser', function () {
+            /** @var \Illuminate\Database\Schema\Blueprint $this */
+            $this->softDeletes();
+            $this->unsignedBigInteger('deleted_by')->nullable();
+        });
+
         LogViewer::auth(function ($request) {
             // Cek apakah user authenticated dan role_id = 1 (Super Admin)
             return $request->user() && $request->user()->role_id == 1;

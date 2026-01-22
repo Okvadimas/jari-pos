@@ -65,7 +65,8 @@ class UnitController extends Controller
 
     public function destroy(Request $request)
     {
-        UnitService::destroy($request->id);
+        $unit = Unit::find($request->id);
+        $unit->delete();
 
         return $this->successResponse('Satuan berhasil dihapus');
     }

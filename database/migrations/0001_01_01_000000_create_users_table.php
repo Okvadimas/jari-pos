@@ -25,7 +25,9 @@ return new class extends Migration
             $table->integer('updated_by')->nullable();
             $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletesWithUser();
 
             $table->index('username');
             $table->index('email');
