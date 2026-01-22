@@ -65,8 +65,9 @@ class CategoryController extends Controller
 
     public function destroy(Request $request)
     {
-        CategoryService::destroy($request->id);
-
+        $category = Category::find($request->id);
+        $category->delete();
+        
         return $this->successResponse('Kategori berhasil dihapus');
     }
 }

@@ -53,14 +53,4 @@ class UnitService
             return false;
         }
     }
-
-    public static function destroy($id)
-    {
-        $unit = Unit::find($id);
-        $unit->update([
-            'status'        => 0,
-            'updated_by'    => Auth::user()->id,
-            'updated_at'    => date('Y-m-d H:i:s'),
-        ]);
-    }
 }

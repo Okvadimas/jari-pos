@@ -73,7 +73,8 @@ class UserController extends Controller
 
     public function destroy(Request $request)
     {
-        UserService::destroy($request->id);
+        $user = User::find($request->id);
+        $user->delete();
 
         return $this->successResponse('User berhasil dihapus');
     }

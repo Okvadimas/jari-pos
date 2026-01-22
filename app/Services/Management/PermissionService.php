@@ -69,13 +69,4 @@ class PermissionService {
         }
     }
 
-    public static function destroy($id)
-    {
-        $role = Role::find($id);
-        $role->update([
-            'status'        => '0',
-            'updated_by'    => Auth::user()->id,
-            'updated_at'    => date('Y-m-d H:i:s'),
-        ]);
-    }
 }
