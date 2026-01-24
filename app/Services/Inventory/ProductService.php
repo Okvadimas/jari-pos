@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Services\Inventory;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
+
+use App\Repositories\Inventory\ProductRepository;
+
+use App\Models\Product;
+
+class ProductService
+{
+    public static function datatable()
+    {
+        $data = ProductRepository::datatable();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                if(!$row->status) {
+                    return '';
+                }
+                return '<a href="' . url('inventory/product/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
+                        <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
+            })
+            ->editColumn('status', function ($row) {
+                return $row->status == 1 ? 'Active' : 'Inactive';
+            })
+            ->rawColumns(['action', 'status'])
+            ->make(true);
+    }
+
+    public static function store($data)
+    {
+        try {
+            DB::beginTransaction();
+
+            if (!empty($data['id'])) {
+                $product = Product::find($data['id']);
+                $data['updated_by'] = Auth::user()->id;
+                $product->update($data);
+            } else {
+                $data['created_by'] = Auth::user()->id;
+                $product = Product::create($data);
+            }
+
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
+    public static function destroy($id)
+    {
+        $product = Product::find($id);
+        $product->update([
+            'status'        => 0,
+            'updated_by'    => Auth::user()->id,
+            'updated_at'    => date('Y-m-d H:i:s'),
+        ]);
+    }
+}
