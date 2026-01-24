@@ -32,7 +32,6 @@
                                             <th>Perusahaan</th>
                                             <th>Nama</th>
                                             <th>Paket</th>
-                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                 </table>

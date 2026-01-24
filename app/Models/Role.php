@@ -13,7 +13,6 @@ class Role extends Model
         'id',
         'name',
         'slug',
-        'status',
         'created_by',
         'updated_by'
     ];
@@ -30,6 +29,6 @@ class Role extends Model
 
     public function dataTableRole()
     {
-        return self::select('id', 'slug', 'name', 'status')->where('status', 1);
+        return self::select('id', 'slug', 'name');
     }
 }

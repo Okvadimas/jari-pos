@@ -25,9 +25,6 @@ const datatable = () => {
             { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
             { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
-            { data: 'status', name: 'status', orderable: false, searchable: false, render: function(data) {
-                return data === true || data === 1 || data === 'Active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
-            }},
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },

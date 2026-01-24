@@ -11,7 +11,9 @@ use App\Models\Company;
 class CompanyRepository {
 
     public static function datatable() {
-        $query = Company::select('id', 'name', 'email', 'phone', 'address', 'status')->orderBy('id', 'desc');
+        $query = Company::select('id', 'name', 'email', 'phone', 'address')
+                    ->whereNull('deleted_at')
+                    ->orderBy('id', 'desc');
         
         return $query;
     }

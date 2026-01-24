@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 50)->unique();
-            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

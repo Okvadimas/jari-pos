@@ -11,8 +11,6 @@ class Payment extends Model
     use HasFactory, SoftDeletesWithUser;
 
     protected $table = 'payment_methods';
-    protected $fillable = ['name', 'type', 'status', 'created_by', 'updated_by'];
-    protected $casts = [
-        'status' => 'boolean',
-    ];
+    protected $fillable = ['name', 'type', 'created_by', 'updated_by'];
+    protected $casts = [];
 }

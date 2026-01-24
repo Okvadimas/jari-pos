@@ -123,8 +123,11 @@ class ProductSeeder extends Seeder
                 ['id' => $product['id']],
                 [
                     'category_id' => $product['category_id'],
+                    'company_id' => 1, // Default company
                     'name' => $product['name'],
                     'description' => $product['description'],
+                    'created_by' => 1,
+                    'updated_by' => 1,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]

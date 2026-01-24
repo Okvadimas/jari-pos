@@ -33,18 +33,14 @@ class StoreUserRequest extends FormRequest
                 'required',
                 Rule::unique('users', 'username')
                     ->ignore($userId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
             'email'     => [
                 'required',
                 'email',
                 Rule::unique('users', 'email')
                     ->ignore($userId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
             'name'      => 'required',
             'paket'     => 'required',

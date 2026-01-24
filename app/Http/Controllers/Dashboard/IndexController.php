@@ -24,15 +24,15 @@ class IndexController extends Controller
         $startOfMonth = Carbon::now()->startOfMonth();
 
         // 1. Revenue Metrics (Daily & Monthly)
-        // Filter by company_id and status (1 = Active)
+        // Using soft delete check instead of status
         $dailyRevenue = SalesOrder::where('company_id', $companyId)
             ->whereDate('order_date', $today)
-            ->where('status', 1)
+            ->whereNull('deleted_at')
             ->sum('final_amount');
 
         $monthlyRevenue = SalesOrder::where('company_id', $companyId)
             ->whereDate('order_date', '>=', $startOfMonth)
-            ->where('status', 1)
+            ->whereNull('deleted_at')
             ->sum('final_amount');
 
         // 2. Profit Calculation (Revenue - COGS)
@@ -43,7 +43,7 @@ class IndexController extends Controller
         $variantAvgCosts = DB::table('purchase_details')
             ->join('purchases', 'purchase_details.purchase_id', '=', 'purchases.id')
             ->where('purchases.company_id', $companyId)
-            ->where('purchase_details.status', 1)
+            ->whereNull('purchase_details.deleted_at')
             ->select('purchase_details.product_variant_id', DB::raw('AVG(purchase_details.cost_price_per_item) as avg_cost'))
             ->groupBy('purchase_details.product_variant_id')
             ->pluck('avg_cost', 'product_variant_id');
@@ -54,7 +54,7 @@ class IndexController extends Controller
             ->whereHas('salesOrder', function($q) use ($companyId, $startOfMonth) {
                 $q->where('company_id', $companyId)
                   ->whereDate('order_date', '>=', $startOfMonth)
-                  ->where('status', 1);
+                  ->whereNull('deleted_at');
             })
             ->get();
 
@@ -74,7 +74,7 @@ class IndexController extends Controller
             ->join('product_variants', 'sales_order_details.product_variant_id', '=', 'product_variants.id')
             ->join('products', 'product_variants.product_id', '=', 'products.id')
             ->where('sales_orders.company_id', $companyId)
-            ->where('sales_orders.status', 1)
+            ->whereNull('sales_orders.deleted_at')
             ->whereDate('sales_orders.order_date', '>=', $startOfMonth)
             ->select(
                 'products.name as product_name',
@@ -117,7 +117,7 @@ class IndexController extends Controller
         $chartStartDate = Carbon::today()->subDays(6);
         
         $salesData = SalesOrder::where('company_id', $companyId)
-            ->where('status', 1)
+            ->whereNull('deleted_at')
             ->whereDate('order_date', '>=', $chartStartDate)
             ->selectRaw('DATE(order_date) as date, SUM(final_amount) as total')
             ->groupBy('date')

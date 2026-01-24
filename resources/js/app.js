@@ -37,3 +37,10 @@ $(document).ready(function() {
     // Add your global JavaScript here
     console.log('App.js loaded - jQuery ready!');
 });
+
+function formatCurrency(number, separator = ",") {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+}
+
+// Expose to global scope for Blade templates and other scripts
+window.formatCurrency = formatCurrency;

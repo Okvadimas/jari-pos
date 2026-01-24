@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('image');
             $table->string('type')->comment('Platform iklan (multiple), dipisahkan koma: slider, facebook, instagram, tiktok');
-            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
+            $table->tinyInteger('is_published')->default(0)->comment('1 = published, 0 = draft');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->integer('in_stock')->default(0)->comment('Total barang masuk dari purchase hari ini');
             $table->integer('out_stock')->default(0)->comment('Total barang keluar dari sales hari ini');
             $table->integer('adjustment_stock')->default(0)->comment('Perubahan manual (barang rusak/hilang) hari ini');
-            $table->integer('closing_stock')->comment('Stok akhir hari ini: (opening + in + adj) - out');
-            $table->tinyInteger('status')->default(1)->comment('1 = aktif, 0 = non aktif');
+            $table->integer('closing_stock')->default(0)->comment('Stok akhir hari ini: (opening + in + adj) - out');
+            $table->tinyInteger('is_locked')->default(0)->comment('1 = locked, 0 = unlocked');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

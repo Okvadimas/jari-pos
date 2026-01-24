@@ -9,7 +9,7 @@ class PurchaseDetail extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'purchase_details';
-    protected $fillable = ['purchase_id', 'product_variant_id', 'quantity', 'cost_price_per_item', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['purchase_id', 'product_variant_id', 'quantity', 'cost_price_per_item', 'created_by', 'updated_by'];
 
     public function purchase()
     {

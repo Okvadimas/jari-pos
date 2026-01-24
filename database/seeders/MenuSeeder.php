@@ -78,6 +78,13 @@ class MenuSeeder extends Seeder
                 'icon'      => 'ni ni-tag',
                 'url'       => '/inventory/category',
             ],
+            [
+                'code'      => 'IN-03',
+                'parent'    => 'IN',
+                'name'      => 'Produk',
+                'icon'      => 'ni ni-list',
+                'url'       => '/inventory/product',
+            ],
 
             // Transaksi
             [
@@ -108,7 +115,10 @@ class MenuSeeder extends Seeder
         foreach ($menus as $menu) {
             Menu::updateOrCreate(
                 ['code' => $menu['code']],
-                $menu
+                array_merge($menu, [
+                    'created_by' => 1,
+                    'updated_by' => 1,
+                ])
             );
         }
     }

@@ -9,7 +9,7 @@ class Permission extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'permissions';
-    protected $fillable = ['role_id', 'menu_id', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['role_id', 'menu_id', 'created_by', 'updated_by'];
 
     public function role()
     {

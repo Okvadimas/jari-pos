@@ -22,7 +22,6 @@ return new class extends Migration
             $table->foreignId('product_variant_id')->nullable()->constrained('product_variants')->nullOnDelete()->comment('Promo spesifik hanya untuk varian tertentu');
             $table->decimal('min_order_amount', 15, 2)->default(0);
             $table->integer('priority')->default(1)->comment('Semakin kecil semakin prioritas');
-            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

@@ -7,7 +7,8 @@ use App\Models\Category;
 class CategoryRepository {
 
     public static function datatable() {
-        $query = Category::select('id', 'name', 'status', 'created_by', 'updated_by')
+        $query = Category::select('id', 'name', 'created_by', 'updated_by')
+                    ->whereNull('deleted_at')
                     ->orderBy('id', 'desc');
         
         return $query;

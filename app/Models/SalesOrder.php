@@ -9,7 +9,7 @@ class SalesOrder extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'sales_orders';
-    protected $fillable = ['company_id', 'order_date', 'total_amount', 'applied_promo_id', 'total_discount_manual', 'final_amount', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['company_id', 'order_date', 'total_amount', 'applied_promo_id', 'total_discount_manual', 'final_amount', 'created_by', 'updated_by'];
 
     public function company()
     {

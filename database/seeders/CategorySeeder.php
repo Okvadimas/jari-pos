@@ -32,6 +32,8 @@ class CategorySeeder extends Seeder
                 ['id' => $category['id']],
                 [
                     'name' => $category['name'],
+                    'created_by' => 1,
+                    'updated_by' => 1,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]

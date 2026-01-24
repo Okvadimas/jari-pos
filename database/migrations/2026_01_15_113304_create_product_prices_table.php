@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('product_prices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
-            $table->decimal('price', 15, 2)->comment('Harga jual ke customer');
-            $table->tinyInteger('status')->default(1)->comment('1 = aktif, 0 = non aktif');
+            $table->decimal('purchase_price', 15, 0)->comment('Harga beli ke supplier');
+            $table->decimal('sell_price', 15, 0)->comment('Harga jual ke customer');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

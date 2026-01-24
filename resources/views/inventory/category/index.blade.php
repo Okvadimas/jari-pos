@@ -30,7 +30,6 @@
                                             <th>No</th>
                                             <th>Aksi</th>
                                             <th>Nama</th>
-                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                 </table>

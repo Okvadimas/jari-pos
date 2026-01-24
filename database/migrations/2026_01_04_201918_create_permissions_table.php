@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
             $table->foreignId('menu_id')->constrained('menu')->cascadeOnDelete();
-            $table->tinyInteger('status')->default(0)->comment('1 = full access, 0 = no access');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

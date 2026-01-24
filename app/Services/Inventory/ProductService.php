@@ -2,23 +2,25 @@
 
 namespace App\Services\Inventory;
 
-use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
-use App\Repositories\Inventory\CategoryRepository;
 
-class CategoryService
+use App\Repositories\Inventory\ProductRepository;
+
+use App\Models\Product;
+
+class ProductService
 {
     public static function datatable()
     {
-        $data = CategoryRepository::datatable();
+        $data = ProductRepository::datatable();
 
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                return '<a href="' . url('inventory/category/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
+                return '<a href="' . url('inventory/product/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
                         <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
             })
             ->rawColumns(['action'])
@@ -31,12 +33,12 @@ class CategoryService
             DB::beginTransaction();
 
             if (!empty($data['id'])) {
-                $category = Category::find($data['id']);
+                $product = Product::find($data['id']);
                 $data['updated_by'] = Auth::user()->id;
-                $category->update($data);
+                $product->update($data);
             } else {
                 $data['created_by'] = Auth::user()->id;
-                $category = Category::create($data);
+                $product = Product::create($data);
             }
 
             DB::commit();
@@ -46,5 +48,11 @@ class CategoryService
             Log::error($th->getMessage());
             return false;
         }
+    }
+
+    public static function destroy($id)
+    {
+        $product = Product::find($id);
+        $product->delete();
     }
 }

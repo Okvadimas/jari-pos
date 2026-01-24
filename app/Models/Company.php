@@ -11,10 +11,8 @@ class Company extends Model
     use HasFactory, SoftDeletesWithUser;
 
     protected $table = 'companies';
-    protected $fillable = ['name', 'email', 'phone', 'address', 'logo', 'status', 'created_by', 'updated_by'];
-    protected $casts = [
-        'status' => 'boolean',
-    ];
+    protected $fillable = ['name', 'email', 'phone', 'address', 'logo', 'created_by', 'updated_by'];
+    protected $casts = [];
 
     public function users()
     {

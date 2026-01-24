@@ -34,18 +34,14 @@ class StoreCompanyRequest extends FormRequest
                 'max:255',
                 Rule::unique('companies', 'name')
                     ->ignore($companyId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
             'email'     => [
                 'required',
                 'email',
                 Rule::unique('companies', 'email')
                     ->ignore($companyId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
             'phone'     => 'nullable|string|max:20',
             'address'   => 'nullable|string',

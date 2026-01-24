@@ -9,7 +9,7 @@ class ProductPrice extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'product_prices';
-    protected $fillable = ['product_variant_id', 'price', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['product_variant_id', 'purchase_price', 'sell_price', 'created_by', 'updated_by'];
 
     public function variant()
     {

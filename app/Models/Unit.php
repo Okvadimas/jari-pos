@@ -9,10 +9,8 @@ class Unit extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'units';
-    protected $fillable = ['code', 'name', 'status', 'created_by', 'updated_by'];
-    protected $casts = [
-        'status' => 'boolean',
-    ];
+    protected $fillable = ['code', 'name', 'created_by', 'updated_by'];
+    protected $casts = [];
 
     public function products()
     {

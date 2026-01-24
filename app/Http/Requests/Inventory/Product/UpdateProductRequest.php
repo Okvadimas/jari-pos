@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Requests\Inventory\Unit;
+namespace App\Http\Requests\Inventory\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
 
-class StoreUnitRequest extends FormRequest
+class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // Cek akses ke menu Inventori Unit (code: IN-01)
-        return Gate::allows('access-menu', 'IN-01');
+        // Cek akses ke menu Inventori Product (code: IN-03)
+        return Gate::allows('access-menu', 'IN-03');
     }
 
     /**

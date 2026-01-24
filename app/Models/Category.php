@@ -9,10 +9,8 @@ class Category extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'categories';
-    protected $fillable = ['name', 'status', 'created_by', 'updated_by'];
-    protected $casts = [
-        'status' => 'boolean',
-    ];
+    protected $fillable = ['name', 'created_by', 'updated_by'];
+    protected $casts = [];
 
     public function products()
     {
