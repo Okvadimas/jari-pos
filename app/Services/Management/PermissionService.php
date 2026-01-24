@@ -52,7 +52,6 @@ class PermissionService {
                 $data_permission[] = [
                     'role_id'       => $role->id,
                     'menu_id'       => $menu,
-                    'status'        => 1,
                     'created_by'    => Auth::user()->id,
                     'created_at'    => date('Y-m-d H:i:s'),
                 ];
