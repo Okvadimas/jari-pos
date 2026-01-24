@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\SoftDeletesWithUser;
 
 class Permission extends Model
 {
+    use SoftDeletesWithUser;
     protected $table = 'permissions';
     protected $fillable = ['role_id', 'menu_id', 'status', 'created_by', 'updated_by'];
 

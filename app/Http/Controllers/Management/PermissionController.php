@@ -81,7 +81,8 @@ class PermissionController extends Controller
 
     public function destroy(Request $request)
     {
-        PermissionService::destroy($request->id);
+        $permission = Permission::find($request->id);
+        $permission->delete();
 
         return $this->successResponse('Akses berhasil dihapus');
     }

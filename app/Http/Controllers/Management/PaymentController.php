@@ -65,7 +65,8 @@ class PaymentController extends Controller
 
     public function destroy(Request $request)
     {
-        PaymentService::destroy($request->id);
+        $payment = Payment::find($request->id);
+        $payment->delete();
 
         return $this->successResponse('Pembayaran berhasil dihapus');
     }

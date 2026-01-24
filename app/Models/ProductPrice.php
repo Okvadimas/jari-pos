@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\SoftDeletesWithUser;
 
 class ProductPrice extends Model
 {
+    use SoftDeletesWithUser;
     protected $table = 'product_prices';
     protected $fillable = ['product_variant_id', 'price', 'status', 'created_by', 'updated_by'];
 

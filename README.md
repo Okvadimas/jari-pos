@@ -4,7 +4,7 @@ Berikut adalah draf `README.md` yang profesional dan lengkap untuk proyek **JARI
 
 # JARIPOS - Point of Sale System
 
-JARIPOS adalah aplikasi kasir (Point of Sale) modern yang dibangun menggunakan **Laravel 12** dan **Vite**. Proyek ini sepenuhnya menggunakan **Docker** untuk memastikan lingkungan pengembangan yang konsisten, terutama dioptimalkan untuk arsitektur **Apple Silicon.
+JARIPOS adalah aplikasi kasir (Point of Sale) modern yang dibangun menggunakan **Laravel 12** dan **Vite**. Proyek ini sepenuhnya menggunakan **Docker** untuk memastikan lingkungan pengembangan yang konsisten, terutama dioptimalkan untuk arsitektur.
 
 ## 🚀 Tech Stack
 

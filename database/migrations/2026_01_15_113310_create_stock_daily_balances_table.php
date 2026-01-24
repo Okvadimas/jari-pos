@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletesWithUser();
 
             // Unique constraint: satu varian hanya boleh punya satu record per tanggal
             $table->unique(['product_variant_id', 'date']);
