@@ -122,5 +122,15 @@ Route::group(['middleware' => ['web', 'auth']], function () {
             Route::post('/product/store', [ProductController::class, 'store'])->name('inventory-product-store');
             Route::post('/product/destroy/{id}', [ProductController::class, 'destroy'])->name('inventory-product-destroy');
         });
+
+        // Product (Menu Code: IN-04)
+        Route::group(['middleware' => 'menu-access:IN-04'], function () {
+            Route::get('/product-variant', [ProductVariantController::class, 'index'])->name('inventory-product-variant');
+            Route::get('/product-variant/datatable', [ProductVariantController::class, 'datatable'])->name('inventory-product-variant-datatable');
+            Route::get('/product-variant/create', [ProductVariantController::class, 'create'])->name('inventory-product-variant-create');
+            Route::get('/product-variant/edit/{id}', [ProductVariantController::class, 'edit'])->name('inventory-product-variant-edit');
+            Route::post('/product-variant/store', [ProductVariantController::class, 'store'])->name('inventory-product-variant-store');
+            Route::post('/product-variant/destroy/{id}', [ProductVariantController::class, 'destroy'])->name('inventory-product-variant-destroy');
+        });
     });
 });

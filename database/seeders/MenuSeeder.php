@@ -85,6 +85,13 @@ class MenuSeeder extends Seeder
                 'icon'      => 'ni ni-list',
                 'url'       => '/inventory/product',
             ],
+            [
+                'code'      => 'IN-04',
+                'parent'    => 'IN',
+                'name'      => 'Produk Varian',
+                'icon'      => 'ni ni-list-thumb-fill',
+                'url'       => '/inventory/product-variant',
+            ],
 
             // Transaksi
             [
