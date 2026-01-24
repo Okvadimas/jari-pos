@@ -51,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
             // Check if user's role has permission to access this menu
             $permission = Permission::where('role_id', $user->role_id)
                 ->where('menu_id', $menu->id)
-                ->where('status', 1) // 1 = full access
+                ->whereNull('deleted_at')
                 ->first();
 
             return $permission !== null;
@@ -69,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
             // Check if user's role has permission to access this menu
             $permission = Permission::where('role_id', $user->role_id)
                 ->where('menu_id', $menu->id)
-                ->where('status', 1) // 1 = full access
+                ->whereNull('deleted_at')
                 ->first();
 
             return $permission !== null;

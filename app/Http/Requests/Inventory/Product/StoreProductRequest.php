@@ -34,9 +34,7 @@ class StoreProductRequest extends FormRequest
                 'max:10',
                 Rule::unique('units', 'code')
                     ->ignore($unitId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
             'name'  => [
                 'required',
@@ -44,9 +42,7 @@ class StoreProductRequest extends FormRequest
                 'max:50',
                 Rule::unique('units', 'name')
                     ->ignore($unitId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
         ];
     }

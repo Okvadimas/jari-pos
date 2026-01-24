@@ -21,11 +21,12 @@ class UserRepository {
                         'users.name',
                         'r.name as nama_role',
                         'users.role_id',
-                        'users.status',
                     ])
                     ->join('companies as c', 'users.company_id', '=', 'c.id')
                     ->join('roles as r', 'users.role_id', '=', 'r.id')
-                    ->where('users.status', 1);
+                    ->whereNull('users.deleted_at')
+                    ->whereNull('c.deleted_at')
+                    ->whereNull('r.deleted_at');
         
         return $query;
     }

@@ -115,7 +115,10 @@ class MenuSeeder extends Seeder
         foreach ($menus as $menu) {
             Menu::updateOrCreate(
                 ['code' => $menu['code']],
-                $menu
+                array_merge($menu, [
+                    'created_by' => 1,
+                    'updated_by' => 1,
+                ])
             );
         }
     }

@@ -14,7 +14,7 @@ class UtilityRepository {
 
     public function dataCompanies($search)
     {
-        $query = $this->company->select('id', 'name')->where('status', 1);
+        $query = $this->company->select('id', 'name')->whereNull('deleted_at');
 
         if($search) {
             $query->where('name', 'like', '%' . $search . '%');

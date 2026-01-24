@@ -14,13 +14,12 @@ class PermissionRepository {
 
     public static function datatable() {
         $query = DB::table('roles')
+                    ->whereNull('deleted_at')
                     ->select([
                         'roles.id',
                         'roles.name as nama_role',
                         'roles.slug',
-                        'roles.status',
-                    ])
-                    ->where('roles.status', 1);
+                    ]);
         
         return $query;
     }

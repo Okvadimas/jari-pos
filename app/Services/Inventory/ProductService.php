@@ -20,16 +20,10 @@ class ProductService
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                if(!$row->status) {
-                    return '';
-                }
                 return '<a href="' . url('inventory/product/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
                         <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
             })
-            ->editColumn('status', function ($row) {
-                return $row->status == 1 ? 'Active' : 'Inactive';
-            })
-            ->rawColumns(['action', 'status'])
+            ->rawColumns(['action'])
             ->make(true);
     }
 
@@ -59,10 +53,6 @@ class ProductService
     public static function destroy($id)
     {
         $product = Product::find($id);
-        $product->update([
-            'status'        => 0,
-            'updated_by'    => Auth::user()->id,
-            'updated_at'    => date('Y-m-d H:i:s'),
-        ]);
+        $product->delete();
     }
 }

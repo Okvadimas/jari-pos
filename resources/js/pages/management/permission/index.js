@@ -25,9 +25,6 @@ const datatable = () => {
             { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },
             { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
             { data: 'nama_role', name: 'nama_role' },
-            { data: 'status', name: 'status', orderable: false, searchable: false, render: function(data) {
-                return data == 1 ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Tidak Aktif</span>';
-            }},
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },

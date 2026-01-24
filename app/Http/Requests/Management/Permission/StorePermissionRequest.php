@@ -32,17 +32,13 @@ class StorePermissionRequest extends FormRequest
                 'required',
                 Rule::unique('roles', 'name')
                     ->ignore($roleId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
             'slug'     => [
                 'required',
                 Rule::unique('roles', 'slug')
                     ->ignore($roleId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
             'menus'     => 'required|array',
         ];

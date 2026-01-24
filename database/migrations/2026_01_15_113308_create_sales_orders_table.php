@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('applied_promo_id')->nullable()->constrained('promotions')->nullOnDelete();
             $table->decimal('total_discount_manual', 15, 2)->default(0)->comment('Diskon dari promo');
             $table->decimal('final_amount', 15, 2)->comment('Total yang dibayar customer');
-            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

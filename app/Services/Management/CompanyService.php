@@ -20,10 +20,6 @@ class CompanyService
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                if (!$row->status) {
-                    return '';
-                }
-
                 return '<a href="' . url('management/company/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
                         <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
             })

@@ -31,7 +31,6 @@
                                             <th>Aksi</th>
                                             <th>Kode</th>
                                             <th>Nama</th>
-                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                 </table>

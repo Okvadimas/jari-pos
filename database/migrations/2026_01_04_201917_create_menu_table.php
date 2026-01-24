@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('name', 100);
             $table->text('icon')->nullable();
             $table->text('url')->nullable();
-            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

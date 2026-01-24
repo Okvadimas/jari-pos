@@ -32,9 +32,6 @@ const datatable = () => {
             { data: 'harga_jual', name: 'harga_jual', render: function(data) {
                 return 'Rp. ' + formatCurrency(data);
             } },
-            { data: 'status', name: 'status', orderable: false, searchable: false, render: function(data) {
-                return data === true || data === 1 || data === 'Active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
-            }},
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },

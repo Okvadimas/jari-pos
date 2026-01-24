@@ -40,7 +40,11 @@ class RoleSeeder extends Seeder
         foreach ($roles as $role) {
             Role::updateOrCreate(
                 ['slug' => $role['slug']],
-                ['name' => $role['name']]
+                [
+                    'name' => $role['name'],
+                    'created_by' => 1,
+                    'updated_by' => 1,
+                ]
             );
         }
     }

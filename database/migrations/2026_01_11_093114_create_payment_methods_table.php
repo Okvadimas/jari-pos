@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name'); 
             $table->enum('type', ['cash', 'bank_transfer', 'e-wallet', 'other']);
-            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

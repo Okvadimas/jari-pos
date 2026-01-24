@@ -33,7 +33,6 @@
                                             <th>Email</th>
                                             <th>Telepon</th>
                                             <th>Alamat</th>
-                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                 </table>

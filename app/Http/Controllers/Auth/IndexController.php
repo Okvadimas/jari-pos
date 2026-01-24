@@ -22,7 +22,7 @@ class IndexController extends Controller
 {
     public function login() {
         $title      = 'Login | Jari POS';
-        $sliders    = Campaign::where('type', 'slider')->where('status', 'active')->get();  
+        $sliders    = Campaign::where('type', 'slider')->where('is_published', 1)->get();  
         $css        = 'resources/css/pages/auth/login.css';
         $js         = 'resources/js/pages/auth/login.js';  
         return view('auth.login', compact('css', 'js', 'title', 'sliders'));
@@ -42,7 +42,6 @@ class IndexController extends Controller
         }
 
         $credential = $request->only('username', 'password');
-        $credential['status'] = 1;
         if(Auth::attempt($credential)) {
             $user = Auth::user();
             $request->session()->put('user', $user);
@@ -60,7 +59,7 @@ class IndexController extends Controller
 
     public function register() {
         $title      = 'Register | Jari POS';
-        $sliders    = Campaign::where('type', 'slider')->where('status', 'active')->get();
+        $sliders    = Campaign::where('type', 'slider')->where('is_published', 1)->get();
         $css        = 'resources/css/pages/auth/register.css';
         $js         = 'resources/js/pages/auth/register.js';  
         return view('auth.register', compact('css', 'js', 'title', 'sliders'));
@@ -87,7 +86,6 @@ class IndexController extends Controller
             'username'  => $request->username,
             'email'     => $request->email,
             'password'  => Hash::make($request->password),
-            'status'    => 'active',
         ]);
 
         // Auto Login

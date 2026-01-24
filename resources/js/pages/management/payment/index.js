@@ -25,7 +25,6 @@ const datatable = () => {
             { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
             { data: 'name', name: 'name' },
             { data: 'type', name: 'type' },
-            { data: 'status', name: 'status' },
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },

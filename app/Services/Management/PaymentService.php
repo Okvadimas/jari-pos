@@ -16,25 +16,14 @@ class PaymentService {
 
         return DataTables::of($query)
             ->addIndexColumn()
-            ->editColumn('status', function ($row) {
-                if ($row->status) {
-                    return '<span class="badge badge-success">Active</span>';
-                } else {
-                    return '<span class="badge badge-danger">Inactive</span>';
-                }
-            })
             ->editColumn('type', function ($row) {
                 return ucfirst(str_replace('_', ' ', $row->type));
             })
             ->addColumn('action', function ($row) {
-                if (!$row->status) {
-                    return '';
-                }
-
                 return '<a href="' . url('management/payment/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
                         <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
             })
-            ->rawColumns(['status', 'action'])
+            ->rawColumns(['action'])
             ->make(true);
     }
 

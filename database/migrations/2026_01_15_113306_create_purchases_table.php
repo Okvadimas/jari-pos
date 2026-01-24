@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('supplier_name')->nullable();
             $table->decimal('total_cost', 15, 2)->comment('Total bayar ke supplier');
             $table->text('reference_note')->nullable()->comment('Misal: Beli 10kg Pelet Ikan');
-            $table->tinyInteger('status')->default(1)->comment('1 = aktif, 0 = non aktif');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

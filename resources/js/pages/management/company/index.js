@@ -27,9 +27,6 @@ const datatable = () => {
             { data: 'email', name: 'email' },
             { data: 'phone', name: 'phone' },
             { data: 'address', name: 'address' },
-            { data: 'status', name: 'status', orderable: false, searchable: false, render: function(data) {
-                return data === true || data === 1 || data === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
-            }},
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },

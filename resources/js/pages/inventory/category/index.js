@@ -24,9 +24,6 @@ const datatable = () => {
             { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },
             { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
             { data: 'name', name: 'name' },
-            { data: 'status', name: 'status', orderable: false, searchable: false, render: function(data) {
-                return data === true || data === 1 || data === 'Active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
-            }},
         ],
     });
 }

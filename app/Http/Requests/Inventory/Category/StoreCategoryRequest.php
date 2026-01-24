@@ -34,9 +34,7 @@ class StoreCategoryRequest extends FormRequest
                 'max:255',
                 Rule::unique('categories', 'name')
                     ->ignore($categoryId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
         ];
     }

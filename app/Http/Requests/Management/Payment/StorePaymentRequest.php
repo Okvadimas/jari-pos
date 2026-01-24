@@ -34,9 +34,7 @@ class StorePaymentRequest extends FormRequest
                 'max:255',
                 Rule::unique('payment_methods', 'name')
                     ->ignore($paymentId)
-                    ->where(function ($query) {
-                        return $query->where('status', 1);
-                    }),
+                    ->whereNull('deleted_at'),
             ],
             'type'  => 'required|in:cash,bank_transfer,e-wallet,other',
         ];

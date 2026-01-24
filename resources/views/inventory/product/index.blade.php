@@ -34,7 +34,6 @@
                                             <th>Varian</th>
                                             <th>Harga Beli</th>
                                             <th>Harga Jual</th>
-                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                 </table>

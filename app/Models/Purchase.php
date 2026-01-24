@@ -9,7 +9,7 @@ class Purchase extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'purchases';
-    protected $fillable = ['company_id', 'purchase_date', 'supplier_name', 'total_cost', 'reference_note', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['company_id', 'purchase_date', 'supplier_name', 'total_cost', 'reference_note', 'created_by', 'updated_by'];
 
     public function company()
     {

@@ -22,7 +22,8 @@ class PermissionSeeder extends Seeder
                 'role_id'   => 1,
                 'menu_id'   => $menu->id,
             ], [
-                'status'    => 1,
+                'created_by' => 1,
+                'updated_by' => 1,
             ]);
         }
     }

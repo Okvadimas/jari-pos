@@ -27,7 +27,8 @@ class User extends Authenticatable
         'company_id',
         'start_date',
         'end_date',
-        'status'
+        'created_by',
+        'updated_by'
     ];
 
     /**

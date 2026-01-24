@@ -31,7 +31,6 @@
                                             <th>Aksi</th>
                                             <th>Nama</th>
                                             <th>Tipe</th>
-                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                 </table>

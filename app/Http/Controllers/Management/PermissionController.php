@@ -42,7 +42,7 @@ class PermissionController extends Controller
             'menus'     => Menu::select('menu.id', 'menu.code', 'menu.parent', 'menu.name', 'parent.name as parent_name')
                             ->join('menu as parent', 'menu.parent', 'parent.code')
                             ->where('menu.parent', '!=', '0')
-                            ->where('menu.status', 1)
+                            ->whereNull('menu.deleted_at')
                             ->orderBy('menu.id', 'asc')
                             ->get(),
         ];
@@ -58,10 +58,10 @@ class PermissionController extends Controller
             'menus'     => Menu::select('menu.id', 'menu.code', 'menu.parent', 'menu.name', 'parent.name as parent_name')
                             ->join('menu as parent', 'menu.parent', 'parent.code')
                             ->where('menu.parent', '!=', '0')
-                            ->where('menu.status', 1)
+                            ->whereNull('menu.deleted_at')
                             ->orderBy('menu.id', 'asc')
                             ->get(),
-            'permissions' => Permission::select('menu_id')->where('status', 1)->where('role_id', $id)->get(),
+            'permissions' => Permission::select('menu_id')->where('role_id', $id)->whereNull('deleted_at')->get(),
             'role'      => Role::find($id),
         ];
 

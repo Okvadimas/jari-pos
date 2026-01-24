@@ -9,7 +9,7 @@ class ProductVariant extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'product_variants';
-    protected $fillable = ['product_id', 'name', 'sku', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['product_id', 'name', 'sku', 'created_by', 'updated_by'];
 
     public function product()
     {
