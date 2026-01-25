@@ -37,6 +37,7 @@ class ProductController extends Controller
     {
         $data = [
             'title'         => $this->pageTitle,
+            'sku'           => ProductService::generateSku(),
             'categories'    => Category::select('id', 'name')->get(),
             'companies'     => Company::select('id', 'name')->get(),
             'js'            => 'resources/js/pages/inventory/product/form.js',
@@ -62,17 +63,17 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        ProductService::store($validated);
+        $process = ProductService::store($validated);
 
         $message = !empty($validated['id']) ? 'Produk berhasil diupdate' : 'Produk berhasil ditambahkan';
 
-        return $this->successResponse($message);
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
     }
 
     public function destroy(Request $request)
     {
-        ProductService::destroy($request->id);
+        $process = ProductService::destroy($request->id);
 
-        return $this->successResponse('Produk berhasil dihapus');
+        return $process ? $this->successResponse('Produk berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
     }
 }

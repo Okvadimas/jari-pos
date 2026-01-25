@@ -31,16 +31,8 @@ $(document).ready(function() {
                 }
             },
             error: function(response) {
-                let statusCode = response.status;
-                if(statusCode >= 500) {
-                    NioApp.Toast('Terjadi kesalahan', 'error', { position: 'top-right' });
-                } else {
-                    let errors = response.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-                    NioApp.Toast(firstError, 'warning', { position: 'top-right' });
-                }
+                handleAjaxError(response);
             }
         });
     });
 });
-

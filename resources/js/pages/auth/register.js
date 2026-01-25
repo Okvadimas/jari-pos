@@ -33,12 +33,8 @@ $(document).ready(function() {
                     });
                 }
             },
-            error: function(xhr, status, error) {
-                console.log(error);
-                NioApp.Toast(error.message, 'error', {
-                    position: 'top-right',
-                    duration: 2000
-                });
+            error: function(xhr) {
+                handleAjaxError(xhr);
             }
         });        
     });

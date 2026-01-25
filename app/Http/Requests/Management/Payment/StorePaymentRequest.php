@@ -43,12 +43,12 @@ class StorePaymentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Nama wajib diisi.',
-            'name.string'   => 'Nama harus berupa string.',
-            'name.max'      => 'Nama tidak boleh lebih dari 255 karakter.',
+            'name.required' => 'Nama metode pembayaran wajib diisi.',
+            'name.string'   => 'Nama metode pembayaran harus berupa string.',
+            'name.max'      => 'Nama metode pembayaran tidak boleh lebih dari 255 karakter.',
             'name.unique'   => 'Nama metode pembayaran sudah terdaftar.',
-            'type.required' => 'Tipe pembayaran wajib diisi.',
-            'type.in'       => 'Tipe pembayaran tidak valid.',
+            'type.required' => 'Tipe metode pembayaran wajib diisi.',
+            'type.in'       => 'Tipe metode pembayaran tidak valid.',
         ];
     }
 }

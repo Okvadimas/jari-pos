@@ -30,7 +30,7 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="site-email">Nama</label>
+                                                <label class="form-label" for="site-email">Nama <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan nama role/paket</span>
                                             </div>
                                         </div>
@@ -46,7 +46,7 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="site-email">Slug</label>
+                                                <label class="form-label" for="site-email">Slug <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan slug role/paket</span>
                                             </div>
                                         </div>

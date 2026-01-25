@@ -56,18 +56,17 @@ class UnitController extends Controller
     {
         $validated = $request->validated();
 
-        UnitService::store($validated);
+        $process = UnitService::store($validated);
 
         $message = !empty($validated['id']) ? 'Satuan berhasil diupdate' : 'Satuan berhasil ditambahkan';
 
-        return $this->successResponse($message);
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
     }
 
     public function destroy(Request $request)
     {
-        $unit = Unit::find($request->id);
-        $unit->delete();
+        $process = UnitService::destroy($request->id);
 
-        return $this->successResponse('Satuan berhasil dihapus');
+        return $process ? $this->successResponse('Satuan berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
     }
 }

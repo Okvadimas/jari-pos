@@ -25,9 +25,7 @@
                                 <h5 class="card-title mb-1">{{ isset($product) ? 'Edit' : 'Tambah' }} Produk</h5>
                                 <p>{{ isset($product) ? 'Edit data produk' : 'Menambahkan produk baru' }}</p>
                                 <form id="form-data" class="gy-3 form-settings">
-                                    @if(isset($product))
-                                        <input type="hidden" name="id" value="{{ $product->id }}">
-                                    @endif
+                                    <input type="hidden" name="id" value="{{ isset($product) ? $product->id : '' }}">
 
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
@@ -39,7 +37,7 @@
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <select class="js-select2" id="category_id" name="category_id" required>
+                                                    <select class="js-select2" id="category_id" name="category_id">
                                                         <option value="">Pilih Kategori</option>
                                                         @foreach ($categories as $category)
                                                             <option value="{{ $category->id }}" {{ isset($product) && $product->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -61,7 +59,7 @@
                                             <div class="col-lg-7">
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
-                                                        <select class="js-select2" id="company_id" name="company_id" required>
+                                                        <select class="js-select2" id="company_id" name="company_id">
                                                             <option value="">Pilih Perusahaan</option>
                                                             @foreach ($companies as $company)
                                                                 <option value="{{ $company->id }}" {{ isset($product) && $product->company_id == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
@@ -100,7 +98,23 @@
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($product) ? $product->name : '' }}" required>
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($product) ? $product->name : '' }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-center">
+                                        <div class="col-lg-5">
+                                            <div class="form-group">
+                                                <label class="form-label" for="sku">SKU <span class="text-danger">*</span></label>
+                                                <span class="form-note">Masukkan kode produk</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7">
+                                            <div class="form-group">
+                                                <div class="form-control-wrap">
+                                                    <input type="text" class="form-control" id="sku" name="sku" value="{{ isset($product) ? $product->sku : $sku }}">
                                                 </div>
                                             </div>
                                         </div>

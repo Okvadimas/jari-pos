@@ -56,18 +56,17 @@ class PaymentController extends Controller
     {
         $validated = $request->validated();
 
-        PaymentService::store($validated);
+        $process = PaymentService::store($validated);
 
         $message = !empty($validated['id']) ? 'Pembayaran berhasil diupdate' : 'Pembayaran berhasil ditambahkan';
 
-        return $this->successResponse($message);
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
     }
 
     public function destroy(Request $request)
     {
-        $payment = Payment::find($request->id);
-        $payment->delete();
+        $process = PaymentService::destroy($request->id);
 
-        return $this->successResponse('Pembayaran berhasil dihapus');
+        return $process ? $this->successResponse('Pembayaran berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
     }
 }

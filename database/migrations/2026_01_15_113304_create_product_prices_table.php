@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
             $table->decimal('purchase_price', 15, 0)->comment('Harga beli ke supplier');
             $table->decimal('sell_price', 15, 0)->comment('Harga jual ke customer');
+            $table->integer('is_active')->default(1)->comment('1 = Aktif, 0 = Tidak Aktif');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();

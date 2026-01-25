@@ -56,18 +56,17 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
 
-        CategoryService::store($validated);
+        $process = CategoryService::store($validated);
 
         $message = !empty($validated['id']) ? 'Kategori berhasil diupdate' : 'Kategori berhasil ditambahkan';
 
-        return $this->successResponse($message);
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
     }
 
     public function destroy(Request $request)
     {
-        $category = Category::find($request->id);
-        $category->delete();
-        
-        return $this->successResponse('Kategori berhasil dihapus');
+        $process = CategoryService::destroy($request->id);
+
+        return $process ? $this->successResponse('Kategori berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
     }
 }

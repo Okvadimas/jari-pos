@@ -13,12 +13,7 @@ const datatable = () => {
             url: '/management/user/datatable',
             type: 'GET',
             error: function (xhr) {
-                if (xhr.status === 419) { // Unauthorized error
-                    NioApp.Toast('Sesi kamu sudah habis. Silahkan login ulang 😊', 'error', {position: 'top-right'});
-                    window.location.href = "/login"; 
-                } else {
-                    NioApp.Toast('Terjadi kesalahan saat memuat data. Silahkan coba lagi.', 'error', {position: 'top-right'});
-                }
+                handleAjaxError(xhr);
             }
         },
         columns: [
@@ -59,12 +54,7 @@ function hapus(id) {
                     }
                 },
                 error: function(response) {
-                    let statusCode = response.status;
-                    if(statusCode >= 500) {
-                        NioApp.Toast('Terjadi kesalahan', 'error', { position: 'top-right' });
-                    } else {
-                        NioApp.Toast(response.responseJSON.message, 'warning', { position: 'top-right' });
-                    }
+                    handleAjaxError(response);
                 }
             });
         }

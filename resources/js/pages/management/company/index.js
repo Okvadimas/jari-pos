@@ -12,12 +12,7 @@ const datatable = () => {
             url: '/management/company/datatable',
             type: 'GET',
             error: function (xhr) {
-                if (xhr.status === 419) { // Unauthorized error
-                    NioApp.Toast('Sesi kamu sudah habis. Silahkan login ulang 😊', 'error', {position: 'top-right'});
-                    window.location.href = "/login"; 
-                } else {
-                    NioApp.Toast('Terjadi kesalahan saat memuat data. Silahkan coba lagi.', 'error', {position: 'top-right'});
-                }
+                handleAjaxError(xhr);
             }
         },
         columns: [
@@ -56,9 +51,8 @@ function hapus(id) {
                         NioApp.Toast(response.message, 'warning', { position: 'top-right' });
                     }
                 },
-                error: function(error) {
-                    console.log(error);
-                    NioApp.Toast('Error while fetching data', 'error', { position: 'top-right' });
+                error: function(response) {
+                    handleAjaxError(response);
                 }
             });
         }

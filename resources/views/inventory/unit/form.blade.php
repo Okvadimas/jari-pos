@@ -25,20 +25,19 @@
                                 <h5 class="card-title mb-1">{{ isset($unit) ? 'Edit' : 'Tambah' }} Satuan</h5>
                                 <p>{{ isset($unit) ? 'Edit data satuan' : 'Menambahkan satuan baru' }}</p>
                                 <form id="form-data" class="gy-3 form-settings">
-                                    @if(isset($unit))
-                                        <input type="hidden" name="id" value="{{ $unit->id }}">
-                                    @endif
+                                    <input type="hidden" name="id" value="{{ isset($unit) ? $unit->id : '' }}">
+
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="code">Kode Satuan</label>
-                                                <span class="form-note">Masukkan kode satuan (Max 10 karakter)</span>
+                                                <label class="form-label" for="code">Kode Satuan <span class="text-danger">*</span></label>
+                                                <span class="form-note">Masukkan kode satuan (Maksimal 10 karakter)</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="code" name="code" value="{{ isset($unit) ? $unit->code : '' }}" required maxlength="10">
+                                                    <input type="text" class="form-control" id="code" name="code" value="{{ isset($unit) ? $unit->code : '' }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -46,14 +45,14 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="name">Nama Satuan</label>
+                                                <label class="form-label" for="name">Nama Satuan <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan nama satuan</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($unit) ? $unit->name : '' }}" required>
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($unit) ? $unit->name : '' }}">
                                                 </div>
                                             </div>
                                         </div>

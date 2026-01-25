@@ -49,4 +49,16 @@ class PaymentService {
         }
     }
 
+    public static function destroy($id)
+    {
+        try {
+            $payment = Payment::find($id);
+            $payment->delete();
+            return true;
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
 }

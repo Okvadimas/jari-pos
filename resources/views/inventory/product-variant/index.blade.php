@@ -13,12 +13,12 @@
                             </div><!-- .nk-block-head-content -->
 
                             <div class="nk-block-head-content d-none d-lg-block">
-                                <a href="{{ route('inventory-product-create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Produk</span></a>
+                                <a href="{{ route('inventory-product-variant-create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Varian</span></a>
                             </div>
                             
                         </div><!-- .nk-block-between -->
                         <div class="nk-block-head-content mt-3 d-block d-lg-none">
-                            <a href="{{ route('inventory-product-create') }}" class="btn btn-primary mb-1 w-100"><em class="icon ni ni-plus"></em><span>Tambah Produk</span></a>
+                            <a href="{{ route('inventory-product-variant-create') }}" class="btn btn-primary mb-1 w-100"><em class="icon ni ni-plus"></em><span>Tambah Varian</span></a>
                         </div>
                     </div><!-- .nk-block-head -->
                     <div class="nk-block">
@@ -30,7 +30,10 @@
                                             <th>No</th>
                                             <th>Aksi</th>
                                             <th>Nama Produk</th>
+                                            <th>Nama Varian</th>
                                             <th>Kategori</th>
+                                            <th>Harga Beli</th>
+                                            <th>Harga Jual</th>
                                         </tr>
                                     </thead>
                                 </table>

@@ -14,6 +14,7 @@ class CompanySeeder extends Seeder
     public function run(): void
     {
         Company::create([
+            'code' => 'JPO',
             'name' => 'Jari POS Official',
             'email' => 'company@jaripos.com',
             'phone' => '08123456789',
@@ -24,6 +25,7 @@ class CompanySeeder extends Seeder
         ]);
 
         Company::create([
+            'code' => 'DC',
             'name' => 'Demo Company',
             'email' => 'demo@jaripos.com',
             'phone' => '08987654321',
