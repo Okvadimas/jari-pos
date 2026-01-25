@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Session;
 
 use App\Repositories\Inventory\ProductRepository;
 
@@ -52,7 +53,20 @@ class ProductService
 
     public static function destroy($id)
     {
-        $product = Product::find($id);
-        $product->delete();
+        try {
+            $product = Product::find($id);
+            $product->delete();
+            return true;
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
+    public static function generateSku()
+    {
+        $company = Session::get('company_code');
+        $sku = DB::selectOne('CALL generate_kode(?, ?)', ['PRD', $company])->code;
+        return $sku;
     }
 }

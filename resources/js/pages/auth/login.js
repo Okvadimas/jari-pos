@@ -26,14 +26,8 @@ $(document).ready(function() {
                     NioApp.Toast(response.message, 'warning', { position: 'top-right' });
                 }
             },
-            error: function(xhr, status, error) {
-                let statusCode = xhr.status;
-                if(statusCode >= 500) {
-                    NioApp.Toast('Terjadi kesalahan pada server', 'error', { position: 'top-right' });
-                } else {
-                    let message = xhr.responseJSON?.message || 'Terjadi kesalahan';
-                    NioApp.Toast(message, 'warning', { position: 'top-right' });
-                }
+            error: function(xhr) {
+                handleAjaxError(xhr);
             }
         });        
     });

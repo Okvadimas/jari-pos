@@ -25,20 +25,19 @@
                                 <h5 class="card-title mb-1">{{ isset($company) ? 'Edit' : 'Tambah' }} Perusahaan</h5>
                                 <p>{{ isset($company) ? 'Edit data perusahaan' : 'Menambahkan perusahaan baru' }}</p>
                                 <form id="form-data" class="gy-3 form-settings">
-                                    @if(isset($company))
-                                        <input type="hidden" name="id" value="{{ $company->id }}">
-                                    @endif
+                                    <input type="hidden" name="id" value="{{ isset($company) ? $company->id : '' }}">
+                                    
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="name">Nama Perusahaan</label>
+                                                <label class="form-label" for="name">Nama Perusahaan <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan nama perusahaan</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($company) ? $company->name : '' }}" required>
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($company) ? $company->name : '' }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -46,14 +45,14 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="email">Email</label>
+                                                <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan email perusahaan</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="email" class="form-control" id="email" name="email" value="{{ isset($company) ? $company->email : '' }}" required>
+                                                    <input type="text" class="form-control" id="email" name="email" value="{{ isset($company) ? $company->email : '' }}">
                                                 </div>
                                             </div>
                                         </div>

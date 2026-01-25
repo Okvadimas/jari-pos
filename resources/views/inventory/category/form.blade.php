@@ -25,21 +25,19 @@
                                 <h5 class="card-title mb-1">{{ isset($category) ? 'Edit' : 'Tambah' }} Kategori</h5>
                                 <p>{{ isset($category) ? 'Edit data kategori' : 'Menambahkan kategori baru' }}</p>
                                 <form id="form-data" class="gy-3 form-settings">
-                                    @if(isset($category))
-                                        <input type="hidden" name="id" value="{{ $category->id }}">
-                                    @endif
+                                    <input type="hidden" name="id" value="{{ isset($category) ? $category->id : '' }}">
                                     
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="name">Nama Kategori</label>
+                                                <label class="form-label" for="name">Nama Kategori <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan nama kategori</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($category) ? $category->name : '' }}" required>
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ isset($category) ? $category->name : '' }}">
                                                 </div>
                                             </div>
                                         </div>

@@ -56,18 +56,17 @@ class CompanyController extends Controller
     {
         $validated = $request->validated();
 
-        CompanyService::store($validated);
+        $process = CompanyService::store($validated);
 
         $message = !empty($validated['id']) ? 'Perusahaan berhasil diupdate' : 'Perusahaan berhasil ditambahkan';
 
-        return $this->successResponse($message);
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
     }
 
     public function destroy(Request $request)
     {
-        $company = Company::find($request->id);
-        $company->delete();
+        $process = CompanyService::destroy($request->id);
 
-        return $this->successResponse('Perusahaan berhasil dihapus');
+        return $process ? $this->successResponse('Perusahaan berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
     }
 }

@@ -72,18 +72,17 @@ class PermissionController extends Controller
     {
         $validated = $request->validated();
 
-        PermissionService::store($validated);
+        $process = PermissionService::store($validated);
 
         $message = !empty($validated['id']) ? 'Akses berhasil diupdate' : 'Akses berhasil ditambahkan';
 
-        return $this->successResponse($message);
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
     }
 
     public function destroy(Request $request)
     {
-        $permission = Permission::find($request->id);
-        $permission->delete();
+        $process = PermissionService::destroy($request->id);
 
-        return $this->successResponse('Akses berhasil dihapus');
+        return $process ? $this->successResponse('Akses berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
     }
 }

@@ -47,4 +47,16 @@ class CategoryService
             return false;
         }
     }
+
+    public static function destroy($id)
+    {
+        try {
+            $category = Category::find($id);
+            $category->delete();
+            return true;
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
 }

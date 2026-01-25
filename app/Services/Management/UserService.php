@@ -49,4 +49,16 @@ class UserService {
         return $user;
     }
 
+    public static function destroy($id)
+    {
+        try {
+            $user = User::find($id);
+            $user->delete();
+            return true;
+        } catch (\Throwable $th) {
+            \Illuminate\Support\Facades\Log::error($th->getMessage());
+            return false;
+        }
+    }
+
 }

@@ -70,4 +70,16 @@ class CompanyService
         }
     }
 
+    public static function destroy($id)
+    {
+        try {
+            $company = Company::find($id);
+            $company->delete();
+            return true;
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
 }

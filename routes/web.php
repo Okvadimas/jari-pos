@@ -21,6 +21,7 @@ use App\Http\Controllers\Management\PaymentController       as PaymentManagement
 use App\Http\Controllers\Inventory\UnitController           as UnitController;
 use App\Http\Controllers\Inventory\CategoryController       as CategoryController;
 use App\Http\Controllers\Inventory\ProductController        as ProductController;
+use App\Http\Controllers\Inventory\ProductVariantController as ProductVariantController;
 
 Route::get('/', [LandingController::class, 'index'])->name('root');
 

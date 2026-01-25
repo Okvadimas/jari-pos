@@ -45,7 +45,7 @@ class PermissionService {
             }
 
             // Delete Insert Permissions
-            Permission::where('role_id', $role->id)->delete();
+            Permission::where('role_id', $role->id)->forceDelete();
 
             $data_permission = [];
             foreach ($validated['menus'] as $menu) {
@@ -63,6 +63,22 @@ class PermissionService {
             return true;
         } catch (\Throwable $th) {
             DB::rollBack();
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
+
+    public static function destroy($id)
+    {
+        try {
+            // Delete permissions related to this role first
+            Permission::where('role_id', $id)->forceDelete();
+            
+            // Delete the role
+            $role = Role::find($id);
+            $role->delete();
+            return true;
+        } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return false;
         }

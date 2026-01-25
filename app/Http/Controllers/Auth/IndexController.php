@@ -43,10 +43,10 @@ class IndexController extends Controller
 
         $credential = $request->only('username', 'password');
         if(Auth::attempt($credential)) {
-            $user = Auth::user();
-            $request->session()->put('user', $user);
-            $request->session()->put('role', $user->role->slug);
-            $request->session()->put('company', $user->company);
+            $request->session()->regenerate();
+            $request->session()->put('role_slug', Auth::user()->role->slug);
+            $request->session()->put('company_id', Auth::user()->company_id);
+            $request->session()->put('company_code', Auth::user()->company->code);
             
             $menu = MenuService::generateMenu();
             $request->session()->put('menu', $menu);

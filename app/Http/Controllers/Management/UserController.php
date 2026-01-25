@@ -64,19 +64,18 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        UserService::store($validated);
+        $process = UserService::store($validated);
 
         $message = !empty($validated['id']) ? 'User berhasil diupdate' : 'User berhasil ditambahkan';
 
-        return $this->successResponse($message);
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
     }
 
     public function destroy(Request $request)
     {
-        $user = User::find($request->id);
-        $user->delete();
+        $process = UserService::destroy($request->id);
 
-        return $this->successResponse('User berhasil dihapus');
+        return $process ? $this->successResponse('User berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
     }
 
 }

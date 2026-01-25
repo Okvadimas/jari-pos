@@ -29,7 +29,7 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="site-name">Perusahaan</label>
+                                                <label class="form-label" for="site-name">Perusahaan <span class="text-danger">*</span></label>
                                                 <span class="form-note">Pilih perusahaan yang akan di akses</span>
                                             </div>
                                         </div>
@@ -48,7 +48,7 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="site-email">Username</label>
+                                                <label class="form-label" for="site-email">Username <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan username user</span>
                                             </div>
                                         </div>
@@ -63,7 +63,7 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="site-email">Nama</label>
+                                                <label class="form-label" for="site-email">Nama <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan nama user</span>
                                             </div>
                                         </div>
@@ -78,7 +78,7 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="site-email">Email</label>
+                                                <label class="form-label" for="site-email">Email <span class="text-danger">*</span></label>
                                                 <span class="form-note">Masukkan email user</span>
                                             </div>
                                         </div>
@@ -93,7 +93,7 @@
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label">Paket</label>
+                                                <label class="form-label">Paket <span class="text-danger">*</span></label>
                                                 <span class="form-note">Pilih paket yang akan di akses</span>
                                             </div>
                                         </div>

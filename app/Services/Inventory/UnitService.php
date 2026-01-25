@@ -47,4 +47,16 @@ class UnitService
             return false;
         }
     }
+
+    public static function destroy($id)
+    {
+        try {
+            $unit = Unit::find($id);
+            $unit->delete();
+            return true;
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return false;
+        }
+    }
 }
