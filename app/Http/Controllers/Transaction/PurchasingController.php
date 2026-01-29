@@ -19,6 +19,7 @@ class PurchasingController extends Controller
         $data = [
             'startDate' => $startDate,
             'endDate' => $endDate,
+            'title' => 'Laporan Pembelian',
             'js' => 'resources/js/pages/transaction/purchasing/index.js',
         ];
 
@@ -45,7 +46,38 @@ class PurchasingController extends Controller
             ->editColumn('total_cost', function ($row) {
                 return 'Rp ' . number_format($row->total_cost, 0, ',', '.');
             })
-            ->rawColumns(['action']) // In case we add actions later
+            ->addColumn('action', function ($row) {
+                return '<button class="btn btn-sm btn-icon btn-trigger btn-detail" data-id="' . $row->id . '" title="View Details">
+                            <em class="icon ni ni-eye"></em>
+                        </button>';
+            })
+            ->rawColumns(['action'])
             ->make(true);
+    }
+
+    public function show($id)
+    {
+        $purchase = Purchase::with(['company', 'details.variant.product'])->findOrFail($id);
+        
+        // Format response data
+        $details = $purchase->details->map(function($detail) {
+            $productName = optional($detail->variant->product)->name ?? '-';
+            $variantName = optional($detail->variant)->name ?? '';
+            
+            return [
+                'product_name' => trim($productName . ' ' . $variantName),
+                'sku' => optional($detail->variant)->sku ?? '-',
+                'quantity' => $detail->quantity,
+                'cost' => $detail->cost_price_per_item,
+                'total' => $detail->quantity * $detail->cost_price_per_item
+            ];
+        });
+
+        return response()->json([
+            'purchase' => $purchase,
+            'company_name' => $purchase->company ? $purchase->company->name : $purchase->supplier_name,
+            'purchase_date_formatted' => Carbon::parse($purchase->purchase_date)->format('d M Y H:i'),
+            'details' => $details
+        ]);
     }
 }
