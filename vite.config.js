@@ -120,6 +120,16 @@ export default defineConfig({
                 // ================================
                 'resources/js/pages/inventory/category/index.js',
                 'resources/js/pages/inventory/category/form.js',
+
+                // ================================
+                // Transaction - Sales
+                // ================================
+                'resources/js/pages/transaction/sales/index.js',
+
+                // ================================
+                // Transaction - Purchasing
+                // ================================
+                'resources/js/pages/transaction/purchasing/index.js',
             ],
             refresh: true,
         }),
