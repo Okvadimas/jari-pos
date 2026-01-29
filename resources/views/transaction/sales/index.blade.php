@@ -8,7 +8,7 @@
                 <div class="nk-block-head nk-block-head-sm">
                     <div class="nk-block-between">
                         <div class="nk-block-head-content">
-                            <h3 class="nk-block-title page-title">Sales Report</h3>
+                            <h3 class="nk-block-title page-title">{{ $title }}</h3>
                         </div>
                     </div>
                 </div><!-- .nk-block-head -->
@@ -56,6 +56,7 @@
                                         <th>Customer</th>
                                         <th class="text-end">Total Amount</th>
                                         <th class="text-end">Final Amount</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -64,6 +65,70 @@
                         </div>
                     </div><!-- .card-preview -->
                 </div><!-- .nk-block -->
+
+                <!-- Modal Detail -->
+                <div class="modal fade" tabindex="-1" id="modal-detail">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Sales Order Details</h5>
+                                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <em class="icon ni ni-cross"></em>
+                                </a>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-muted">Customer</label>
+                                            <div class="form-control-wrap">
+                                                <span class="fs-5" id="detail-customer">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="form-label text-muted">Date</label>
+                                            <div class="form-control-wrap">
+                                                <span class="fs-5" id="detail-date">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th class="text-end">Qty</th>
+                                                <th class="text-end">Price</th>
+                                                <th class="text-end">Discount</th>
+                                                <th class="text-end">Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="detail-items">
+                                            <!-- Items will be populated via JS -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="4" class="text-end">Total Amount</th>
+                                                <th class="text-end" id="detail-total-amount">Rp 0</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="4" class="text-end">Promo Discount</th>
+                                                <th class="text-end" id="detail-discount-manual">Rp 0</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="4" class="text-end">Grand Total</th>
+                                                <th class="text-end fw-bold fs-5" id="detail-final-amount">Rp 0</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
