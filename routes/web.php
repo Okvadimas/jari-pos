@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\POS\IndexController                as POSController;
+
 // Landing
 use App\Http\Controllers\Landing\IndexController            as LandingController;
 
@@ -50,6 +52,15 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     // Dashboard
     Route::get('/dashboard',        [DashboardController::class, 'index'])->name('dashboard');
     // End Dashboard
+
+    // POS Routes
+    Route::group(['prefix' => 'pos', 'middleware' => ['web', 'auth']], function () {
+        Route::get('/', [POSController::class, 'index'])->name('pos.index');
+        Route::get('/products', [POSController::class, 'getProducts'])->name('pos.products');
+        Route::get('/categories', [POSController::class, 'getCategories'])->name('pos.categories');
+        Route::get('/top-selling', [POSController::class, 'getTopSelling'])->name('pos.top-selling');
+        Route::get('/vouchers', [POSController::class, 'getVouchers'])->name('pos.vouchers');
+    });
 
     // Management
     Route::group(['prefix' => 'management'], function () {

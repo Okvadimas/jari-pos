@@ -49,6 +49,15 @@ function formatCurrency(value, separator = '.') {
     return value.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 }
 
+/**
+ * Format number to Rupiah display string
+ * @param {number} amount - Amount to format
+ * @returns {string} Formatted currency string (e.g., "Rp 150.000")
+ */
+function formatRupiah(amount) {
+    return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount || 0);
+}
+
 $(document).on('input', '.currency-input', function () {
     this.value = formatCurrency(this.value);
 });
@@ -119,4 +128,5 @@ function handleAjaxError(response, options = {}) {
 
 // Expose to global scope for all scripts
 window.formatCurrency = formatCurrency;
+window.formatRupiah = formatRupiah;
 window.handleAjaxError = handleAjaxError;
