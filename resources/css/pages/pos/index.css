@@ -289,6 +289,7 @@ body {
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
+    border: 1px solid var(--pos-border);
 }
 
 /* ============================================
@@ -1213,7 +1214,7 @@ body {
 
     /* Navbar Fixes */
     .pos-navbar {
-        padding: 0 12px;
+        padding: 10px 12px 0px;
         height: auto;
         min-height: 56px;
         position: sticky;
@@ -1225,7 +1226,7 @@ body {
     }
 
     .pos-navbar-left {
-        gap: 12px;
+        gap: 0;
         width: 100%; /* Ensure full width for spacing */
     }
     
@@ -1364,7 +1365,7 @@ body {
 
     .pos-welcome {
         font-size: 1rem;
-        max-width: 150px;
+        max-width: 200px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1385,21 +1386,16 @@ body {
     .pos-search-icon {
         width: 14px;
         height: 14px;
-        left: 10px;
+        left: 14px;
     }
 
     .pos-navbar-right {
         gap: 8px;
     }
-    
-    .pos-theme-toggle, .pos-navbar-btn {
-        display: none; /* Hide non-essential buttons on mobile */
-    }
 
     .pos-avatar {
-        width: 32px;
-        height: 32px;
         font-size: 0.8rem;
+        border: 1px solid var(--pos-border);
     }
     
     /* Product Panel */
@@ -1500,14 +1496,27 @@ body {
 /* ============================================
     Desktop Defaults (Reset Mobile Styles)
     ============================================ */
+/* Default hidden */
 .pos-mobile-menu-overlay,
 .pos-mobile-menu {
     display: none;
 }
 
+/* Active State for Mobile (overrides display:none) */
+.pos-mobile-menu-overlay.active {
+    display: block;  /* Show overlay when active */
+}
+.pos-mobile-menu.active {
+    display: block;  /* Show menu when active */
+    transform: translateX(0); /* Slide in */
+}
+
+/* Force hide on Desktop even if active class is present */
 @media (min-width: 769px) {
     .pos-mobile-menu-overlay,
-    .pos-mobile-menu {
+    .pos-mobile-menu,
+    .pos-mobile-menu-overlay.active,
+    .pos-mobile-menu.active {
         display: none !important;
     }
 }
