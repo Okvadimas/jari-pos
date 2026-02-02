@@ -25,6 +25,10 @@ use App\Http\Controllers\Inventory\CategoryController       as CategoryControlle
 use App\Http\Controllers\Inventory\ProductController        as ProductController;
 use App\Http\Controllers\Inventory\ProductVariantController as ProductVariantController;
 
+// Transaction
+use App\Http\Controllers\Transaction\SalesController        as SalesController;
+use App\Http\Controllers\Transaction\PurchasingController   as PurchasingController;
+
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
 // PWA Offline Page
@@ -146,4 +150,14 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         });
     });
 
+    // Transaction
+    Route::group(['prefix' => 'transaction'], function () {
+        Route::get('/sales', [SalesController::class, 'index'])->name('transaction.sales.index');
+        Route::get('/sales/datatable', [SalesController::class, 'datatable'])->name('transaction.sales.datatable');
+        Route::get('/sales/show/{id}', [SalesController::class, 'show'])->name('transaction.sales.show');
+
+        Route::get('/purchasing', [PurchasingController::class, 'index'])->name('transaction.purchasing.index');
+        Route::get('/purchasing/datatable', [PurchasingController::class, 'datatable'])->name('transaction.purchasing.datatable');
+        Route::get('/purchasing/show/{id}', [PurchasingController::class, 'show'])->name('transaction.purchasing.show');
+    });
 });

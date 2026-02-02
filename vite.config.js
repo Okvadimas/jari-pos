@@ -126,6 +126,16 @@ export default defineConfig({
                 // ================================
                 'resources/css/pages/pos/index.css',
                 'resources/js/pages/pos/index.js',
+
+                // ================================
+                // Transaction - Sales
+                // ================================
+                'resources/js/pages/transaction/sales/index.js',
+
+                // ================================
+                // Transaction - Purchasing
+                // ================================
+                'resources/js/pages/transaction/purchasing/index.js',
             ],
             refresh: true,
         }),

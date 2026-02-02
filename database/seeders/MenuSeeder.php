@@ -108,7 +108,7 @@ class MenuSeeder extends Seeder
                 'parent'    => 'TR',
                 'name'      => 'Pembelian',
                 'icon'      => 'ni ni-cart-fill',
-                'url'       => '/transaction/purchase',
+                'url'       => '/transaction/purchasing',
             ],
             [
                 'code'      => 'TR-02',
