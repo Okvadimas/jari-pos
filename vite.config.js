@@ -120,6 +120,12 @@ export default defineConfig({
                 // ================================
                 'resources/js/pages/inventory/category/index.js',
                 'resources/js/pages/inventory/category/form.js',
+
+                // ================================
+                // POS
+                // ================================
+                'resources/css/pages/pos/index.css',
+                'resources/js/pages/pos/index.js',
             ],
             refresh: true,
         }),

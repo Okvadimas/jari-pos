@@ -28,6 +28,11 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             ProductVariantSeeder::class,
             ProductPriceSeeder::class,
+
+            // Dummy Data
+            DummySalesSeeder::class,
+            DummyPurchaseSeeder::class,
+            DummyPromotionSeeder::class,
         ]);
     }
 }
