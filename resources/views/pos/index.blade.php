@@ -6,11 +6,9 @@
     <nav class="pos-navbar">
         <div class="pos-navbar-top">
             <div class="pos-navbar-left">
-                <button class="pos-mobile-menu-btn" onclick="toggleMobileMenu()">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
-                    </svg>
-                </button>
+                <div class="pos-navbar-brand d-block d-md-none">
+                     <!-- Removed Toggle Button, can put Logo here if needed, or empty -->
+                </div>
                 <div>
                     <h1 class="pos-welcome">Halo, {{ explode(' ', auth()->user()->name ?? 'Guest')[0] }}</h1>
                     <div class="pos-date" id="currentDate"></div>
@@ -27,26 +25,17 @@
             </div>
             
             <div class="pos-navbar-right">
-                <!-- Desktop Buttons -->
-                <div class="pos-desktop-actions">
-                    <div class="pos-theme-toggle">
-                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
-                        </svg>
-                        <div class="pos-toggle-switch" onclick="toggleTheme()"></div>
-                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-                        </svg>
-                    </div>
-                    
-                    <button class="pos-navbar-btn" title="Refresh" onclick="loadProducts()">
+                <!-- Unified Actions (Visible on all devices) -->
+                <div class="pos-actions d-flex align-items-center">
+                    <!-- Refresh Button -->
+                    <button class="pos-navbar-btn me-2" title="Refresh" onclick="loadProducts()">
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                         </svg>
                     </button>
                     
                     <!-- Notification Dropdown -->
-                    <div class="dropdown d-inline-block">
+                    <div class="dropdown d-inline-block me-2">
                         <button class="pos-navbar-btn border-0" data-bs-toggle="dropdown" aria-expanded="false" title="Notifikasi">
                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
@@ -71,17 +60,57 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <button class="pos-navbar-btn" title="Pengaturan" onclick="openSettingsModal()">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </button>
-                </div>
-                
-                <div class="pos-avatar">
-                    {{ strtoupper(substr(auth()->user()->name ?? 'G', 0, 1)) }}
+
+                    <!-- User Avatar Dropdown -->
+                    <div class="dropdown user-dropdown">
+                        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                            <div class="pos-avatar">
+                                {{ strtoupper(substr(auth()->user()->name ?? 'G', 0, 1)) }}
+                            </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-md dropdown-menu-end">
+                            <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
+                                <div class="user-card">
+                                    <div class="user-avatar">
+                                        <span>{{ strtoupper(substr(auth()->user()->name ?? 'G', 0, 1)) }}</span>
+                                    </div>
+                                    <div class="user-info">
+                                        <span class="lead-text">{{ auth()->user()->name ?? 'Guest' }}</span>
+                                        <span class="sub-text">{{ auth()->user()->email ?? '' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-inner">
+                                <ul class="link-list">
+                                    <li>
+                                        <a href="#" onclick="event.preventDefault(); openSettingsModal()">
+                                            <em class="icon ni ni-setting-alt"></em>
+                                            <span>Pengaturan POS</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="event.preventDefault(); toggleTheme()">
+                                            <em class="icon ni ni-moon"></em>
+                                            <span>Mode Gelap</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-inner">
+                                <ul class="link-list">
+                                    <li>
+                                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            <em class="icon ni ni-signout"></em>
+                                            <span>Keluar</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,31 +126,7 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu Sidebar/Drawer -->
-    <div class="pos-mobile-menu-overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
-    <div class="pos-mobile-menu" id="mobileMenu">
-        <div class="pos-mobile-menu-header">
-            <h3>Menu</h3>
-            <button class="pos-close-btn" onclick="toggleMobileMenu()">&times;</button>
-        </div>
-        <div class="pos-mobile-menu-items">
-            <!-- Content will be cloned from desktop actions using JS or just static duplication -->
-             <div class="pos-theme-toggle-mobile" onclick="toggleTheme()">
-                <span>Dark Mode</span>
-                <div class="pos-toggle-switch"></div>
-            </div>
-            <a href="#" class="pos-mobile-item" onclick="loadProducts(); toggleMobileMenu()">
-                Connect / Refresh
-            </a>
-            <a href="#" class="pos-mobile-item">Notifications</a>
-            <a href="#" class="pos-mobile-item">Settings</a>
-            <div class="pos-mobile-divider"></div>
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="pos-mobile-item text-danger">Logout</a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                @csrf
-            </form>
-        </div>
-    </div>
+    <!-- Mobile Menu Sidebar Removed -->
 
     <!-- Content Area -->
     <div class="pos-content">
