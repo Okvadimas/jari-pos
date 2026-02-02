@@ -13,14 +13,14 @@ class SalesController extends Controller
 {
     public function index(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $startDate  = Carbon::now()->startOfMonth()->format('d/m/Y');
+        $endDate    = Carbon::now()->endOfMonth()->format('d/m/Y');
 
         $data = [
             'startDate' => $startDate,
-            'endDate' => $endDate,
-            'title' => 'Laporan Penjualan',
-            'js' => 'resources/js/pages/transaction/sales/index.js',
+            'endDate'   => $endDate,
+            'title'     => 'Laporan Penjualan',
+            'js'        => 'resources/js/pages/transaction/sales/index.js',
         ];
 
         return view('transaction.sales.index', $data);
@@ -28,34 +28,33 @@ class SalesController extends Controller
 
     public function datatable(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $startDate  = Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
+        $endDate    = Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
 
-        $data = SalesOrder::with(['company'])
-            ->whereBetween('order_date', [$startDate, $endDate])
-            ->latest();
+        $data   = SalesOrder::whereBetween('order_date', [$startDate, $endDate])
+                    ->latest();
 
         return DataTables::of($data)
-            ->addIndexColumn()
-            ->editColumn('order_date', function ($row) {
-                return Carbon::parse($row->order_date)->format('d M Y');
-            })
-            ->addColumn('customer_name', function ($row) {
-                return optional($row->company)->name ?? 'Guest';
-            })
-            ->editColumn('total_amount', function ($row) {
-                return 'Rp ' . number_format($row->total_amount, 0, ',', '.');
-            })
-            ->editColumn('final_amount', function ($row) {
-                return 'Rp ' . number_format($row->final_amount, 0, ',', '.');
-            })
-            ->addColumn('action', function ($row) {
-                return '<button class="btn btn-sm btn-icon btn-trigger btn-detail" data-id="' . $row->id . '" title="View Details">
-                            <em class="icon ni ni-eye"></em>
-                        </button>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+                    ->addIndexColumn()
+                    ->editColumn('order_date', function ($row) {
+                        return Carbon::parse($row->order_date)->format('d M Y');
+                    })
+                    ->addColumn('customer_name', function ($row) {
+                        return optional($row->company)->name ?? 'Guest';
+                    })
+                    ->editColumn('total_amount', function ($row) {
+                        return 'Rp ' . number_format($row->total_amount, 0, ',', '.');
+                    })
+                    ->editColumn('final_amount', function ($row) {
+                        return 'Rp ' . number_format($row->final_amount, 0, ',', '.');
+                    })
+                    ->addColumn('action', function ($row) {
+                        return '<button class="btn btn-sm btn-icon btn-trigger btn-detail" data-id="' . $row->id . '" title="View Details">
+                                    <em class="icon ni ni-eye"></em>
+                                </button>';
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
     }
 
     public function show($id)
