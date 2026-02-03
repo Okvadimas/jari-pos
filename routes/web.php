@@ -157,7 +157,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::get('/sales/show/{id}', [SalesController::class, 'show'])->name('transaction.sales.show');
 
         Route::get('/purchasing', [PurchasingController::class, 'index'])->name('transaction.purchasing.index');
-        Route::get('/purchasing/datatable', [PurchasingController::class, 'datatable'])->name('transaction.purchasing.datatable');
+    Route::get('/purchasing/datatable', [PurchasingController::class, 'datatable'])->name('transaction.purchasing.datatable');
         Route::get('/purchasing/show/{id}', [PurchasingController::class, 'show'])->name('transaction.purchasing.show');
     });
 });

@@ -11,7 +11,7 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use Faker\Factory as Faker;
 
-class DummyPurchaseSeeder extends Seeder
+class PurchaseSeeder extends Seeder
 {
     /**
      * Run the database seeds.
