@@ -8,7 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Carbon\Carbon;
 
-class DummyPromotionSeeder extends Seeder
+class PromotionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
