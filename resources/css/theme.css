@@ -355,6 +355,24 @@ a.text-primary:focus,
     background-color: #e7eef7;
     border-color: #e7eef7;
 }
+.btn-check:checked + .btn {
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
+}
+.btn-check + .btn:hover {
+    color: var(--app-primary);
+    border-color: var(--app-primary);
+}
+.btn-check:checked + .btn:hover {
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
+    color: #ffffff;
+}
+.btn-check:checked + .btn:focus-visible {
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
+    color: #ffffff;
+}
 
 .btn-dim.btn-outline-primary {
     color: var(--app-primary);

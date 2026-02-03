@@ -3036,6 +3036,7 @@ div.dataTables_wrapper div.dataTables_filter .input-group.has-validation > .form
   --bs-btn-disabled-bg: transparent;
   --bs-btn-disabled-border-color: #854fff;
   --bs-gradient: none;
+  cursor: pointer;
 }
 
 .btn-outline-secondary {
