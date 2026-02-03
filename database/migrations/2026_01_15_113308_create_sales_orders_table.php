@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sales_orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
+            $table->string('customer_name');
             $table->date('order_date');
             $table->decimal('total_amount', 15, 2)->comment('Total sebelum diskon manual');
             $table->foreignId('applied_promo_id')->nullable()->constrained('promotions')->nullOnDelete();

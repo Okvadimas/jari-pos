@@ -11,7 +11,7 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use Faker\Factory as Faker;
 
-class DummySalesSeeder extends Seeder
+class SalesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -41,6 +41,7 @@ class DummySalesSeeder extends Seeder
                 // Create Order
                 $salesOrder = SalesOrder::create([
                     'company_id' => $companyId,
+                    'customer_name' => $faker->name,
                     'order_date' => $orderDate,
                     'total_amount' => 0, // Calculated later
                     'applied_promo_id' => null,

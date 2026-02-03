@@ -30,9 +30,9 @@ class DatabaseSeeder extends Seeder
             ProductPriceSeeder::class,
 
             // Dummy Data
-            DummySalesSeeder::class,
-            DummyPurchaseSeeder::class,
-            DummyPromotionSeeder::class,
+            SalesSeeder::class,
+            PurchaseSeeder::class,
+            PromotionSeeder::class,
         ]);
     }
 }
