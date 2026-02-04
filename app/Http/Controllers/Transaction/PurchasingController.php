@@ -5,22 +5,24 @@ namespace App\Http\Controllers\Transaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Yajra\DataTables\Facades\DataTables;
 
+use App\Services\Transaction\PurchasingService;
 use App\Models\Purchase;
 
 class PurchasingController extends Controller
 {
+    private $pageTitle = 'Laporan Pembelian';
+
     public function index(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $startDate  = Carbon::now()->startOfMonth()->format('d/m/Y');
+        $endDate    = Carbon::now()->endOfMonth()->format('d/m/Y');
 
         $data = [
             'startDate' => $startDate,
-            'endDate' => $endDate,
-            'title' => 'Laporan Pembelian',
-            'js' => 'resources/js/pages/transaction/purchasing/index.js',
+            'endDate'   => $endDate,
+            'title'     => $this->pageTitle,
+            'js'        => 'resources/js/pages/transaction/purchasing/index.js',
         ];
 
         return view('transaction.purchasing.index', $data);
@@ -28,31 +30,23 @@ class PurchasingController extends Controller
 
     public function datatable(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $startDate  = Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
+        $endDate    = Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
 
-        $data = Purchase::with(['company'])
-            ->whereBetween('purchase_date', [$startDate, $endDate])
-            ->latest();
+        return PurchasingService::datatable($startDate, $endDate);
+    }
 
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->editColumn('purchase_date', function ($row) {
-                return Carbon::parse($row->purchase_date)->format('d M Y');
-            })
-            ->addColumn('supplier_name', function ($row) {
-                return $row->supplier_name ?? optional($row->company)->name ?? '-';
-            })
-            ->editColumn('total_cost', function ($row) {
-                return 'Rp ' . number_format($row->total_cost, 0, ',', '.');
-            })
-            ->addColumn('action', function ($row) {
-                return '<button class="btn btn-sm btn-icon btn-trigger btn-detail" data-id="' . $row->id . '" title="View Details">
-                            <em class="icon ni ni-eye"></em>
-                        </button>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+    public function summary(Request $request)
+    {
+        $startDate  = Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
+        $endDate    = Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
+
+        $summary = PurchasingService::getSummary($startDate, $endDate);
+
+        return response()->json([
+            'total_transaksi' => number_format($summary->total_transaksi, 0, ',', '.'),
+            'total_pembelian' => 'Rp ' . number_format($summary->total_pembelian, 0, ',', '.'),
+        ]);
     }
 
     public function show($id)
@@ -81,3 +75,4 @@ class PurchasingController extends Controller
         ]);
     }
 }
+

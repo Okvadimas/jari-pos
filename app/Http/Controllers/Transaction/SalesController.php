@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Transaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Yajra\DataTables\Facades\DataTables;
 
+use App\Services\Transaction\SalesService;
 use App\Models\SalesOrder;
 
 class SalesController extends Controller
 {
+    private $pageTitle = 'Laporan Penjualan';
+
     public function index(Request $request)
     {
         $startDate  = Carbon::now()->startOfMonth()->format('d/m/Y');
@@ -19,7 +21,7 @@ class SalesController extends Controller
         $data = [
             'startDate' => $startDate,
             'endDate'   => $endDate,
-            'title'     => 'Laporan Penjualan',
+            'title'     => $this->pageTitle,
             'js'        => 'resources/js/pages/transaction/sales/index.js',
         ];
 
@@ -31,35 +33,27 @@ class SalesController extends Controller
         $startDate  = Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
         $endDate    = Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
 
-        $data   = SalesOrder::whereBetween('order_date', [$startDate, $endDate])
-                    ->latest();
+        return SalesService::datatable($startDate, $endDate);
+    }
 
-        return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->editColumn('order_date', function ($row) {
-                        return Carbon::parse($row->order_date)->format('d M Y');
-                    })
-                    ->addColumn('customer_name', function ($row) {
-                        return optional($row->company)->name ?? 'Guest';
-                    })
-                    ->editColumn('total_amount', function ($row) {
-                        return 'Rp ' . number_format($row->total_amount, 0, ',', '.');
-                    })
-                    ->editColumn('final_amount', function ($row) {
-                        return 'Rp ' . number_format($row->final_amount, 0, ',', '.');
-                    })
-                    ->addColumn('action', function ($row) {
-                        return '<button class="btn btn-sm btn-icon btn-trigger btn-detail" data-id="' . $row->id . '" title="View Details">
-                                    <em class="icon ni ni-eye"></em>
-                                </button>';
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+    public function summary(Request $request)
+    {
+        $startDate  = Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d');
+        $endDate    = Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d');
+
+        $summary = SalesService::getSummary($startDate, $endDate);
+
+        return response()->json([
+            'total_transaksi' => number_format($summary->total_transaksi, 0, ',', '.'),
+            'total_penjualan' => 'Rp ' . number_format($summary->total_penjualan, 0, ',', '.'),
+            'total_diskon' => 'Rp ' . number_format($summary->total_diskon, 0, ',', '.'),
+            'total_pendapatan' => 'Rp ' . number_format($summary->total_pendapatan, 0, ',', '.'),
+        ]);
     }
 
     public function show($id)
     {
-        $salesOrder = SalesOrder::with(['company', 'details.variant.product'])->findOrFail($id);
+        $salesOrder = SalesOrder::with(['company', 'details.variant.product', 'appliedPromo'])->findOrFail($id);
         
         // Format response data
         $details = $salesOrder->details->map(function($detail) {
@@ -77,9 +71,11 @@ class SalesController extends Controller
 
         return response()->json([
             'sales_order' => $salesOrder,
-            'customer_name' => optional($salesOrder->company)->name ?? 'Guest',
+            'customer_name' => $salesOrder->customer_name ?: (optional($salesOrder->company)->name ?? 'Guest'),
             'order_date_formatted' => Carbon::parse($salesOrder->order_date)->format('d M Y H:i'),
+            'promo_name' => optional($salesOrder->appliedPromo)->name,
             'details' => $details
         ]);
     }
 }
+
