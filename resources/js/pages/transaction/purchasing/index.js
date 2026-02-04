@@ -1,6 +1,7 @@
 $(document).ready(function() {
-    console.log('Purchasing Report page scripts loaded');
+    console.log('Laporan Pembelian page scripts loaded');
     datatable();
+    loadSummary();
 });
 
 const datatable = () => {
@@ -17,8 +18,7 @@ const datatable = () => {
                 d.end_date = $('#end_date').val();
             },
             error: function (xhr) {
-                console.error(xhr);
-                NioApp.Toast('Error loading data', 'error', {position: 'top-right'});
+                handleAjaxError(xhr);
             }
         },
         columns: [
@@ -26,7 +26,7 @@ const datatable = () => {
                 return '#' + data;
             }},
             { data: 'purchase_date', name: 'purchase_date' },
-            { data: 'supplier_name', name: 'supplier_name' },
+            { data: 'supplier_display', name: 'supplier_name' },
             { data: 'total_cost', name: 'total_cost', className: 'text-end' },
             { data: 'reference_note', name: 'reference_note' },
             { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
@@ -37,9 +37,28 @@ const datatable = () => {
     });
 }
 
+const loadSummary = () => {
+    $.ajax({
+        url: '/transaction/purchasing/summary',
+        type: 'GET',
+        data: {
+            start_date: $('#start_date').val(),
+            end_date: $('#end_date').val()
+        },
+        success: function(response) {
+            $('#summary-total-transaksi').text(response.total_transaksi);
+            $('#summary-total-pembelian').text(response.total_pembelian);
+        },
+        error: function(xhr) {
+            handleAjaxError(xhr);
+        }
+    });
+}
+
 // Refresh table on filter click
 $('#btn-filter').on('click', function(e) {
     $('#table-data').DataTable().ajax.reload();
+    loadSummary();
 });
 
 // View Details
@@ -62,7 +81,7 @@ $(document).on('click', '.btn-detail', function() {
         success: function(response) {
             $('#detail-supplier').text(response.company_name);
             $('#detail-date').text(response.purchase_date_formatted);
-            $('#detail-note').text(response.purchase.reference_note || 'No notes');
+            $('#detail-note').text(response.purchase.reference_note || 'Tidak ada catatan');
             
             let itemsHtml = '';
             let totalCost = 0;
@@ -81,16 +100,16 @@ $(document).on('click', '.btn-detail', function() {
                     totalCost += item.total;
                 });
             } else {
-                itemsHtml = '<tr><td colspan="5" class="text-center">No items found</td></tr>';
+                itemsHtml = '<tr><td colspan="5" class="text-center">Tidak ada item</td></tr>';
             }
             
             $('#detail-items').html(itemsHtml);
             $('#detail-total').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.purchase.total_cost));
         },
         error: function(xhr) {
-            console.error(xhr);
-            NioApp.Toast('Failed to load details', 'error', {position: 'top-right'});
+            handleAjaxError(xhr);
             $('#modal-detail').modal('hide');
         }
     });
 });
+

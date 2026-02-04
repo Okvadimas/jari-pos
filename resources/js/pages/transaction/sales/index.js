@@ -1,6 +1,7 @@
 $(document).ready(function() {
-    console.log('Sales Report page scripts loaded');
+    console.log('Laporan Penjualan page scripts loaded');
     datatable();
+    loadSummary();
 });
 
 const datatable = () => {
@@ -17,8 +18,7 @@ const datatable = () => {
                 d.end_date = $('#end_date').val();
             },
             error: function (xhr) {
-                console.error(xhr);
-                NioApp.Toast('Error loading data', 'error', {position: 'top-right'});
+                handleAjaxError(xhr);
             }
         },
         columns: [
@@ -26,7 +26,7 @@ const datatable = () => {
                 return '#' + data;
             }},
             { data: 'order_date', name: 'order_date' },
-            { data: 'customer_name', name: 'company.name' },
+            { data: 'customer_display', name: 'customer_name' },
             { data: 'total_amount', name: 'total_amount', className: 'text-end' },
             { data: 'final_amount', name: 'final_amount', className: 'text-end' },
             { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
@@ -37,9 +37,30 @@ const datatable = () => {
     });
 }
 
+const loadSummary = () => {
+    $.ajax({
+        url: '/transaction/sales/summary',
+        type: 'GET',
+        data: {
+            start_date: $('#start_date').val(),
+            end_date: $('#end_date').val()
+        },
+        success: function(response) {
+            $('#summary-total-transaksi').text(response.total_transaksi);
+            $('#summary-total-penjualan').text(response.total_penjualan);
+            $('#summary-total-diskon').text(response.total_diskon);
+            $('#summary-total-pendapatan').text(response.total_pendapatan);
+        },
+        error: function(xhr) {
+            handleAjaxError(xhr);
+        }
+    });
+}
+
 // Refresh table on filter click
 $('#btn-filter').on('click', function(e) {
     $('#table-data').DataTable().ajax.reload();
+    loadSummary();
 });
 
 // View Details
@@ -50,6 +71,7 @@ $(document).on('click', '.btn-detail', function() {
     // Show loading or clear previous data
     $('#detail-customer').text('Loading...');
     $('#detail-date').text('Loading...');
+    $('#detail-promo').text('-').removeClass('bg-primary bg-secondary').addClass('bg-secondary');
     $('#detail-items').html('<tr><td colspan="5" class="text-center">Loading data...</td></tr>');
     $('#detail-total-amount').text('-');
     $('#detail-discount-manual').text('-');
@@ -63,6 +85,13 @@ $(document).on('click', '.btn-detail', function() {
         success: function(response) {
             $('#detail-customer').text(response.customer_name);
             $('#detail-date').text(response.order_date_formatted);
+            
+            // Handle promo display
+            if (response.promo_name) {
+                $('#detail-promo').text(response.promo_name).removeClass('bg-secondary').addClass('bg-primary');
+            } else {
+                $('#detail-promo').text('Tidak ada').removeClass('bg-primary').addClass('bg-secondary');
+            }
             
             let itemsHtml = '';
             
@@ -79,7 +108,7 @@ $(document).on('click', '.btn-detail', function() {
                     `;
                 });
             } else {
-                itemsHtml = '<tr><td colspan="5" class="text-center">No items found</td></tr>';
+                itemsHtml = '<tr><td colspan="5" class="text-center">Tidak ada item</td></tr>';
             }
             
             $('#detail-items').html(itemsHtml);
@@ -88,9 +117,9 @@ $(document).on('click', '.btn-detail', function() {
             $('#detail-final-amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.sales_order.final_amount));
         },
         error: function(xhr) {
-            console.error(xhr);
-            NioApp.Toast('Failed to load details', 'error', {position: 'top-right'});
+            handleAjaxError(xhr);
             $('#modal-detail').modal('hide');
         }
     });
 });
+
