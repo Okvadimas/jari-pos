@@ -5,6 +5,9 @@
 console.log('POS Page JavaScript loaded');
 
 $(document).ready(function() {
+    // Initialize OfflineDB
+    initOfflineMode();
+    
     // Initialize
     setCurrentDate();
     loadCategories();
@@ -60,6 +63,13 @@ let settings = {
     taxRate: 11
 };
 
+// Offline State
+let isOffline = !navigator.onLine;
+let pendingTransactionsCount = 0;
+
+// Import OfflineDB (loaded via script tag or bundled)
+// Ensure OfflineDB is available globally
+
 // ============================================
 // Utility Functions
 // ===========================================
@@ -72,19 +82,46 @@ function setCurrentDate() {
 // ============================================
 // Category Functions
 // ============================================
-function loadCategories() {
+async function loadCategories() {
+    // Try offline fallback if not online
+    if (!navigator.onLine && typeof OfflineDB !== 'undefined') {
+        try {
+            const cached = await OfflineDB.getCachedCategories();
+            if (cached.length > 0) {
+                console.log('[Offline] Loading categories from cache');
+                categories = cached;
+                renderCategories();
+                return;
+            }
+        } catch (e) {
+            console.error('[Offline] Failed to load cached categories:', e);
+        }
+    }
+    
     $.ajax({
         url: window.posRoutes.categories,
         type: 'GET',
-        success: function(response) {
-            if (response.status === 'success') {
+        success: async function(response) {
+            if (response.status) {
                 categories = response.data;
                 renderCategories();
+                
+                // Cache for offline use
+                if (typeof OfflineDB !== 'undefined') {
+                    await OfflineDB.cacheCategories(response.data);
+                }
             }
         },
-        error: function(xhr, status, error) {
+        error: async function(xhr, status, error) {
             console.error('Error loading categories:', error);
-            console.error('Response:', xhr.responseText);
+            // Try cache on error
+            if (typeof OfflineDB !== 'undefined') {
+                const cached = await OfflineDB.getCachedCategories();
+                if (cached.length > 0) {
+                    categories = cached;
+                    renderCategories();
+                }
+            }
         }
     });
 }
@@ -121,11 +158,27 @@ function renderCategories() {
 // ============================================
 // Product Functions
 // ============================================
-function loadProducts() {
+async function loadProducts() {
     const categoryId = $('.pos-category-pill.active').data('category');
     const search = $('#searchProduct').val();
     
     $('#productsGrid').html('<div class="pos-loading"><div class="pos-spinner"></div></div>');
+    
+    // Try offline fallback if not online
+    if (!navigator.onLine && typeof OfflineDB !== 'undefined') {
+        try {
+            const cached = await OfflineDB.getCachedProducts(categoryId, search);
+            if (cached.length > 0) {
+                console.log('[Offline] Loading products from cache');
+                renderProductsWithOfflineStock(cached);
+                return;
+            }
+        } catch (e) {
+            console.error('[Offline] Failed to load cached products:', e);
+        }
+        $('#productsGrid').html(getEmptyStateHTML('📡', 'Tidak ada data produk offline', 'Silakan koneksikan internet untuk memuat data'));
+        return;
+    }
     
     $.ajax({
         url: window.posRoutes.products,
@@ -134,19 +187,31 @@ function loadProducts() {
             category_id: categoryId,
             search: search
         },
-        success: function(response) {
+        success: async function(response) {
             console.log('Products response:', response);
-            if (response.status === 'success') {
-                renderProducts(response.data.data || response.data);
-                checkLowStockProducts(response.data.data || response.data);
+            if (response.status) {
+                const products = response.data.data || response.data;
+                renderProducts(products);
+                checkLowStockProducts(products);
+                
+                // Cache for offline use (only cache all products, not filtered)
+                if (typeof OfflineDB !== 'undefined' && (!categoryId || categoryId === 'all') && !search) {
+                    await OfflineDB.cacheProducts(products);
+                }
             } else {
                 $('#productsGrid').html(getEmptyStateHTML('⚠️', 'Gagal memuat produk'));
             }
         },
-        error: function(xhr, status, error) {
+        error: async function(xhr, status, error) {
             console.error('Error loading products:', error);
-            console.error('Status:', status);
-            console.error('Response:', xhr.responseText);
+            // Try cache on error
+            if (typeof OfflineDB !== 'undefined') {
+                const cached = await OfflineDB.getCachedProducts(categoryId, search);
+                if (cached.length > 0) {
+                    renderProductsWithOfflineStock(cached);
+                    return;
+                }
+            }
             $('#productsGrid').html(getEmptyStateHTML('❌', `Gagal memuat produk<br><small>${error}</small>`));
         }
     });
@@ -702,22 +767,7 @@ function checkNotifications() {
     updateNotificationBadge();
 }
 
-function handleConnectionChange() {
-    if (navigator.onLine) {
-        // Remove offline notification if exists
-        notifications = notifications.filter(n => n.id !== 'system-offline');
-        addNotification('success', 'Koneksi Pulih', 'Anda kembali online. Data akan disinkronkan.', 'system-online');
-        setTimeout(() => {
-             notifications = notifications.filter(n => n.id !== 'system-online');
-             renderNotifications();
-             updateNotificationBadge();
-        }, 5000);
-    } else {
-        addNotification('danger', 'Koneksi Terputus', 'Anda dalam mode offline.', 'system-offline');
-    }
-    renderNotifications();
-    updateNotificationBadge();
-}
+// Note: handleConnectionChange is defined in the Offline Mode Functions section
 
 function checkLowStockProducts(products) {
     if (!products) return;
@@ -905,3 +955,438 @@ window.clearNotifications = clearNotifications;
 window.openSettingsModal = openSettingsModal;
 window.closeSettingsModal = closeSettingsModal;
 window.saveSettings = saveSettings;
+
+// ============================================
+// Offline Mode Functions
+// ============================================
+
+/**
+ * Initialize offline mode
+ */
+async function initOfflineMode() {
+    if (typeof OfflineDB !== 'undefined') {
+        try {
+            await OfflineDB.initDB();
+            console.log('[Offline] IndexedDB initialized');
+            
+            // Update offline status
+            updateOfflineStatus();
+            
+            // Listen for sync complete messages from Service Worker
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.addEventListener('message', handleSWMessage);
+            }
+        } catch (error) {
+            console.error('[Offline] Failed to initialize IndexedDB:', error);
+        }
+    } else {
+        console.warn('[Offline] OfflineDB module not loaded');
+    }
+}
+
+/**
+ * Handle Service Worker messages
+ */
+function handleSWMessage(event) {
+    if (event.data?.type === 'SYNC_COMPLETE') {
+        const result = event.data.data;
+        console.log('[Offline] Sync complete:', result);
+        
+        NioApp.Toast(`Sinkronisasi selesai: ${result.accepted} berhasil, ${result.rejected} ditolak`, 
+            result.rejected > 0 ? 'warning' : 'success', 
+            { position: 'top-right' }
+        );
+        
+        updateOfflineStatus();
+        refreshStockFromServer();
+    }
+}
+
+/**
+ * Handle connection change
+ */
+function handleConnectionChange(event) {
+    isOffline = !navigator.onLine;
+    updateOfflineStatus();
+    
+    if (navigator.onLine) {
+        console.log('[Offline] Back online');
+        NioApp.Toast('Koneksi internet kembali!', 'success', { position: 'top-right' });
+        
+        // Trigger sync
+        syncPendingTransactions();
+        
+        // Reload fresh data
+        loadCategories();
+        loadProducts();
+    } else {
+        console.log('[Offline] Gone offline');
+        NioApp.Toast('Mode Offline - Transaksi akan disimpan lokal', 'warning', { position: 'top-right' });
+    }
+}
+
+/**
+ * Update offline status UI
+ */
+async function updateOfflineStatus() {
+    isOffline = !navigator.onLine;
+    
+    if (typeof OfflineDB !== 'undefined') {
+        try {
+            const status = await OfflineDB.getOfflineStatus();
+            pendingTransactionsCount = status.pendingCount;
+        } catch (e) {
+            pendingTransactionsCount = 0;
+        }
+    }
+    
+    // Update UI
+    if (isOffline || pendingTransactionsCount > 0) {
+        let statusText = isOffline ? 'Mode Offline' : 'Online';
+        if (pendingTransactionsCount > 0) {
+            statusText += ` - ${pendingTransactionsCount} transaksi menunggu sync`;
+        }
+        
+        $('#offlineStatusBar').show().find('#offlineStatusText').text(statusText);
+        $('#pendingCount').text(pendingTransactionsCount);
+    } else {
+        $('#offlineStatusBar').hide();
+    }
+}
+
+/**
+ * Load categories with offline fallback
+ */
+async function loadCategoriesWithFallback() {
+    if (!navigator.onLine && typeof OfflineDB !== 'undefined') {
+        // Load from cache
+        try {
+            const cached = await OfflineDB.getCachedCategories();
+            if (cached.length > 0) {
+                console.log('[Offline] Loading categories from cache');
+                categories = cached;
+                renderCategories();
+                return;
+            }
+        } catch (e) {
+            console.error('[Offline] Failed to load cached categories:', e);
+        }
+    }
+    
+    // Online - load from server and cache
+    $.ajax({
+        url: window.posRoutes.categories,
+        type: 'GET',
+        success: async function(response) {
+            if (response.status === 'success') {
+                categories = response.data;
+                renderCategories();
+                
+                // Cache for offline use
+                if (typeof OfflineDB !== 'undefined') {
+                    await OfflineDB.cacheCategories(response.data);
+                }
+            }
+        },
+        error: async function(xhr, status, error) {
+            console.error('Error loading categories:', error);
+            // Try cache on error
+            if (typeof OfflineDB !== 'undefined') {
+                const cached = await OfflineDB.getCachedCategories();
+                if (cached.length > 0) {
+                    categories = cached;
+                    renderCategories();
+                }
+            }
+        }
+    });
+}
+
+/**
+ * Load products with offline fallback
+ */
+async function loadProductsWithFallback() {
+    const categoryId = $('.pos-category-pill.active').data('category');
+    const search = $('#searchProduct').val();
+    
+    $('#productsGrid').html('<div class="pos-loading"><div class="pos-spinner"></div></div>');
+    
+    if (!navigator.onLine && typeof OfflineDB !== 'undefined') {
+        // Load from cache
+        try {
+            const cached = await OfflineDB.getCachedProducts(categoryId, search);
+            if (cached.length > 0) {
+                console.log('[Offline] Loading products from cache');
+                renderProductsWithOfflineStock(cached);
+                return;
+            }
+        } catch (e) {
+            console.error('[Offline] Failed to load cached products:', e);
+        }
+        $('#productsGrid').html(getEmptyStateHTML('📡', 'Tidak ada data produk offline', 'Silakan koneksikan internet untuk memuat data'));
+        return;
+    }
+    
+    // Online - load from server and cache
+    $.ajax({
+        url: window.posRoutes.products,
+        type: 'GET',
+        data: {
+            category_id: categoryId,
+            search: search
+        },
+        success: async function(response) {
+            console.log('Products response:', response);
+            if (response.status === 'success') {
+                const products = response.data.data || response.data;
+                renderProducts(products);
+                checkLowStockProducts(products);
+                
+                // Cache for offline use (only cache all products, not filtered)
+                if (typeof OfflineDB !== 'undefined' && (!categoryId || categoryId === 'all') && !search) {
+                    await OfflineDB.cacheProducts(products);
+                }
+            } else {
+                $('#productsGrid').html(getEmptyStateHTML('⚠️', 'Gagal memuat produk'));
+            }
+        },
+        error: async function(xhr, status, error) {
+            console.error('Error loading products:', error);
+            // Try cache on error
+            if (typeof OfflineDB !== 'undefined') {
+                const cached = await OfflineDB.getCachedProducts(categoryId, search);
+                if (cached.length > 0) {
+                    renderProductsWithOfflineStock(cached);
+                    return;
+                }
+            }
+            $('#productsGrid').html(getEmptyStateHTML('❌', `Gagal memuat produk<br><small>${error}</small>`));
+        }
+    });
+}
+
+/**
+ * Render products with offline stock badges
+ */
+function renderProductsWithOfflineStock(products) {
+    if (!products || products.length === 0) {
+        $('#productsGrid').html(getEmptyStateHTML('📦', 'Produk tidak ditemukan (offline)', 'Data dari cache lokal'));
+        return;
+    }
+    
+    // Store products in global cache
+    window.productsCache = {};
+    products.forEach(p => {
+        window.productsCache[p.id] = {
+            id: p.id,
+            name: p.name,
+            price_display: p.price_display || 0,
+            image: p.image || null,
+            variants: p.variants || [],
+            stock: p.local_stock ?? p.stock ?? 15
+        };
+    });
+    
+    let html = '';
+    products.forEach(product => {
+        const price = product.price_display || 0;
+        const inCart = cart.find(item => item.id === product.id);
+        const productName = product.name || '';
+        const imageSrc = product.image ? product.image : '/images/product-sample.png';
+        const localStock = product.local_stock ?? product.stock ?? 15;
+        
+        // Stock Badge (offline)
+        let stockBadge = '';
+        let isOutOfStock = false;
+        if (localStock <= 0) {
+            stockBadge = `<div class="pos-stock-badge out-of-stock">Habis (offline)</div>`;
+            isOutOfStock = true;
+        } else if (localStock < 5) {
+            stockBadge = `<div class="pos-stock-badge">Sisa ${localStock} (offline)</div>`;
+        }
+
+        html += `
+            <div class="pos-product-card ${isOutOfStock ? 'out-of-stock' : ''}" data-product-id="${product.id}">
+                ${stockBadge}   
+                <img src="${imageSrc}" class="pos-product-image" alt="${productName}">
+                <div class="pos-product-info">
+                    <h4 class="pos-product-name">${productName}</h4>
+                    <div class="pos-product-price">${formatRupiah(price)}</div>
+                    <button class="pos-btn-add ${inCart ? 'pos-btn-add-outline' : 'pos-btn-add-primary'}"
+                            onclick="addToCartById(${product.id})"
+                            ${isOutOfStock ? 'disabled' : ''}>
+                        ${isOutOfStock ? 'Stok Habis' : (inCart ? `Di Keranjang (${inCart.qty})` : '+ Tambah')}
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    
+    $('#productsGrid').html(html);
+}
+
+/**
+ * Save transaction when offline
+ */
+async function saveOfflineTransaction(orderData) {
+    if (typeof OfflineDB === 'undefined') {
+        console.error('[Offline] OfflineDB not available');
+        return null;
+    }
+    
+    try {
+        const clientId = await OfflineDB.savePendingTransaction(orderData);
+        console.log('[Offline] Transaction saved with client_id:', clientId);
+        
+        // Reduce local stock
+        for (const item of orderData.items) {
+            await OfflineDB.reduceLocalStock(item.product_id, item.quantity);
+        }
+        
+        // Update status
+        await updateOfflineStatus();
+        
+        // Request background sync if available
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.sync.register('sync-transactions');
+        }
+        
+        return clientId;
+    } catch (error) {
+        console.error('[Offline] Failed to save transaction:', error);
+        return null;
+    }
+}
+
+/**
+ * Sync pending transactions
+ */
+async function syncPendingTransactions() {
+    if (typeof OfflineDB === 'undefined') return;
+    
+    try {
+        const pending = await OfflineDB.getPendingTransactions();
+        if (pending.length === 0) {
+            console.log('[Offline] No pending transactions to sync');
+            return;
+        }
+        
+        console.log(`[Offline] Syncing ${pending.length} transactions...`);
+        
+        // Try background sync first
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.sync.register('sync-transactions');
+        } else {
+            // Fallback: direct sync via AJAX
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+            
+            $.ajax({
+                url: window.posRoutes?.sync || '/pos/sync/transactions',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                contentType: 'application/json',
+                data: JSON.stringify({ transactions: pending }),
+                success: async function(result) {
+                    console.log('[Offline] Sync result:', result);
+                    
+                    // Remove synced transactions
+                    if (result.results?.accepted) {
+                        for (const txn of result.results.accepted) {
+                            await OfflineDB.removePendingTransaction(txn.client_id);
+                        }
+                    }
+                    
+                    NioApp.Toast(`Sinkronisasi: ${result.accepted} berhasil`, 'success', { position: 'top-right' });
+                    await updateOfflineStatus();
+                    refreshStockFromServer();
+                },
+                error: function(xhr, status, error) {
+                    console.error('[Offline] Sync failed:', error);
+                    NioApp.Toast('Gagal sinkronisasi, akan dicoba lagi nanti', 'warning', { position: 'top-right' });
+                }
+            });
+        }
+    } catch (error) {
+        console.error('[Offline] Sync error:', error);
+    }
+}
+
+/**
+ * Refresh stock from server
+ */
+async function refreshStockFromServer() {
+    if (typeof OfflineDB === 'undefined' || !navigator.onLine) return;
+    
+    try {
+        const response = await fetch(window.posRoutes.products);
+        const data = await response.json();
+        if (data.status === 'success') {
+            await OfflineDB.syncStockFromServer(data.data.data || data.data);
+            loadProducts(); // Re-render with fresh stock
+        }
+    } catch (error) {
+        console.error('[Offline] Failed to refresh stock:', error);
+    }
+}
+
+// ============================================
+// Cache Cleanup Functions (for Settings)
+// ============================================
+
+async function clearProductCache() {
+    if (typeof OfflineDB === 'undefined') return;
+    if (!confirm('Hapus cache produk?')) return;
+    
+    await OfflineDB.clearProductCache();
+    NioApp.Toast('Cache produk berhasil dihapus', 'success', { position: 'top-right' });
+    updateStorageInfo();
+}
+
+async function clearCategoryCache() {
+    if (typeof OfflineDB === 'undefined') return;
+    if (!confirm('Hapus cache kategori?')) return;
+    
+    await OfflineDB.clearCategoryCache();
+    NioApp.Toast('Cache kategori berhasil dihapus', 'success', { position: 'top-right' });
+    updateStorageInfo();
+}
+
+async function clearSyncHistory() {
+    if (typeof OfflineDB === 'undefined') return;
+    if (!confirm('Hapus history sinkronisasi?')) return;
+    
+    await OfflineDB.clearSyncHistory();
+    NioApp.Toast('History sinkronisasi berhasil dihapus', 'success', { position: 'top-right' });
+    updateStorageInfo();
+}
+
+async function clearAllCache() {
+    if (typeof OfflineDB === 'undefined') return;
+    if (!confirm('Hapus semua cache? (Transaksi pending akan tetap tersimpan)')) return;
+    
+    await OfflineDB.clearAllCache();
+    NioApp.Toast('Semua cache berhasil dihapus', 'success', { position: 'top-right' });
+    updateStorageInfo();
+}
+
+async function updateStorageInfo() {
+    if (typeof OfflineDB === 'undefined') {
+        $('#storageInfo').text('OfflineDB tidak tersedia');
+        return;
+    }
+    
+    const info = await OfflineDB.getStorageInfo();
+    $('#storageInfo').text(`${info.products} produk, ${info.categories} kategori, ${info.pending} transaksi pending`);
+}
+
+// Export offline functions
+window.clearProductCache = clearProductCache;
+window.clearCategoryCache = clearCategoryCache;
+window.clearSyncHistory = clearSyncHistory;
+window.clearAllCache = clearAllCache;
+window.updateStorageInfo = updateStorageInfo;
+window.syncPendingTransactions = syncPendingTransactions;

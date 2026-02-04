@@ -26,14 +26,6 @@ $(document).ready(function() {
         });
     }
 
-    window.addEventListener('online', () => {
-        Swal.fire({
-            icon: 'success',
-            title: 'Great!',
-            text: 'You are back online. Welcome back!',
-        });
-    });
-
     // Add your global JavaScript here
     console.log('App.js loaded - jQuery ready!');
 });

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\POS\IndexController                as POSController;
+use App\Http\Controllers\POS\SyncController                 as POSSyncController;
 
 // Landing
 use App\Http\Controllers\Landing\IndexController            as LandingController;
@@ -60,6 +61,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::get('/categories', [POSController::class, 'getCategories'])->name('pos.categories');
         Route::get('/top-selling', [POSController::class, 'getTopSelling'])->name('pos.top-selling');
         Route::get('/vouchers', [POSController::class, 'getVouchers'])->name('pos.vouchers');
+        Route::post('/sync/transactions', [POSSyncController::class, 'syncTransactions'])->name('pos.sync.transactions');
     });
 
     // Management
