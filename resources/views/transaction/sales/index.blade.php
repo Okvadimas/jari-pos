@@ -45,6 +45,80 @@
                     </div><!-- .card -->
                 </div><!-- .nk-block -->
 
+                <!-- Summary Cards -->
+                <div class="nk-block">
+                    <div class="row g-gs">
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card card-bordered">
+                                <div class="card-inner">
+                                    <div class="card-title-group align-start mb-0">
+                                        <div class="card-title">
+                                            <h6 class="subtitle">Total Transaksi</h6>
+                                        </div>
+                                        <div class="card-tools">
+                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Jumlah transaksi penjualan"></em>
+                                        </div>
+                                    </div>
+                                    <div class="card-amount">
+                                        <span class="amount" id="summary-total-transaksi">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card card-bordered">
+                                <div class="card-inner">
+                                    <div class="card-title-group align-start mb-0">
+                                        <div class="card-title">
+                                            <h6 class="subtitle">Total Penjualan</h6>
+                                        </div>
+                                        <div class="card-tools">
+                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total nilai penjualan sebelum diskon"></em>
+                                        </div>
+                                    </div>
+                                    <div class="card-amount">
+                                        <span class="amount" id="summary-total-penjualan">Rp 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card card-bordered">
+                                <div class="card-inner">
+                                    <div class="card-title-group align-start mb-0">
+                                        <div class="card-title">
+                                            <h6 class="subtitle">Total Diskon</h6>
+                                        </div>
+                                        <div class="card-tools">
+                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total diskon dari promo"></em>
+                                        </div>
+                                    </div>
+                                    <div class="card-amount">
+                                        <span class="amount text-danger" id="summary-total-diskon">Rp 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card card-bordered">
+                                <div class="card-inner">
+                                    <div class="card-title-group align-start mb-0">
+                                        <div class="card-title">
+                                            <h6 class="subtitle">Total Pendapatan</h6>
+                                        </div>
+                                        <div class="card-tools">
+                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total pendapatan bersih"></em>
+                                        </div>
+                                    </div>
+                                    <div class="card-amount">
+                                        <span class="amount text-success" id="summary-total-pendapatan">Rp 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- .nk-block -->
+
                 <div class="nk-block nk-block-lg">
                     <div class="card card-bordered card-preview">
                         <div class="card-inner">
@@ -78,7 +152,7 @@
                             </div>
                             <div class="modal-body">
                                 <div class="row g-3 mb-3">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label class="form-label text-muted">Pelanggan</label>
                                             <div class="form-control-wrap">
@@ -86,11 +160,19 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label class="form-label text-muted">Tanggal</label>
                                             <div class="form-control-wrap">
                                                 <span class="fs-5" id="detail-date">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label class="form-label text-muted">Promo</label>
+                                            <div class="form-control-wrap">
+                                                <span class="fs-5 badge bg-primary" id="detail-promo">-</span>
                                             </div>
                                         </div>
                                     </div>
@@ -116,11 +198,11 @@
                                             </tr>
                                             <tr>
                                                 <th colspan="4" class="text-end">Diskon Promo</th>
-                                                <th class="text-end" id="detail-discount-manual">Rp 0</th>
+                                                <th class="text-end text-danger" id="detail-discount-manual">Rp 0</th>
                                             </tr>
                                             <tr>
                                                 <th colspan="4" class="text-end">Total Bayar</th>
-                                                <th class="text-end fw-bold fs-5" id="detail-final-amount">Rp 0</th>
+                                                <th class="text-end fw-bold fs-5 text-success" id="detail-final-amount">Rp 0</th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -135,3 +217,4 @@
     </div>
 </div>
 @endsection
+

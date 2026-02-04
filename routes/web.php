@@ -156,10 +156,12 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::group(['prefix' => 'transaction'], function () {
         Route::get('/sales', [SalesController::class, 'index'])->name('transaction.sales.index');
         Route::get('/sales/datatable', [SalesController::class, 'datatable'])->name('transaction.sales.datatable');
+        Route::get('/sales/summary', [SalesController::class, 'summary'])->name('transaction.sales.summary');
         Route::get('/sales/show/{id}', [SalesController::class, 'show'])->name('transaction.sales.show');
 
         Route::get('/purchasing', [PurchasingController::class, 'index'])->name('transaction.purchasing.index');
-    Route::get('/purchasing/datatable', [PurchasingController::class, 'datatable'])->name('transaction.purchasing.datatable');
+        Route::get('/purchasing/datatable', [PurchasingController::class, 'datatable'])->name('transaction.purchasing.datatable');
+        Route::get('/purchasing/summary', [PurchasingController::class, 'summary'])->name('transaction.purchasing.summary');
         Route::get('/purchasing/show/{id}', [PurchasingController::class, 'show'])->name('transaction.purchasing.show');
     });
 });
