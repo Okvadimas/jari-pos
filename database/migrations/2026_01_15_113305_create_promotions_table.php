@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
             $table->string('name');
             $table->decimal('discount_value', 15, 2);
             $table->dateTime('start_date');

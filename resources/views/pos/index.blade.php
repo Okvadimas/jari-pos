@@ -126,6 +126,18 @@
         </div>
     </nav>
 
+    <!-- Offline Status Bar -->
+    <div class="pos-offline-bar" id="offlineStatusBar" style="display: none;">
+        <span class="pos-offline-icon">📡</span>
+        <span id="offlineStatusText">Mode Offline</span>
+        <span class="pos-pending-badge" id="pendingCount">0</span>
+        <button class="pos-sync-btn" onclick="syncPendingTransactions()" title="Sinkronkan Sekarang">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+        </button>
+    </div>
+
     <!-- Mobile Menu Sidebar Removed -->
 
     <!-- Content Area -->
@@ -392,6 +404,32 @@
                         </div>
                     </div>
                 </div>
+
+                <hr>
+
+                <!-- Cache Management -->
+                <div class="pos-settings-section">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Cache Offline</h6>
+                    
+                    <div class="mb-3">
+                        <span class="text-muted small" id="storageInfo">Memuat info cache...</span>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="clearProductCache()">
+                            <em class="icon ni ni-box me-1"></em> Hapus Produk
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="clearCategoryCache()">
+                            <em class="icon ni ni-folder me-1"></em> Hapus Kategori
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="clearSyncHistory()">
+                            <em class="icon ni ni-histroy me-1"></em> Hapus History
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="clearAllCache()">
+                            <em class="icon ni ni-trash me-1"></em> Hapus Semua Cache
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="pos-action-btn pos-btn-primary w-100" onclick="saveSettings()">Simpan Pengaturan</button>
@@ -404,7 +442,9 @@
     window.posRoutes = {
         categories: "{{ route('pos.categories') }}",
         products: "{{ route('pos.products') }}",
-        vouchers: "{{ route('pos.vouchers') }}"
+        vouchers: "{{ route('pos.vouchers') }}",
+        sync: "{{ route('pos.sync.transactions') }}"
     };
 </script>
+<script src="{{ asset('js/pos/offline-db.js') }}"></script>
 @endsection

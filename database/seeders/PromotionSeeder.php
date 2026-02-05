@@ -21,6 +21,7 @@ class PromotionSeeder extends Seeder
 
         $promotions = [
             [
+                'company_id' => 1,
                 'name' => 'DISKON AWAL TAHUN',
                 'discount_value' => 10000,
                 'min_order_amount' => 50000,
@@ -31,6 +32,7 @@ class PromotionSeeder extends Seeder
                 'priority' => 1,
             ],
             [
+                'company_id' => 1,
                 'name' => 'VOUCHER SPESIAL MEMBER',
                 'discount_value' => 25000,
                 'min_order_amount' => 100000,
@@ -41,6 +43,7 @@ class PromotionSeeder extends Seeder
                 'priority' => 2,
             ],
             [
+                'company_id' => 1,
                 'name' => 'FLASH SALE KATEGORI',
                 'discount_value' => 5000,
                 'min_order_amount' => 20000,
@@ -51,6 +54,7 @@ class PromotionSeeder extends Seeder
                 'priority' => 3,
             ],
             [
+                'company_id' => 1,
                 'name' => 'PROMO PRODUK PILIHAN',
                 'discount_value' => 15000,
                 'min_order_amount' => 0, // No min order
@@ -61,6 +65,7 @@ class PromotionSeeder extends Seeder
                 'priority' => 4,
             ],
             [
+                'company_id' => 1,
                 'name' => 'EXPIRED VOUCHER',
                 'discount_value' => 50000,
                 'min_order_amount' => 100000,

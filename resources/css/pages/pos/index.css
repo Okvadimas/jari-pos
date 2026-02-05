@@ -1794,3 +1794,79 @@ input:checked + .slider:before {
     width: auto;
     min-width: 140px;
 }
+
+/* ============================================
+    Offline Status Bar
+    ============================================ */
+.pos-offline-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.pos-offline-bar.online {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.pos-offline-icon {
+    font-size: 1rem;
+}
+
+.pos-pending-badge {
+    background-color: rgba(255, 255, 255, 0.25);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+.pos-sync-btn {
+    padding: 4px 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: var(--pos-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pos-sync-btn:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.pos-sync-btn:active {
+    transform: scale(0.95);
+}
+
+/* Out of stock styling */
+.pos-product-card.out-of-stock {
+    opacity: 0.7;
+}
+
+.pos-stock-badge.out-of-stock {
+    background-color: rgba(107, 114, 128, 0.9);
+}
+
+/* ============================================
+    Dark Theme - Offline Bar
+    ============================================ */
+[data-theme="dark"] .pos-offline-bar {
+    background: linear-gradient(135deg, #d97706, #b45309);
+}
+
+[data-theme="dark"] .pos-offline-bar.online {
+    background: linear-gradient(135deg, #059669, #047857);
+}

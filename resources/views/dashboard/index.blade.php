@@ -8,14 +8,15 @@
                     <div class="nk-block-head nk-block-head-sm">
                         <div class="nk-block-between">
                             <div class="nk-block-head-content">
-                                <h3 class="nk-block-title page-title">Dashboard</h3>
+                                <span class="sub-text text-muted mb-3 d-block d-md-none">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                                <h3 class="nk-block-title page-title mb-0">Dashboard</h3>
                                 <div class="nk-block-des text-soft">
                                     <p>Selamat datang, {{ ucwords(Auth::user()->name) }}!</p>
                                 </div>
                             </div>
                             <div class="nk-block-head-content">
                                 <div class="toggle-wrap nk-block-tools-toggle">
-                                    <span class="sub-text text-muted">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                                    <span class="sub-text text-muted mb-3 d-none d-md-block">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -257,25 +258,56 @@
                             </div>
                         </div>
 
-                        <!-- Active Promotions Banner -->
+                        <!-- Active Promotions Section -->
                         @if(count($activePromotions) > 0)
-                        <div class="row g-gs mt-3">
+                        <div class="row g-gs mt-4">
                             <div class="col-12">
-                                <div class="card card-bordered" style="background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%); border-left: 4px solid #ffc107; height: auto;">
-                                    <div class="card-inner py-3">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <em class="icon ni ni-gift text-warning me-2" style="font-size: 1.25rem;"></em>
-                                            <h6 class="mb-0 fw-bold text-dark">Promo Aktif</h6>
-                                            <span class="badge bg-warning text-dark ms-2">{{ count($activePromotions) }}</span>
+                                <div class="card card-bordered border-0" style="background: linear-gradient(108deg, #FFF9E6 0%, #FFF0C2 100%); box-shadow: 0 4px 15px rgba(255, 193, 7, 0.15);">
+                                    <div class="card-inner py-4">
+                                        <div class="d-flex align-items-center mb-4 px-1">
+                                            <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                                                <em class="icon ni ni-gift text-warning" style="font-size: 1.75rem;"></em>
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-0 fw-bold text-dark">Promo Aktif</h5>
+                                                <p class="text-muted small mb-0">Nikmati penawaran spesial yang tersedia saat ini</p>
+                                            </div>
+                                            <span class="badge bg-warning text-dark pill ms-3 px-3 py-2 fs-13px fw-bold">{{ count($activePromotions) }} Voucher</span>
                                         </div>
-                                        <div class="d-flex flex-wrap gap-2 mt-2">
+                                        
+                                        <!-- Horizontal Scroll Container -->
+                                        <div class="d-flex flex-nowrap overflow-auto pb-4 px-2 no-scrollbar" style="scroll-behavior: smooth;">
                                             @foreach($activePromotions as $promo)
-                                            <div class="badge-promo d-inline-flex align-items-center bg-white border border-warning rounded-pill px-3 py-2 shadow-sm">
-                                                <em class="icon ni ni-ticket text-warning me-1"></em>
-                                                <span class="fw-medium text-dark">{{ $promo->name }}</span>
-                                                <span class="mx-1 text-muted">•</span>
-                                                <span class="text-success fw-bold">Rp {{ number_format($promo->discount_value, 0, ',', '.') }}</span>
-                                                <span class="ms-2 text-muted small">(s/d {{ \Carbon\Carbon::parse($promo->end_date)->format('d M') }})</span>
+                                            <!-- Item -->
+                                            <div class="flex-shrink-0 bg-white shadow-sm position-relative overflow-hidden promo-ticket me-3" style="width: 280px; min-width: 280px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05);">
+                                                <!-- Decorative Circles -->
+                                                <div class="position-absolute bg-light rounded-circle" style="width: 20px; height: 20px; top: 50%; left: -12px; transform: translateY(-50%); box-shadow: inset -2px 0 3px rgba(0,0,0,0.05);"></div>
+                                                <div class="position-absolute bg-light rounded-circle" style="width: 20px; height: 20px; top: 50%; right: -12px; transform: translateY(-50%); box-shadow: inset 2px 0 3px rgba(0,0,0,0.05);"></div>
+                                                
+                                                <div class="d-flex flex-column h-100">
+                                                    <!-- Ticket Body -->
+                                                    <div class="p-3 pb-2 flex-grow-1">
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                            <span class="badge bg-warning-dim text-warning fw-bold text-uppercase" style="letter-spacing: 0.5px;">Promo</span>
+                                                            <em class="icon ni ni-ticket-fill text-light" style="font-size: 1.5rem; color: #e5e9f2 !important;"></em>
+                                                        </div>
+                                                        <h3 class="text-success fw-bolder mb-1">Rp {{ number_format($promo->discount_value, 0, ',', '.') }}</h3>
+                                                        <h6 class="fw-bold text-dark mb-0 text-truncate" title="{{ $promo->name }}">{{ $promo->name }}</h6>
+                                                    </div>
+                                                    
+                                                    <!-- Dashed Divider -->
+                                                    <div class="w-100 px-3">
+                                                        <div class="border-top border-dashed" style="border-top: 2px dashed #e5e9f2;"></div>
+                                                    </div>
+                                                    
+                                                    <!-- Ticket Footer -->
+                                                    <div class="p-3 pt-2 bg-light bg-opacity-25 mt-auto">
+                                                        <div class="d-flex align-items-center justify-content-center text-muted small">
+                                                            <em class="icon ni ni-calendar-alt me-1"></em>
+                                                            <span>Berlaku s/d <strong class="text-dark">{{ \Carbon\Carbon::parse($promo->end_date)->format('d M Y') }}</strong></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             @endforeach
                                         </div>
@@ -284,6 +316,29 @@
                             </div>
                         </div>
                         @endif
+
+                        <style>
+                            .no-scrollbar::-webkit-scrollbar {
+                                height: 5px;
+                            }
+                            .no-scrollbar::-webkit-scrollbar-track {
+                                background: transparent; 
+                            }
+                            .no-scrollbar::-webkit-scrollbar-thumb {
+                                background: rgba(255, 193, 7, 0.3); 
+                                border-radius: 10px;
+                            }
+                            .no-scrollbar::-webkit-scrollbar-thumb:hover {
+                                background: rgba(255, 193, 7, 0.6); 
+                            }
+                            .promo-ticket {
+                                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                            }
+                            .promo-ticket:hover {
+                                transform: translateY(-5px);
+                                box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+                            }
+                        </style>
 
                         <!-- Tables Section -->
                         <div class="row g-gs mt-3">

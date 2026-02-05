@@ -11,11 +11,19 @@ $(document).ready(function() {
 
     $('#form-data').submit(function(e) {
         e.preventDefault();
+
+        let $btn = $('#btn-submit');
+        $btn.attr('disabled', true);
+        $btn.html('<em class="icon spinner-border spinner-border-sm" role="status" aria-hidden="true"></em><span>Masuk</span>');    
         
         $.ajax({
             url: '/login',
             type: 'POST',
             data: $(this).serialize(),
+            complete: function() {
+                $btn.attr('disabled', false);
+                $btn.html('Masuk');
+            },
             success: function(response) {
                 if(response.status) {
                     NioApp.Toast(response.message, 'success', { position: 'top-right' });
@@ -27,6 +35,9 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr) {
+                $btn.attr('disabled', false);
+                $btn.html('Masuk');
+
                 handleAjaxError(xhr);
             }
         });        

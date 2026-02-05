@@ -1,25 +1,36 @@
 /**
  * Jari POS Service Worker
  * Handles caching and offline functionality
+ * Version: 2.0 - Enhanced for POS offline transactions
  */
 
-const CACHE_NAME = 'jaripos-cache-v1';
+const CACHE_NAME = 'jaripos-cache-v2';
+const API_CACHE_NAME = 'jaripos-api-cache-v1';
 const OFFLINE_URL = '/offline';
 
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
     '/',
     '/dashboard',
+    '/pos',
     '/offline',
     '/images/brand-logo.svg',
     '/images/brand-full-logo-side.png',
+    '/images/product-sample.png',
     '/js/bundle.js',
     '/manifest.json'
 ];
 
+// API endpoints to cache for offline use
+const CACHEABLE_APIS = [
+    '/pos/products',
+    '/pos/categories',
+    '/pos/vouchers'
+];
+
 // Install event - cache core assets
 self.addEventListener('install', (event) => {
-    console.log('[Service Worker] Installing...');
+    console.log('[Service Worker] Installing v2...');
     
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -41,12 +52,14 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
     console.log('[Service Worker] Activating...');
     
+    const currentCaches = [CACHE_NAME, API_CACHE_NAME];
+    
     event.waitUntil(
         caches.keys()
             .then((cacheNames) => {
                 return Promise.all(
                     cacheNames
-                        .filter((cacheName) => cacheName !== CACHE_NAME)
+                        .filter((cacheName) => !currentCaches.includes(cacheName))
                         .map((cacheName) => {
                             console.log('[Service Worker] Deleting old cache:', cacheName);
                             return caches.delete(cacheName);
@@ -59,6 +72,11 @@ self.addEventListener('activate', (event) => {
             })
     );
 });
+
+// Check if URL is a cacheable API endpoint
+function isCacheableAPI(url) {
+    return CACHEABLE_APIS.some(api => url.pathname.startsWith(api));
+}
 
 // Fetch event - Network first, fallback to cache strategy
 self.addEventListener('fetch', (event) => {
@@ -75,14 +93,34 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Skip API requests and form submissions
-    if (url.pathname.startsWith('/api/') || 
-        url.pathname.startsWith('/logout') ||
+    // Skip auth-related requests
+    if (url.pathname.startsWith('/logout') ||
         url.pathname.startsWith('/login')) {
         return;
     }
 
-    // For navigation requests (HTML pages)
+    // Handle cacheable API requests (products, categories, vouchers)
+    if (isCacheableAPI(url)) {
+        event.respondWith(
+            fetch(request)
+                .then((response) => {
+                    // Clone and cache the response
+                    const responseClone = response.clone();
+                    caches.open(API_CACHE_NAME).then((cache) => {
+                        cache.put(request, responseClone);
+                    });
+                    return response;
+                })
+                .catch(() => {
+                    // Offline - try to serve from cache
+                    console.log('[Service Worker] Serving API from cache:', url.pathname);
+                    return caches.match(request);
+                })
+        );
+        return;
+    }
+
+    // For navigation requests (HTML pages including /pos)
     if (request.mode === 'navigate') {
         event.respondWith(
             fetch(request)
@@ -200,10 +238,128 @@ self.addEventListener('notificationclick', (event) => {
     );
 });
 
-// Background sync (for offline form submissions, future use)
+// Background sync for offline transactions
 self.addEventListener('sync', (event) => {
-    if (event.tag === 'sync-data') {
-        console.log('[Service Worker] Syncing data...');
-        // Implement background sync logic here
+    if (event.tag === 'sync-transactions') {
+        console.log('[Service Worker] Background sync: sync-transactions');
+        event.waitUntil(syncOfflineTransactions());
+    }
+});
+
+/**
+ * Sync offline transactions to server
+ */
+async function syncOfflineTransactions() {
+    try {
+        // Open IndexedDB to get pending transactions
+        const db = await openIndexedDB();
+        const transactions = await getPendingTransactionsFromDB(db);
+        
+        if (transactions.length === 0) {
+            console.log('[Service Worker] No pending transactions to sync');
+            return;
+        }
+        
+        console.log(`[Service Worker] Syncing ${transactions.length} transactions...`);
+        
+        // Get CSRF token from a client
+        const allClients = await clients.matchAll();
+        let csrfToken = '';
+        
+        for (const client of allClients) {
+            // Try to get CSRF from client
+            try {
+                const response = await client.fetch('/pos');
+                const html = await response.text();
+                const match = html.match(/meta name="csrf-token" content="([^"]+)"/);
+                if (match) {
+                    csrfToken = match[1];
+                    break;
+                }
+            } catch (e) {
+                // Ignore
+            }
+        }
+        
+        // Send transactions to server
+        const response = await fetch('/pos/sync/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ transactions })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('[Service Worker] Sync result:', result);
+            
+            // Remove synced transactions from IndexedDB
+            if (result.results?.accepted) {
+                for (const txn of result.results.accepted) {
+                    await removeTransactionFromDB(db, txn.client_id);
+                }
+            }
+            
+            // Notify clients about sync completion
+            const clients = await self.clients.matchAll();
+            clients.forEach(client => {
+                client.postMessage({
+                    type: 'SYNC_COMPLETE',
+                    data: result
+                });
+            });
+        }
+    } catch (error) {
+        console.error('[Service Worker] Sync failed:', error);
+        throw error; // Will trigger retry
+    }
+}
+
+/**
+ * Open IndexedDB
+ */
+function openIndexedDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('jaripos-offline', 1);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+/**
+ * Get pending transactions from IndexedDB
+ */
+function getPendingTransactionsFromDB(db) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('pendingTransactions', 'readonly');
+        const store = transaction.objectStore('pendingTransactions');
+        const index = store.index('synced');
+        const request = index.getAll(false);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+/**
+ * Remove transaction from IndexedDB
+ */
+function removeTransactionFromDB(db, clientId) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('pendingTransactions', 'readwrite');
+        const store = transaction.objectStore('pendingTransactions');
+        const request = store.delete(clientId);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// Listen for messages from clients
+self.addEventListener('message', (event) => {
+    if (event.data?.type === 'TRIGGER_SYNC') {
+        console.log('[Service Worker] Manual sync triggered');
+        syncOfflineTransactions();
     }
 });
