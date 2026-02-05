@@ -30,13 +30,13 @@ class PurchaseSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Creating 20 Dummy Purchases...');
+        $this->command->info('Creating 100 Dummy Purchases...');
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             DB::transaction(function () use ($faker, $companyIds, $productVariantIds, $userIds) {
                 $companyId = $faker->randomElement($companyIds);
                 $createdBy = $faker->randomElement($userIds);
-                $purchaseDate = $faker->dateTimeBetween('-1 year', 'now');
+                $purchaseDate = $faker->dateTimeBetween('-1 month', 'now');
 
                 // Create Purchase
                 $purchase = Purchase::create([

@@ -27,9 +27,7 @@ class SalesService
                 return 'Rp ' . number_format($row->final_amount, 0, ',', '.');
             })
             ->addColumn('action', function ($row) {
-                return '<button class="btn btn-sm btn-icon btn-trigger btn-detail" data-id="' . $row->id . '" title="Lihat Detail">
-                            <em class="icon ni ni-eye"></em>
-                        </button>';
+                return '<button class="btn btn-dim btn-sm btn-outline-info" onclick="detail(' . $row->id . ')"><em class="icon ni ni-eye d-none d-sm-inline me-1"></em> Detail</button>';
             })
             ->rawColumns(['action'])
             ->make(true);

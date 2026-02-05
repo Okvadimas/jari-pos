@@ -3,15 +3,19 @@
 namespace App\Repositories\Transaction;
 
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
+    
 class SalesRepository
 {
     public static function datatable($startDate, $endDate)
     {
+        $user = Auth::user();
+
         $query = DB::table('sales_orders as so')
                     ->leftJoin('companies as c', 'c.id', '=', 'so.company_id')
                     ->whereNull('so.deleted_at')
                     ->whereBetween('so.order_date', [$startDate, $endDate])
+                    ->where('so.company_id', $user->company_id)
                     ->select(
                         'so.id',
                         'so.order_date',
@@ -21,18 +25,19 @@ class SalesRepository
                         'so.final_amount',
                         'so.applied_promo_id',
                         'c.name as company_name'
-                    )
-                    ->orderBy('so.order_date', 'desc')
-                    ->orderBy('so.id', 'desc');
+                    );
 
         return $query;
     }
 
     public static function getSummary($startDate, $endDate)
     {
+        $user = Auth::user();
+
         return DB::table('sales_orders')
             ->whereNull('deleted_at')
             ->whereBetween('order_date', [$startDate, $endDate])
+            ->where('company_id', $user->company_id)
             ->selectRaw('
                 COUNT(*) as total_transaksi,
                 COALESCE(SUM(total_amount), 0) as total_penjualan,
