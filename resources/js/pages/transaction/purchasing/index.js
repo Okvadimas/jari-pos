@@ -21,15 +21,18 @@ const datatable = () => {
                 handleAjaxError(xhr);
             }
         },
+        order: [3, 'desc'],
         columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', orderable: false, searchable: false },
+            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
             { data: 'id', name: 'id', render: function(data, type, row) {
-                return '#' + data;
-            }},
+                    return '#' + data;
+                }
+            },
             { data: 'purchase_date', name: 'purchase_date' },
             { data: 'supplier_display', name: 'supplier_name' },
             { data: 'total_cost', name: 'total_cost', className: 'text-end' },
             { data: 'reference_note', name: 'reference_note' },
-            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },
@@ -62,8 +65,7 @@ $('#btn-filter').on('click', function(e) {
 });
 
 // View Details
-$(document).on('click', '.btn-detail', function() {
-    let id = $(this).data('id');
+function detail(id) {
     let url = '/transaction/purchasing/show/' + id;
 
     // Show loading or clear previous data
@@ -79,7 +81,7 @@ $(document).on('click', '.btn-detail', function() {
         url: url,
         type: 'GET',
         success: function(response) {
-            $('#detail-supplier').text(response.company_name);
+            $('#detail-supplier').text(response.purchase.supplier_name);
             $('#detail-date').text(response.purchase_date_formatted);
             $('#detail-note').text(response.purchase.reference_note || 'Tidak ada catatan');
             
@@ -111,5 +113,6 @@ $(document).on('click', '.btn-detail', function() {
             $('#modal-detail').modal('hide');
         }
     });
-});
+}
 
+window.detail = detail;

@@ -91,12 +91,13 @@
                             <table class="table table-striped nowrap" id="table-data">
                                 <thead>
                                     <tr>
-                                        <th>No. Transaksi</th>
+                                        <th class="text-center">No.</th>
+                                        <th class="text-center">Aksi</th>
+                                        <th>Nomor Transaksi</th>
                                         <th>Tanggal</th>
                                         <th>Supplier</th>
                                         <th class="text-end">Total Pembelian</th>
                                         <th>Catatan</th>
-                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>

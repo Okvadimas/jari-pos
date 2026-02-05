@@ -21,15 +21,18 @@ const datatable = () => {
                 handleAjaxError(xhr);
             }
         },
+        order: [3, 'desc'],
         columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
+            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
             { data: 'id', name: 'id', render: function(data, type, row) {
-                return '#' + data;
-            }},
+                    return '#' + data;
+                }
+            },
             { data: 'order_date', name: 'order_date' },
             { data: 'customer_display', name: 'customer_name' },
             { data: 'total_amount', name: 'total_amount', className: 'text-end' },
             { data: 'final_amount', name: 'final_amount', className: 'text-end' },
-            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },
@@ -64,8 +67,7 @@ $('#btn-filter').on('click', function(e) {
 });
 
 // View Details
-$(document).on('click', '.btn-detail', function() {
-    let id = $(this).data('id');
+function detail(id) {
     let url = '/transaction/sales/show/' + id;
 
     // Show loading or clear previous data
@@ -121,5 +123,6 @@ $(document).on('click', '.btn-detail', function() {
             $('#modal-detail').modal('hide');
         }
     });
-});
+};
 
+window.detail = detail;

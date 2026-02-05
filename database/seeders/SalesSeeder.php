@@ -30,13 +30,13 @@ class SalesSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Creating 50 Dummy Sales Orders...');
+        $this->command->info('Creating 100 Dummy Sales Orders...');
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             DB::transaction(function () use ($faker, $companyIds, $productVariantIds, $userIds) {
                 $companyId = $faker->randomElement($companyIds);
                 $createdBy = $faker->randomElement($userIds);
-                $orderDate = $faker->dateTimeBetween('-1 year', 'now');
+                $orderDate = $faker->dateTimeBetween('-1 month', 'now');
 
                 // Create Order
                 $salesOrder = SalesOrder::create([
@@ -58,13 +58,6 @@ class SalesSeeder extends Seeder
 
                 for ($j = 0; $j < $numberOfItems; $j++) {
                     $variantId = $faker->randomElement($productVariantIds);
-                    // Fetch variant price (assuming ProductPrice logic or base price from variant/product relationships, 
-                    // but for dummy data, we might just grab a random price or try to get it from DB if easy.
-                    // Given the models I saw, ProductVariant might not have price directly or it is in ProductPrice.
-                    // To keep it simple and robust without querying too much inside loop, I'll mock the price if I can't easily get it.
-                    // Actually, ProductPrice exists. Let's try to be slightly realistic or just random.
-                    // Random is safer to avoid complex query logic in seeder if the relation isn't loaded.
-                    $unitPrice = $faker->numberBetween(100, 5000) * 1000; // 100k - 5000k (too high?), maybe 10k to 500k
                     $unitPrice = $faker->numberBetween(10, 500) * 1000; // 10.000 - 500.000
 
                     $quantity = $faker->numberBetween(1, 10);
