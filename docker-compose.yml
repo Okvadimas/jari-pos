@@ -22,7 +22,7 @@ services:
     container_name: jaripos-nginx
     restart: unless-stopped
     ports:
-      - "90:80"
+      - "80:80"
     volumes:
       - .:/var/www
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
