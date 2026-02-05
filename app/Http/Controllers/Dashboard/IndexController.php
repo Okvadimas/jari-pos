@@ -178,11 +178,12 @@ class IndexController extends Controller
         // 7. ACTIVE PROMOTIONS (Promo Aktif)
         // =====================================================
         
-        $activePromotions = Promotion::whereNull('deleted_at')
+        $activePromotions = Promotion::where('company_id', $companyId)
+            ->whereNull('deleted_at')
             ->where('start_date', '<=', $now)
             ->where('end_date', '>=', $now)
             ->orderBy('priority', 'asc')
-            ->limit(5)
+            // ->limit(5)
             ->get(['id', 'name', 'discount_value', 'start_date', 'end_date']);
 
         // =====================================================

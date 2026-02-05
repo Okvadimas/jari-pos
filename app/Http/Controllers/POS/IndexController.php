@@ -39,7 +39,7 @@ class IndexController extends Controller
         return $this->successResponse('Data berhasil diambil', $vouchers);
     }
 
-    public function store() {
+    public function store(Request $request) {
         
     }
 }
