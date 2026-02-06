@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 
 // Load Service
 use App\Services\PosService;
+use App\Http\Requests\POS\StorePosRequest;
 
 class IndexController extends Controller
 {
     public function index()
     {
-        return view('pos.index');
+        $payments = PosService::getPaymentMethods();
+        return view('pos.index', compact('payments'));
     }
 
     public function getProducts(Request $request)
@@ -39,7 +41,14 @@ class IndexController extends Controller
         return $this->successResponse('Data berhasil diambil', $vouchers);
     }
 
-    public function store(Request $request) {
-        
+    public function store(StorePosRequest $request) {
+        $validated = $request->validated();
+        $process = PosService::store($validated);
+
+        if ($process['status']) {
+            return $this->successResponse('Transaksi berhasil disimpan', $process['data']);
+        } else {
+            return $this->errorResponse($process['message'] ?? 'Terjadi kesalahan saat menyimpan transaksi');
+        }
     }
 }

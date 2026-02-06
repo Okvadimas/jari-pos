@@ -16,8 +16,6 @@ class Promotion extends Model
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'discount_value' => 'decimal:2',
-        'min_order_amount' => 'decimal:2',
     ];
 
     public function category()

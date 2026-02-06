@@ -264,10 +264,9 @@
                     <label class="pos-cart-label">Metode Pembayaran</label>
                     <select class="js-select2" id="paymentMethod">
                         <option value="">Pilih Metode Pembayaran</option>
-                        <option value="cash">Tunai</option>
-                        <option value="card">Kartu Kredit/Debit</option>
-                        <option value="qris">QRIS</option>
-                        <option value="transfer">Transfer Bank</option>
+                        @foreach($payments as $payment)
+                            <option value="{{ $payment->id }}">{{ $payment->name }}</option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -443,7 +442,8 @@
         categories: "{{ route('pos.categories') }}",
         products: "{{ route('pos.products') }}",
         vouchers: "{{ route('pos.vouchers') }}",
-        sync: "{{ route('pos.sync.transactions') }}"
+        sync: "{{ route('pos.sync.transactions') }}",
+        store: "{{ route('pos.store') }}"
     };
 </script>
 <script src="{{ asset('js/pos/offline-db.js') }}"></script>

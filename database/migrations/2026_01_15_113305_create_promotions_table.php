@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
             $table->string('name');
-            $table->decimal('discount_value', 15, 2);
+            $table->decimal('discount_value', 15, 0);
+            $table->string('type')->default('fixed')->comment('fixed or percentage');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete()->comment('Promo berlaku satu kategori');

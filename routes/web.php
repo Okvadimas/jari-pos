@@ -61,6 +61,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::get('/categories', [POSController::class, 'getCategories'])->name('pos.categories');
         Route::get('/top-selling', [POSController::class, 'getTopSelling'])->name('pos.top-selling');
         Route::get('/vouchers', [POSController::class, 'getVouchers'])->name('pos.vouchers');
+        Route::post('/store', [POSController::class, 'store'])->name('pos.store');
         Route::post('/sync/transactions', [POSSyncController::class, 'syncTransactions'])->name('pos.sync.transactions');
     });
 

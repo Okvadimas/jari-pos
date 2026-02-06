@@ -23,12 +23,17 @@ $(document).ready(function() {
     
     // Search with debounce
     let searchTimeout;
-    $('#searchProduct').on('input', function() {
+    $('#searchProduct, #searchProductMobile').on('input', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             loadProducts();
         }, 300);
     });
+
+    // Prevent Customer Name from triggering search (Defensive)
+    // $('#customerName').on('input', function(e) {
+    //     e.stopPropagation();
+    // });
 
     // Mobile Cart Toggle
     $('.pos-cart-items-header').on('click', function() {
@@ -585,7 +590,12 @@ function loadVouchers() {
                 data: 'amount', 
                 name: 'amount',
                  render: function(data, type, row) {
-                    return 'Rp ' + new Intl.NumberFormat('id-ID').format(data);
+                    console.log('data', data);
+                    if(row.type === 'fixed') {
+                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(data);
+                    } else {
+                        return data + '%';
+                    }
                 }
             },
             {
@@ -605,7 +615,9 @@ function loadVouchers() {
 }
 
 function selectVoucher(id) {
+    console.log('Available Vouchers: ', window.availableVouchers)
     const voucher = window.availableVouchers.find(v => v.id === id);
+    console.log('Ini Voucher: ', voucher);
     if (!voucher) return;
     
     // Check min order
@@ -678,40 +690,79 @@ function placeOrder() {
     
     const orderType = $('#orderType').val();
     const customerName = $('#customerName').val();
-    const phoneNumber = $('#phoneNumber').val();
+    const phoneNumber = $('#phoneNumber').val(); // Assuming this field exists or needs to be added to modal if important
+    const paymentMethod = $('#paymentMethod').val(); // Sending payment method if backend supports it, though current schema doesn't show payment table. 
+    // Wait, SalesOrder schema didn't have payment_method column in recent migration view, but let's send what we have.
     
     if (!orderType) {
         NioApp.Toast('Mohon pilih tipe pesanan', 'warning', { position: 'top-right' });
         return;
     }
+
+    // Prepare Items
+    const items = cart.map(item => ({
+        product_id: item.id,
+        variant_id: item.variant_id,
+        quantity: item.qty,
+        price: item.price
+    }));
     
     const orderData = {
         order_type: orderType,
         customer_name: customerName,
         phone_number: phoneNumber,
-        items: cart.map(item => ({
-            product_id: item.id,
-            variant_id: item.variant_id,
-            quantity: item.qty,
-            price: item.price
-        })),
-        voucher_id: selectedVoucher ? selectedVoucher.id : null
+        items: items,
+        payment_method_id: paymentMethod, // Added payment_method_id
+        voucher_id: selectedVoucher ? selectedVoucher.id : null,
+        _token: $('meta[name="csrf-token"]').attr('content') // CSRF Token
     };
+
+    // Show Loading
+    const btn = $('#checkoutModal .pos-btn-order');
+    const originalText = btn.text();
+    btn.prop('disabled', true).text('Memproses...');
     
-    console.log('Order Data:', orderData);
-    NioApp.Toast('Pesanan Berhasil Ditempatkan!\nNama: ' + customerName + '\nTotal: ' + $('#totalAmount').text(), 'success', { position: 'top-right' });
-    
-    // Clear everything after success
-    cart = [];
-    selectedVoucher = null;
-    $('#customerName').val('');
-    $('#paymentMethod').val('');
-    $('#orderType').val('dine_in');
-    
-    renderCart();
-    updateProductButtons();
-    calculateTotal();
-    closeCheckoutModal();
+    $.ajax({
+        url: window.posRoutes.store,
+        type: 'POST',
+        data: orderData,
+        success: function(response) {
+            btn.prop('disabled', false).text(originalText);
+            
+            if (response.status) {
+                NioApp.Toast(response.message || 'Pesanan Berhasil Ditempatkan!', 'success', { position: 'top-right' });
+                
+                // Print Receipt if auto-print enabled (Simulated for now)
+                if (settings && settings.autoPrint) {
+                    console.log('Auto Printing Receipt for Order ID:', response.data.id);
+                    // printReceipt(response.data); 
+                }
+
+                // Clear everything after success
+                cart = [];
+                selectedVoucher = null;
+                $('#customerName').val('');
+                $('#paymentMethod').val('');
+                $('#orderType').val('dine_in');
+                
+                renderCart();
+                updateProductButtons();
+                calculateTotal();
+                closeCheckoutModal();
+            } else {
+                 NioApp.Toast(response.message || 'Gagal menyimpan pesanan', 'error', { position: 'top-right' });
+            }
+        },
+        error: function(xhr, status, error) {
+            btn.prop('disabled', false).text(originalText);
+            let msg = 'Terjadi kesalahan sistem';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            NioApp.Toast(msg, 'error', { position: 'top-right' });
+            console.error('Order Error:', error);
+        }
+    });
 }
 
 
@@ -864,9 +915,7 @@ function clearNotifications() {
     updateNotificationBadge();
 }
 
-// ============================================
-// Settings Functions
-// ============================================
+
 // ============================================
 // Settings Functions
 // ============================================
