@@ -23,6 +23,7 @@ class PromotionSeeder extends Seeder
             [
                 'company_id' => 1,
                 'name' => 'DISKON AWAL TAHUN',
+                'type' => 'fixed',
                 'discount_value' => 10000,
                 'min_order_amount' => 50000,
                 'start_date' => Carbon::now()->subDays(10),
@@ -34,6 +35,7 @@ class PromotionSeeder extends Seeder
             [
                 'company_id' => 1,
                 'name' => 'VOUCHER SPESIAL MEMBER',
+                'type' => 'fixed',
                 'discount_value' => 25000,
                 'min_order_amount' => 100000,
                 'start_date' => Carbon::now()->subDays(5),
@@ -45,6 +47,7 @@ class PromotionSeeder extends Seeder
             [
                 'company_id' => 1,
                 'name' => 'FLASH SALE KATEGORI',
+                'type' => 'fixed',
                 'discount_value' => 5000,
                 'min_order_amount' => 20000,
                 'start_date' => Carbon::now()->subDays(1),
@@ -56,6 +59,7 @@ class PromotionSeeder extends Seeder
             [
                 'company_id' => 1,
                 'name' => 'PROMO PRODUK PILIHAN',
+                'type' => 'fixed',
                 'discount_value' => 15000,
                 'min_order_amount' => 0, // No min order
                 'start_date' => Carbon::now()->subDays(15),
@@ -67,6 +71,7 @@ class PromotionSeeder extends Seeder
             [
                 'company_id' => 1,
                 'name' => 'EXPIRED VOUCHER',
+                'type' => 'fixed',
                 'discount_value' => 50000,
                 'min_order_amount' => 100000,
                 'start_date' => Carbon::now()->subMonths(2),

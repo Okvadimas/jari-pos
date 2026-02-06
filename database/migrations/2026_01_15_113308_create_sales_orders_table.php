@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('applied_promo_id')->nullable()->constrained('promotions')->nullOnDelete();
             $table->decimal('total_discount_manual', 15, 2)->default(0)->comment('Diskon dari promo');
             $table->decimal('final_amount', 15, 2)->comment('Total yang dibayar customer');
+            $table->foreignId('payment_method_id')->nullable()->constrained('payment_methods')->nullOnDelete();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->index('order_date');
             $table->index('applied_promo_id');
             $table->index('company_id');
+            $table->index('payment_method_id');
         });
     }
 

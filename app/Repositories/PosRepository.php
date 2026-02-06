@@ -2,11 +2,16 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\DB;
+
 // Load Model
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Category;
+use App\Models\SalesOrder;
 use App\Models\SalesOrderDetail;
 use App\Models\Promotion;
+use App\Models\PaymentMethod;
 
 class PosRepository {
 
@@ -121,7 +126,7 @@ class PosRepository {
                     'id' => $p->id,
                     'code' => $p->name, 
                     'name' => $p->name,
-                    'type' => 'fixed',
+                    'type' => $p->type,
                     'amount' => $p->discount_value,
                     'min_order' => $p->min_order_amount,
                     'description' => "Potongan Rp " . number_format($p->discount_value, 0, ',', '.'),
@@ -136,4 +141,25 @@ class PosRepository {
         return $vouchers;
     }
 
+    public static function getPaymentMethods() {
+        $paymentMethods = PaymentMethod::where('deleted_at', null)->select('id', 'name')->get();
+        return $paymentMethods;
+    }
+
+
+    public static function findVariant($variantId) {
+        return ProductVariant::with('prices', 'product')->find($variantId);
+    }
+
+    public static function findPromo($promoId) {
+        return Promotion::find($promoId);
+    }
+
+    public static function storeOrder($data) {
+        return SalesOrder::create($data);
+    }
+
+    public static function storeOrderDetail($data) {
+        return SalesOrderDetail::create($data);
+    }
 }
