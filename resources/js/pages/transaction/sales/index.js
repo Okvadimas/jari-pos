@@ -25,10 +25,7 @@ const datatable = () => {
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
             { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
-            { data: 'id', name: 'id', render: function(data, type, row) {
-                    return '#' + data;
-                }
-            },
+            { data: 'invoice_number', name: 'invoice_number'},
             { data: 'order_date', name: 'order_date' },
             { data: 'customer_display', name: 'customer_name' },
             { data: 'total_amount', name: 'total_amount', className: 'text-end' },
@@ -125,4 +122,37 @@ function detail(id) {
     });
 };
 
+// Delete function
+function hapus(id) {
+    Swal.fire({
+        title: 'Hapus Penjualan?',
+        text: 'Data penjualan akan dihapus secara permanen',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/transaction/sales/destroy',
+                type: 'POST',
+                data: { id: id },
+                success: function(response) {
+                    if (response.status) {
+                        NioApp.Toast(response.message, 'success', { position: 'top-right' });
+                        $('#table-data').DataTable().ajax.reload();
+                        loadSummary();
+                    } else {
+                        NioApp.Toast(response.message, 'warning', { position: 'top-right' });
+                    }
+                },
+                error: function(xhr) {
+                    handleAjaxError(xhr);
+                }
+            });
+        }
+    });
+}
+
 window.detail = detail;
+window.hapus = hapus;

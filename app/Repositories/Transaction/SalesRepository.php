@@ -18,6 +18,7 @@ class SalesRepository
                     ->where('so.company_id', $user->company_id)
                     ->select(
                         'so.id',
+                        'so.invoice_number',
                         'so.order_date',
                         'so.customer_name',
                         'so.total_amount',

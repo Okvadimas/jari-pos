@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sales_orders', function (Blueprint $table) {
             $table->id();
+            $table->string('invoice_number', 20);
             $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
             $table->string('customer_name');
             $table->date('order_date');
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();
 
+            $table->index('invoice_number');
             $table->index('order_date');
             $table->index('applied_promo_id');
             $table->index('company_id');

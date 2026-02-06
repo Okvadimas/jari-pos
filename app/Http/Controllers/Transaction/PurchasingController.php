@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 use App\Services\Transaction\PurchasingService;
 use App\Models\Purchase;
+use App\Http\Requests\Transaction\StorePurchasingRequest;
 
 class PurchasingController extends Controller
 {
@@ -74,5 +75,57 @@ class PurchasingController extends Controller
             'details' => $details
         ]);
     }
-}
 
+    /**
+     * Show create form
+     */
+    public function create()
+    {
+        $data = [
+            'title' => $this->pageTitle,
+            'js' => 'resources/js/pages/transaction/purchasing/form.js',
+        ];
+
+        return view('transaction.purchasing.form', $data);
+    }
+
+    /**
+     * Show edit form
+     */
+    public function edit($id)
+    {
+        $purchase = Purchase::with(['details.variant.product'])->findOrFail($id);
+
+        $data = [
+            'title' => $this->pageTitle,
+            'js' => 'resources/js/pages/transaction/purchasing/form.js',
+            'purchase' => $purchase,
+        ];
+
+        return view('transaction.purchasing.form', $data);
+    }
+
+    /**
+     * Store or update purchase
+     */
+    public function store(StorePurchasingRequest $request)
+    {
+        $validated = $request->validated();
+
+        $process = PurchasingService::store($validated);
+
+        $message = !empty($validated['id']) ? 'Pembelian berhasil diupdate' : 'Pembelian berhasil ditambahkan';
+
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
+    }
+
+    /**
+     * Soft delete purchase
+     */
+    public function destroy(Request $request)
+    {
+        $process = PurchasingService::destroy($request->id);
+
+        return $process ? $this->successResponse('Pembelian berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
+    }
+}

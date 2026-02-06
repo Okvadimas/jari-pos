@@ -21,5 +21,12 @@ class UtilityController extends Controller
         $data = $this->utilityRepository->dataCompanies($search);
         return response()->json($data);
     }
+
+    public function dataProductVariants(Request $request)
+    {
+        $search = $request->search;
+        $data = $this->utilityRepository->dataProductVariants($search);
+        return response()->json($data);
+    }
     
 }

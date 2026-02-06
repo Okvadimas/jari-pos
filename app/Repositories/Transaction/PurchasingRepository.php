@@ -18,6 +18,7 @@ class PurchasingRepository
                     ->where('p.company_id', $user->company_id)
                     ->select(
                         'p.id',
+                        'p.order_number',
                         'p.purchase_date',
                         'p.supplier_name',
                         'p.total_cost',
@@ -41,5 +42,35 @@ class PurchasingRepository
                 COALESCE(SUM(total_cost), 0) as total_pembelian
             ')
             ->first();
+    }
+
+    /**
+     * Get product variants for dropdown
+     */
+    public static function getProductVariants()
+    {
+        $user = Auth::user();
+
+        return DB::table('product_variants as pv')
+            ->join('products as p', 'p.id', '=', 'pv.product_id')
+            ->whereNull('pv.deleted_at')
+            ->whereNull('p.deleted_at')
+            ->where('p.company_id', $user->company_id)
+            ->select(
+                'pv.id',
+                'pv.name as variant_name',
+                'pv.sku',
+                'p.name as product_name'
+            )
+            ->orderBy('p.name')
+            ->orderBy('pv.name')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'text' => $item->product_name . ($item->variant_name ? ' - ' . $item->variant_name : '') . ' (' . $item->sku . ')',
+                    'sku' => $item->sku,
+                ];
+            });
     }
 }
