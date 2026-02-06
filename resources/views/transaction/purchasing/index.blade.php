@@ -10,6 +10,9 @@
                         <div class="nk-block-head-content">
                             <h3 class="nk-block-title page-title">{{ $title }}</h3>
                         </div>
+                        <div class="nk-block-head-content">
+                            <a href="{{ route('transaction.purchasing.create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Pembelian</span></a>
+                        </div>
                     </div>
                 </div><!-- .nk-block-head -->
 

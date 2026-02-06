@@ -9,6 +9,8 @@ use App\Models\SalesOrderDetail;
 use App\Models\Company;
 use App\Models\ProductVariant;
 use App\Models\User;
+use App\Services\TransactionNumberService;
+use Carbon\Carbon;
 use Faker\Factory as Faker;
 
 class SalesSeeder extends Seeder
@@ -36,17 +38,21 @@ class SalesSeeder extends Seeder
             DB::transaction(function () use ($faker, $companyIds, $productVariantIds, $userIds) {
                 $companyId = $faker->randomElement($companyIds);
                 $createdBy = $faker->randomElement($userIds);
-                $orderDate = $faker->dateTimeBetween('-1 month', 'now');
+                $orderDate = Carbon::parse($faker->dateTimeBetween('-1 month', 'now'));
+
+                // Generate invoice_number using stored procedure
+                $invoiceNumber = TransactionNumberService::generateSalesInvoice($companyId, $orderDate);
 
                 // Create Order
                 $salesOrder = SalesOrder::create([
+                    'invoice_number' => $invoiceNumber,
                     'company_id' => $companyId,
                     'customer_name' => $faker->name,
                     'order_date' => $orderDate,
-                    'total_amount' => 0, // Calculated later
+                    'total_amount' => 0,
                     'applied_promo_id' => null,
                     'total_discount_manual' => 0,
-                    'final_amount' => 0, // Calculated later
+                    'final_amount' => 0,
                     'created_by' => $createdBy,
                     'updated_by' => $createdBy,
                     'created_at' => $orderDate,
@@ -58,7 +64,7 @@ class SalesSeeder extends Seeder
 
                 for ($j = 0; $j < $numberOfItems; $j++) {
                     $variantId = $faker->randomElement($productVariantIds);
-                    $unitPrice = $faker->numberBetween(10, 500) * 1000; // 10.000 - 500.000
+                    $unitPrice = $faker->numberBetween(10, 500) * 1000;
 
                     $quantity = $faker->numberBetween(1, 10);
                     $subtotal = $unitPrice * $quantity;
@@ -82,7 +88,7 @@ class SalesSeeder extends Seeder
                 // Update totals
                 $salesOrder->update([
                     'total_amount' => $totalAmount,
-                    'final_amount' => $totalAmount, // Assuming no discount for simplicity in this random batch
+                    'final_amount' => $totalAmount,
                 ]);
             });
         }

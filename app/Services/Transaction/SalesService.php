@@ -5,6 +5,8 @@ namespace App\Services\Transaction;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Transaction\SalesRepository;
+use App\Models\SalesOrder;
+use Illuminate\Support\Facades\Auth;
 
 class SalesService
 {
@@ -27,7 +29,8 @@ class SalesService
                 return 'Rp ' . number_format($row->final_amount, 0, ',', '.');
             })
             ->addColumn('action', function ($row) {
-                return '<button class="btn btn-dim btn-sm btn-outline-info" onclick="detail(' . $row->id . ')"><em class="icon ni ni-eye d-none d-sm-inline me-1"></em> Detail</button>';
+                return '<button class="btn btn-dim btn-sm btn-outline-info" onclick="detail(' . $row->id . ')"><em class="icon ni ni-eye d-none d-sm-inline me-1"></em> Detail</button>
+                        <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -36,5 +39,20 @@ class SalesService
     public static function getSummary($startDate, $endDate)
     {
         return SalesRepository::getSummary($startDate, $endDate);
+    }
+
+    public static function destroy($id)
+    {
+        $salesOrder = SalesOrder::find($id);
+
+        if (!$salesOrder) {
+            return false;
+        }
+
+        $salesOrder->deleted_by = Auth::id();
+        $salesOrder->deleted_at = now();
+        $salesOrder->save();
+
+        return true;
     }
 }

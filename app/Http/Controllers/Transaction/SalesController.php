@@ -77,5 +77,14 @@ class SalesController extends Controller
             'details' => $details
         ]);
     }
-}
 
+    /**
+     * Soft delete sales order
+     */
+    public function destroy(Request $request)
+    {
+        $process = SalesService::destroy($request->id);
+
+        return $process ? $this->successResponse('Penjualan berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
+    }
+}
