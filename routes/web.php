@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\UtilityController                  as UtilityController;
+
 use App\Http\Controllers\POS\IndexController                as POSController;
 use App\Http\Controllers\POS\SyncController                 as POSSyncController;
 
@@ -162,10 +164,21 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::get('/sales/datatable', [SalesController::class, 'datatable'])->name('transaction.sales.datatable');
         Route::get('/sales/summary', [SalesController::class, 'summary'])->name('transaction.sales.summary');
         Route::get('/sales/show/{id}', [SalesController::class, 'show'])->name('transaction.sales.show');
+        Route::post('/sales/destroy', [SalesController::class, 'destroy'])->name('transaction.sales.destroy');
 
         Route::get('/purchasing', [PurchasingController::class, 'index'])->name('transaction.purchasing.index');
         Route::get('/purchasing/datatable', [PurchasingController::class, 'datatable'])->name('transaction.purchasing.datatable');
         Route::get('/purchasing/summary', [PurchasingController::class, 'summary'])->name('transaction.purchasing.summary');
         Route::get('/purchasing/show/{id}', [PurchasingController::class, 'show'])->name('transaction.purchasing.show');
+        Route::get('/purchasing/create', [PurchasingController::class, 'create'])->name('transaction.purchasing.create');
+        Route::get('/purchasing/edit/{id}', [PurchasingController::class, 'edit'])->name('transaction.purchasing.edit');
+        Route::post('/purchasing/store', [PurchasingController::class, 'store'])->name('transaction.purchasing.store');
+        Route::post('/purchasing/destroy', [PurchasingController::class, 'destroy'])->name('transaction.purchasing.destroy');
+    });
+
+    // Utility Routes
+    Route::group(['prefix' => 'utility'], function () {
+        Route::get('/companies', [UtilityController::class, 'dataCompanies'])->name('utility.companies');
+        Route::get('/variants', [UtilityController::class, 'dataProductVariants'])->name('utility.variants');
     });
 });

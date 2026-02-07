@@ -12,58 +12,67 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Create counters table dengan collation yang konsisten
+        // Create counters table
         Schema::create('counters', function (Blueprint $table) {
             $table->id();
             $table->string('company', 5)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
             $table->string('modul', 5)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            $table->integer('year');
+            $table->integer('month');
             $table->integer('counter_value');
 
-            // Unique constraint untuk kombinasi company dan modul
-            $table->unique(['company', 'modul'], 'uniq_company_modul');
+            // Unique constraint for company, modul, year, month combination
+            $table->unique(['company', 'modul', 'year', 'month'], 'uniq_company_modul_year_month');
         });
 
-        // Create stored procedure generate_kode
-        $procedure = <<<SQL
-DROP PROCEDURE IF EXISTS generate_kode;
-SQL;
-        DB::unprepared($procedure);
+        // Create stored procedure with FOR UPDATE locking
+        DB::unprepared('DROP PROCEDURE IF EXISTS generate_transaction_number');
 
         $procedure = <<<SQL
-CREATE PROCEDURE generate_kode(IN modul_input VARCHAR(5) CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci, IN company_input VARCHAR(5) CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci)
+CREATE PROCEDURE generate_transaction_number(
+    IN prefix_input VARCHAR(5) CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    IN company_input VARCHAR(5) CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    IN year_input INT,
+    IN month_input INT
+)
 BEGIN
-    -- Declare variabel
     DECLARE v_counter INT DEFAULT NULL;
+    DECLARE v_exists INT DEFAULT 0;
     
-    -- Ambil counter terakhir
-    SELECT c.counter_value
-    INTO v_counter
-    FROM counters c
-    WHERE c.company = company_input COLLATE utf8mb4_unicode_ci
-      AND c.modul = modul_input COLLATE utf8mb4_unicode_ci
-    LIMIT 1;
+    -- Check if counter exists with FOR UPDATE lock (transaction managed by caller)
+    SELECT COUNT(*), COALESCE(MAX(counter_value), 0)
+    INTO v_exists, v_counter
+    FROM counters
+    WHERE company = company_input COLLATE utf8mb4_unicode_ci
+      AND modul = prefix_input COLLATE utf8mb4_unicode_ci
+      AND year = year_input
+      AND month = month_input
+    FOR UPDATE;
     
-    -- Jika belum ada data
-    IF v_counter IS NULL THEN
+    -- If no data exists, create new counter
+    IF v_exists = 0 THEN
         SET v_counter = 1;
 
-        INSERT INTO counters (company, modul, counter_value)
-        VALUES (company_input, modul_input, v_counter);
+        INSERT INTO counters (company, modul, year, month, counter_value)
+        VALUES (company_input, prefix_input, year_input, month_input, v_counter);
     ELSE
         SET v_counter = v_counter + 1;
 
         UPDATE counters
         SET counter_value = v_counter
         WHERE company = company_input COLLATE utf8mb4_unicode_ci
-          AND modul = modul_input COLLATE utf8mb4_unicode_ci;
+          AND modul = prefix_input COLLATE utf8mb4_unicode_ci
+          AND year = year_input
+          AND month = month_input;
     END IF;
     
-    -- Return kode
+    -- Return formatted transaction number: PREFIX/YYYY/MM/0001
     SELECT CONCAT(
-        modul_input, '-', 
-        company_input, '-', 
-        LPAD(v_counter, 5, '0')
-    ) AS code;
+        prefix_input, '/',
+        LPAD(year_input, 4, '0'), '/',
+        LPAD(month_input, 2, '0'), '/',
+        LPAD(v_counter, 4, '0')
+    ) AS transaction_number;
 END
 SQL;
         DB::unprepared($procedure);
@@ -75,7 +84,7 @@ SQL;
     public function down(): void
     {
         // Drop stored procedure
-        DB::unprepared('DROP PROCEDURE IF EXISTS generate_kode');
+        DB::unprepared('DROP PROCEDURE IF EXISTS generate_transaction_number');
 
         // Drop table
         Schema::dropIfExists('counters');

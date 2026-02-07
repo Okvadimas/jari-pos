@@ -9,6 +9,8 @@ use App\Models\PurchaseDetail;
 use App\Models\Company;
 use App\Models\ProductVariant;
 use App\Models\User;
+use App\Services\TransactionNumberService;
+use Carbon\Carbon;
 use Faker\Factory as Faker;
 
 class PurchaseSeeder extends Seeder
@@ -30,20 +32,24 @@ class PurchaseSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Creating 20 Dummy Purchases...');
+        $this->command->info('Creating 100 Dummy Purchases...');
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             DB::transaction(function () use ($faker, $companyIds, $productVariantIds, $userIds) {
                 $companyId = $faker->randomElement($companyIds);
                 $createdBy = $faker->randomElement($userIds);
-                $purchaseDate = $faker->dateTimeBetween('-1 year', 'now');
+                $purchaseDate = Carbon::parse($faker->dateTimeBetween('-1 month', 'now'));
+
+                // Generate order_number using stored procedure
+                $orderNumber = TransactionNumberService::generatePurchaseOrder($companyId, $purchaseDate);
 
                 // Create Purchase
                 $purchase = Purchase::create([
+                    'order_number' => $orderNumber,
                     'company_id' => $companyId,
                     'purchase_date' => $purchaseDate,
-                    'supplier_name' => $faker->company, // Supplier name from Faker
-                    'total_cost' => 0, // Calculated later
+                    'supplier_name' => $faker->company,
+                    'total_cost' => 0,
                     'reference_note' => $faker->sentence,
                     'created_by' => $createdBy,
                     'updated_by' => $createdBy,
@@ -56,11 +62,10 @@ class PurchaseSeeder extends Seeder
 
                 for ($j = 0; $j < $numberOfItems; $j++) {
                     $variantId = $faker->randomElement($productVariantIds);
-                    // Cost price random
-                    $costPrice = $faker->numberBetween(5, 300) * 1000; // 5.000 - 300.000
+                    $costPrice = $faker->numberBetween(5, 300) * 1000;
 
                     $quantity = $faker->numberBetween(10, 100);
-                    $subtotal = $costPrice * $quantity; // Although PurchaseDetail doesn't have subtotal, we need it for Purchase total
+                    $subtotal = $costPrice * $quantity;
 
                     PurchaseDetail::create([
                         'purchase_id' => $purchase->id,

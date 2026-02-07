@@ -136,6 +136,7 @@ export default defineConfig({
                 // Transaction - Purchasing
                 // ================================
                 'resources/js/pages/transaction/purchasing/index.js',
+                'resources/js/pages/transaction/purchasing/form.js',
             ],
             refresh: true,
         }),

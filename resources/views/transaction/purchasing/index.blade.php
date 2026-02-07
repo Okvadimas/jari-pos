@@ -10,6 +10,9 @@
                         <div class="nk-block-head-content">
                             <h3 class="nk-block-title page-title">{{ $title }}</h3>
                         </div>
+                        <div class="nk-block-head-content">
+                            <a href="{{ route('transaction.purchasing.create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Pembelian</span></a>
+                        </div>
                     </div>
                 </div><!-- .nk-block-head -->
 
@@ -91,12 +94,13 @@
                             <table class="table table-striped nowrap" id="table-data">
                                 <thead>
                                     <tr>
-                                        <th>No. Transaksi</th>
+                                        <th class="text-center">No.</th>
+                                        <th class="text-center">Aksi</th>
+                                        <th>Nomor Transaksi</th>
                                         <th>Tanggal</th>
                                         <th>Supplier</th>
                                         <th class="text-end">Total Pembelian</th>
                                         <th>Catatan</th>
-                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>

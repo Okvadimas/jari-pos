@@ -9,6 +9,8 @@ use App\Models\SalesOrderDetail;
 use App\Models\Company;
 use App\Models\ProductVariant;
 use App\Models\User;
+use App\Services\TransactionNumberService;
+use Carbon\Carbon;
 use Faker\Factory as Faker;
 
 class SalesSeeder extends Seeder
@@ -30,23 +32,27 @@ class SalesSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Creating 50 Dummy Sales Orders...');
+        $this->command->info('Creating 100 Dummy Sales Orders...');
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             DB::transaction(function () use ($faker, $companyIds, $productVariantIds, $userIds) {
                 $companyId = $faker->randomElement($companyIds);
                 $createdBy = $faker->randomElement($userIds);
-                $orderDate = $faker->dateTimeBetween('-1 year', 'now');
+                $orderDate = Carbon::parse($faker->dateTimeBetween('-1 month', 'now'));
+
+                // Generate invoice_number using stored procedure
+                $invoiceNumber = TransactionNumberService::generateSalesInvoice($companyId, $orderDate);
 
                 // Create Order
                 $salesOrder = SalesOrder::create([
+                    'invoice_number' => $invoiceNumber,
                     'company_id' => $companyId,
                     'customer_name' => $faker->name,
                     'order_date' => $orderDate,
-                    'total_amount' => 0, // Calculated later
+                    'total_amount' => 0,
                     'applied_promo_id' => null,
                     'total_discount_manual' => 0,
-                    'final_amount' => 0, // Calculated later
+                    'final_amount' => 0,
                     'created_by' => $createdBy,
                     'updated_by' => $createdBy,
                     'created_at' => $orderDate,
@@ -58,14 +64,7 @@ class SalesSeeder extends Seeder
 
                 for ($j = 0; $j < $numberOfItems; $j++) {
                     $variantId = $faker->randomElement($productVariantIds);
-                    // Fetch variant price (assuming ProductPrice logic or base price from variant/product relationships, 
-                    // but for dummy data, we might just grab a random price or try to get it from DB if easy.
-                    // Given the models I saw, ProductVariant might not have price directly or it is in ProductPrice.
-                    // To keep it simple and robust without querying too much inside loop, I'll mock the price if I can't easily get it.
-                    // Actually, ProductPrice exists. Let's try to be slightly realistic or just random.
-                    // Random is safer to avoid complex query logic in seeder if the relation isn't loaded.
-                    $unitPrice = $faker->numberBetween(100, 5000) * 1000; // 100k - 5000k (too high?), maybe 10k to 500k
-                    $unitPrice = $faker->numberBetween(10, 500) * 1000; // 10.000 - 500.000
+                    $unitPrice = $faker->numberBetween(10, 500) * 1000;
 
                     $quantity = $faker->numberBetween(1, 10);
                     $subtotal = $unitPrice * $quantity;
@@ -89,7 +88,7 @@ class SalesSeeder extends Seeder
                 // Update totals
                 $salesOrder->update([
                     'total_amount' => $totalAmount,
-                    'final_amount' => $totalAmount, // Assuming no discount for simplicity in this random batch
+                    'final_amount' => $totalAmount,
                 ]);
             });
         }
