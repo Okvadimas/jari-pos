@@ -345,6 +345,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span>Cetak Otomatis setelah Bayar</span>
                         <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="settingAutoPrint">
                             <label class="custom-control-label" for="settingAutoPrint"></label>
                         </div>
                     </div>
