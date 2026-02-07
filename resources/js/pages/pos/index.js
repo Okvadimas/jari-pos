@@ -30,11 +30,6 @@ $(document).ready(function() {
         }, 300);
     });
 
-    // Prevent Customer Name from triggering search (Defensive)
-    // $('#customerName').on('input', function(e) {
-    //     e.stopPropagation();
-    // });
-
     // Mobile Cart Toggle
     $('.pos-cart-items-header').on('click', function() {
         if ($(window).width() <= 768) {
@@ -732,10 +727,10 @@ function placeOrder() {
             if (response.status) {
                 NioApp.Toast(response.message || 'Pesanan Berhasil Ditempatkan!', 'success', { position: 'top-right' });
                 
-                // Print Receipt if auto-print enabled (Simulated for now)
+                // Print Receipt if auto-print enabled
                 if (settings && settings.autoPrint) {
                     console.log('Auto Printing Receipt for Order ID:', response.data.id);
-                    // printReceipt(response.data); 
+                    printReceipt(response.data.id); 
                 }
 
                 // Clear everything after success
@@ -1438,4 +1433,54 @@ window.clearCategoryCache = clearCategoryCache;
 window.clearSyncHistory = clearSyncHistory;
 window.clearAllCache = clearAllCache;
 window.updateStorageInfo = updateStorageInfo;
+
+// ============================================
+// Print Functions
+// ============================================
+
+// ============================================
+// Print Functions
+// ============================================
+function printReceipt(orderId) {
+    if (!orderId) {
+        console.error('No Order ID for printing');
+        return;
+    }
+
+    const toastId = NioApp.Toast('Memproses struk...', 'info', { position: 'top-right' });
+    
+    // Create hidden iframe if not exists
+    let iframe = document.getElementById('receiptPrintFrame');
+    if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'receiptPrintFrame';
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0px';
+        iframe.style.height = '0px';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+    }
+    
+    // Use constructed URL
+    const printUrl = `/pos/print/${orderId}`;
+    
+    iframe.src = printUrl;
+    
+    // Print when loaded
+    iframe.onload = function() {
+        // Wait a tiny bit for render
+        setTimeout(() => {
+            try {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                NioApp.Toast('Struk berhasil dicetak', 'success', { position: 'top-right' });
+            } catch (e) {
+                console.error('Printing failed', e);
+                NioApp.Toast('Gagal mencetak struk', 'error', { position: 'top-right' });
+            }
+        }, 500);
+    };
+}
+window.printReceipt = printReceipt;
 window.syncPendingTransactions = syncPendingTransactions;
+
