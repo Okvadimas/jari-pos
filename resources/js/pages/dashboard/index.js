@@ -2,6 +2,8 @@
  * Dashboard Page JavaScript
  */
 
+console.log('Dashboard Page JavaScript');
+
 $(document).ready(function() {
     initSalesChart();
 });
@@ -28,7 +30,7 @@ function initSalesChart() {
         data: {
             labels: data.labels,
             datasets: [{
-                label: 'Total Revenue (Rp)',
+                label: 'Total Pendapatan (Rp)',
                 data: data.values,
                 backgroundColor: 'rgba(94, 114, 228, 0.6)',
                 borderColor: 'rgba(94, 114, 228, 1)',

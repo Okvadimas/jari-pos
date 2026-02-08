@@ -1,5 +1,9 @@
 @extends('layouts.pos')
 
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/pages/pos/index.css') }}">
+@endsection
+
 @section('content')
 <div class="pos-wrapper">
     <!-- Full Width Navbar -->
@@ -308,8 +312,6 @@
     </div>
 </div>
 
-
-
 <!-- Settings Modal -->
 <div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -348,6 +350,38 @@
                             <input type="checkbox" class="custom-control-input" id="settingAutoPrint">
                             <label class="custom-control-label" for="settingAutoPrint"></label>
                         </div>
+                    </div>
+                </div>
+                
+                <hr>
+
+                <!-- QZ Tray Settings -->
+                <div class="pos-settings-section">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Integrasi QZ Tray (Desktop)</h6>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Gunakan QZ Tray</span>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="settingUseQzTray">
+                            <label class="custom-control-label" for="settingUseQzTray"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-3" id="qzPrinterGroup" style="display: none;">
+                        <label class="form-label">Pilih Printer</label>
+                        <div class="input-group">
+                            <select class="form-control" id="settingQzPrinterName">
+                                <option value="">-- Pilih Printer --</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" type="button" onclick="findPrinters()" title="Refresh Printer">
+                                <em class="icon ni ni-reload"></em>
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-1">Pastikan aplikasi QZ Tray sudah berjalan.</small>
+                    </div>
+
+                    <div id="qzStatus" class="alert alert-light text-center small py-1 mb-0" style="display: none;">
+                        Status: <span id="qzStatusText">Menunggu...</span>
                     </div>
                 </div>
 
@@ -448,4 +482,8 @@
     };
 </script>
 <script src="{{ asset('js/pos/offline-db.js') }}"></script>
+@section('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.9.0/jsrsasign-all-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qz-tray@2.2.4/qz-tray.min.js"></script>
+@endsection
 @endsection

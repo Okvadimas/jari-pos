@@ -7,6 +7,9 @@
  * jQuery is available globally via DashLite's bundle.js as $
  */
 
+// Add your global JavaScript here
+console.log('App.js loaded - jQuery ready!');
+
 // Global JavaScript that runs on every page
 $(document).ready(function() {
     // Example: Global CSRF token setup for $.ajax
@@ -25,9 +28,6 @@ $(document).ready(function() {
             text: 'You are currently offline. Please check your internet connection and try again.',
         });
     }
-
-    // Add your global JavaScript here
-    console.log('App.js loaded - jQuery ready!');
 });
 
 function formatCurrency(value, separator = '.') {

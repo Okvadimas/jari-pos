@@ -14,8 +14,10 @@ class IndexController extends Controller
 
     public function index(Request $request)
     {
-        $data = DashboardService::getDashboardData();
-        $data['title'] = $this->pageTitle;
+        $data           = DashboardService::getDashboardData();
+        $data['title']  = $this->pageTitle;
+        $data['js']     = 'resources/js/pages/dashboard/index.js';
+        $data['css']    = 'resources/css/pages/dashboard/index.css';
 
         return view('dashboard.index', $data);
     }

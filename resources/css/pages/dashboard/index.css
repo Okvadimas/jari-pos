@@ -1,0 +1,11 @@
+/**
+ * Dashboard Page Styles (SCSS)
+ * 
+ * Page-specific SCSS for the dashboard.
+ * Load this in your dashboard blade template with:
+ * @vite('resources/css/pages/dashboard/dashboard.scss')
+ */
+
+.rank-1 { color: #FFD700; }
+.rank-2 { color: #C0C0C0; }
+.rank-3 { color: #CD7F32; }
