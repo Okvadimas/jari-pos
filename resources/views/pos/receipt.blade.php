@@ -94,8 +94,8 @@
     <!-- Main Receipt Container -->
     <div class="flex flex-col items-center justify-center min-h-screen">
 
-        <!-- The Virtual 80mm Thermal Paper -->
-        <div class="thermal-paper bg-white w-[80mm] p-4 text-black flex flex-col items-center">
+        <!-- The Virtual 80mm/58mm Thermal Paper -->
+        <div class="thermal-paper bg-white {{ $paperSize == '58' ? 'w-[58mm] text-[9px]' : 'w-[80mm]' }} p-4 text-black flex flex-col items-center">
 
             <!-- Logo & Header -->
             <div class="flex flex-col items-center mb-6">
@@ -131,7 +131,7 @@
 
             <!-- Itemized List -->
             <div class="w-full mb-6">
-                <div class="grid grid-cols-12 gap-2 text-[9px] font-bold uppercase border-b border-black pb-1 mb-2">
+                <div class="grid grid-cols-12 gap-1 {{ $paperSize == '58' ? 'text-[8px]' : 'text-[9px]' }} font-bold uppercase border-b border-black pb-1 mb-2">
                     <div class="col-span-6">Item</div>
                     <div class="col-span-2 text-center">Qty</div>
                     <div class="col-span-2 text-right">Price</div>
@@ -140,7 +140,7 @@
                 <!-- Items -->
                 <div class="space-y-3">
                     @foreach($details as $item)
-                        <div class="grid grid-cols-12 gap-2 items-start text-[10px]">
+                        <div class="grid grid-cols-12 gap-1 items-start {{ $paperSize == '58' ? 'text-[9px]' : 'text-[10px]' }}">
                             <div class="col-span-6 font-medium leading-tight">
                                 {{ $item->product_name }}
                                 @if(isset($item->variant_name) && $item->variant_name)
@@ -159,7 +159,7 @@
 
             <!-- Totals Section -->
             <div class="w-full flex flex-col gap-1 border-t border-slate-200 pt-4 mb-8">
-                <div class="flex justify-between text-[10px]">
+                <div class="flex justify-between {{ $paperSize == '58' ? 'text-[9px]' : 'text-[10px]' }}">
                     <span class="opacity-60 uppercase">Subtotal</span>
                     <span>{{ number_format($order->total_amount, 0, ',', '.') }}</span>
                 </div>

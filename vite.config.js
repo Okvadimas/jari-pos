@@ -78,7 +78,7 @@ export default defineConfig({
                 // Dashboard
                 // ================================
                 'resources/js/pages/dashboard/index.js',
-                'resources/css/pages/dashboard/dashboard.css',
+                'resources/css/pages/dashboard/index.css',
 
                 // ================================
                 // Landing Page

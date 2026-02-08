@@ -60,7 +60,9 @@ let settings = {
     viewMode: 'grid', // 'grid' or 'list'
     soundEffect: true,
     enableTax: true,
-    taxRate: 11
+    taxRate: 11,
+    useQzTray: false,
+    qzPrinterName: ''
 };
 
 // Offline State
@@ -598,7 +600,9 @@ function loadVouchers() {
                 orderable: false,
                 searchable: false,
                 render: function(data, type, row) {
-                    return `<button class="btn btn-sm btn-primary" onclick="selectVoucher(${row.id})">Pilih</button>`;
+                    return `<button class="btn btn-sm btn-primary" onclick="selectVoucher(${row.id})">
+                        <em class="icon ni ni-check-circle"></em>
+                    </button>`;
                 }
             }
         ],
@@ -950,6 +954,20 @@ function openSettingsModal() {
     $(`input[name="viewMode"][value="${settings.viewMode}"]`).prop('checked', true);
     $('#settingSoundEffect').prop('checked', settings.soundEffect);
     
+    $('#settingSoundEffect').prop('checked', settings.soundEffect);
+
+    // QZ Settings
+    $('#settingUseQzTray').prop('checked', settings.useQzTray);
+    $('#settingQzPrinterName').val(settings.qzPrinterName); // Might need delay if list not loaded
+    
+    toggleQzSettings();
+    $('#settingUseQzTray').on('change', toggleQzSettings);
+    
+    // Attempt init QZ if enabled but not connected
+    if (settings.useQzTray && typeof qz !== 'undefined') {
+        initQzTray(); 
+    }
+    
     $('#settingsModal').modal('show');
 }
 
@@ -972,6 +990,20 @@ function saveSettings() {
     localStorage.setItem('pos-settings', JSON.stringify(settings));
     applySettings();
     calculateTotal(); // Recalculate with new tax settings
+    closeSettingsModal();
+    settings.useQzTray = $('#settingUseQzTray').is(':checked');
+    settings.qzPrinterName = $('#settingQzPrinterName').val();
+    
+    localStorage.setItem('pos-settings', JSON.stringify(settings));
+    applySettings();
+    calculateTotal(); // Recalculate with new tax settings
+    
+    if (settings.useQzTray) {
+        initQzTray(); // Connect if enabled
+    } else if (typeof qz !== 'undefined' && qz.websocket.isActive()) {
+        qz.websocket.disconnect(); // Disconnect if disabled
+    }
+
     closeSettingsModal();
     NioApp.Toast('Pengaturan berhasil disimpan!', 'success', { position: 'top-right' });
 }
@@ -1447,6 +1479,16 @@ function printReceipt(orderId) {
         return;
     }
 
+    // 1. Check if QZ Tray is Enabled AND Device is Desktop (Basic check)
+    // Note: Mobile browsers won't connect to localhost wss usually, but we check logic
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (settings.useQzTray && !isMobile && typeof qz !== 'undefined') {
+        printViaQzTray(orderId);
+        return;
+    }
+
+    // 2. Fallback to Browser Print
     const toastId = NioApp.Toast('Memproses struk...', 'info', { position: 'top-right' });
     
     // Create hidden iframe if not exists
@@ -1461,8 +1503,9 @@ function printReceipt(orderId) {
         document.body.appendChild(iframe);
     }
     
-    // Use constructed URL
-    const printUrl = `/pos/print/${orderId}`;
+    // Use constructed URL with paper size
+    const paperSize = settings.paperSize || '80';
+    const printUrl = `/pos/print/${orderId}?size=${paperSize}`;
     
     iframe.src = printUrl;
     
@@ -1481,6 +1524,117 @@ function printReceipt(orderId) {
         }, 500);
     };
 }
+
+// ============================================
+// QZ Tray Functions
+// ============================================
+function toggleQzSettings() {
+    if ($('#settingUseQzTray').is(':checked')) {
+        $('#qzPrinterGroup').slideDown();
+        $('#qzStatus').slideDown();
+        if (typeof qz !== 'undefined' && !qz.websocket.isActive()) {
+            initQzTray(); 
+        } else {
+             findPrinters(); // Refresh list if already connected
+        }
+    } else {
+        $('#qzPrinterGroup').slideUp();
+        $('#qzStatus').slideUp();
+    }
+}
+
+function initQzTray() {
+    if (typeof qz === 'undefined') {
+        $('#qzStatusText').text('Library QZ tidak dimuat').addClass('text-danger');
+        return;
+    }
+
+    if (qz.websocket.isActive()) {
+         $('#qzStatusText').text('Terhubung').removeClass('text-danger').addClass('text-success');
+         findPrinters();
+         return;
+    }
+
+    $('#qzStatusText').text('Menghubungkan...').removeClass('text-danger text-success');
+
+    qz.websocket.connect().then(function() {
+        $('#qzStatusText').text('Terhubung').addClass('text-success');
+        findPrinters();
+    }).catch(function(e) {
+        console.error(e);
+        $('#qzStatusText').text('Gagal Terhubung: ' + e).addClass('text-danger');
+    });
+}
+
+function findPrinters() {
+    console.log('Finding printers...');
+    if (typeof qz === 'undefined' || !qz.websocket.isActive()) return;
+    
+    qz.printers.find().then(function(data) {
+        const list = $('#settingQzPrinterName');
+        const current = settings.qzPrinterName;
+        list.empty();
+        list.append('<option value="">-- Pilih Printer --</option>');
+        
+        data.forEach(p => {
+            const selected = (p === current) ? 'selected' : '';
+            list.append(`<option value="${p}" ${selected}>${p}</option>`);
+        });
+    }).catch(function(e) {
+        console.error(e);
+        NioApp.Toast('Gagal memuat list printer', 'error');
+    });
+}
+
+function printViaQzTray(orderId) {
+    if (!settings.qzPrinterName) {
+        NioApp.Toast('Printer QZ belum dipilih di pengaturan', 'warning');
+        return;
+    }
+
+    NioApp.Toast('Mengirim ke printer...', 'info');
+
+    // Fetch the receipt HTML/content
+    const paperSize = settings.paperSize || '80';
+    const printUrl = `/pos/print/${orderId}?size=${paperSize}`;
+    
+    // QZ Tray 2.1+ supports HTML printing via Pixel logic
+    // We can pass the URL directly if QZ runs on same network or accessible URL
+    // BUT since we are on localhost/laragon, QZ Tray (desktop) might see 'localhost' as itself?
+    // If the website is hosted, strict CORS might block.
+    // Better approach: fetch HTML content via AJAX, then send to QZ.
+    
+    $.ajax({
+        url: printUrl,
+        type: 'GET',
+        success: function(htmlContent) {
+           
+           // Configuration
+           var config = qz.configs.create(settings.qzPrinterName);
+           
+           // Print Data
+           var data = [{
+               type: 'pixel',
+               format: 'html',
+               flavor: 'plain', // or 'file' if passing URL
+               data: htmlContent
+           }];
+           
+           qz.print(config, data).then(function() {
+               NioApp.Toast('Print Berhasil (QZ)', 'success');
+           }).catch(function(e) {
+               console.error(e);
+               NioApp.Toast('Print Gagal: ' + e, 'error');
+           });
+        },
+        error: function() {
+            NioApp.Toast('Gagal mengambil data struk', 'error');
+        }
+    });
+}
+
 window.printReceipt = printReceipt;
+window.findPrinters = findPrinters;
+window.toggleQzSettings = toggleQzSettings;
 window.syncPendingTransactions = syncPendingTransactions;
 

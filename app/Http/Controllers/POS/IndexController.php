@@ -56,7 +56,7 @@ class IndexController extends Controller
 
     public function testReceipt()
     {
-        return $this->printReceipt(1);
+        return $this->printReceipt(request(), 1);
     }
 
     public function testReceipt2()
@@ -64,7 +64,7 @@ class IndexController extends Controller
         return $this->printReceipt2(1);
     }
 
-    public function printReceipt($id)
+    public function printReceipt(Request $request, $id)
     {
         // Fetch Order Header
         $order = DB::table('sales_orders as so')
@@ -88,8 +88,10 @@ class IndexController extends Controller
                     ->where('sod.sales_order_id', $id)
                     ->get();
         
+        $paperSize = $request->query('size', '80');
+
         // Pass both to view
-        return view('pos.receipt', compact('order', 'details'));
+        return view('pos.receipt', compact('order', 'details', 'paperSize'));
     }
     
     public function printReceipt2($id)

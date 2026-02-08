@@ -84,7 +84,7 @@
                                         <div class="card-inner">
                                             <div class="card-title-group">
                                                 <div class="card-title">
-                                                    <h6 class="title">Estimasi Profit Bulan Ini</h6>
+                                                    <h6 class="title">Estimasi Keuntungan Bulan Ini</h6>
                                                 </div>
                                                 <div class="card-tools">
                                                     <em class="icon ni ni-trend-up text-info" style="font-size: 1.5rem;"></em>
@@ -262,7 +262,7 @@
                         @if(count($activePromotions) > 0)
                         <div class="row g-gs mt-4">
                             <div class="col-12">
-                                <div class="card card-bordered border-0" style="background: linear-gradient(108deg, #FFF9E6 0%, #FFF0C2 100%); box-shadow: 0 4px 15px rgba(255, 193, 7, 0.15);">
+                                <div class="card card-bordered border-0" style="background: linear-gradient(108deg, #FFF9E6 0%, #2263b3 100%); box-shadow: 0 4px 15px rgba(255, 193, 7, 0.15);">
                                     <div class="card-inner py-4">
                                         <div class="d-flex align-items-center mb-4 px-1">
                                             <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
@@ -352,34 +352,69 @@
                                             </div>
                                             <span class="badge bg-light text-dark">Bulan Ini</span>
                                         </div>
-                                        <table class="table table-sm">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>Produk</th>
-                                                    <th class="text-end">Qty</th>
-                                                    <th class="text-end">Revenue</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($topProducts as $item)
+                                        <div class="table-responsive">
+                                            <table class="table table-borderless table-hover align-middle mb-0">
+                                                <thead class="table-light text-muted small text-uppercase fw-bold">
                                                     <tr>
-                                                        <td>
-                                                            <span class="fw-medium">{{ $item->product_name }}</span>
-                                                            <br><small class="text-muted">{{ $item->variant_name }}</small>
-                                                        </td>
-                                                        <td class="text-end">{{ $item->total_qty }}</td>
-                                                        <td class="text-end small">{{ number_format($item->total_revenue, 0, ',', '.') }}</td>
+                                                        <th scope="col" style="width: 40px;">No</th>
+                                                        <th scope="col">Produk</th>
+                                                        <th scope="col" class="text-end">Jml</th>
+                                                        <th scope="col" class="text-end">Pendapatan</th>
                                                     </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="3" class="text-center text-muted py-3">
-                                                            <em class="icon ni ni-package d-block mb-1" style="font-size: 2rem;"></em>
-                                                            Belum ada data penjualan
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($topProducts as $index => $item)
+                                                        <tr class="border-bottom border-light">
+                                                            <td class="text-center">
+                                                                @if($index < 3)
+                                                                    <em class="icon ni ni-star-fill fs-5 rank-{{ $index + 1 }}"
+                                                                        title="Juara {{ $index + 1 }}"></em>
+                                                                @else
+                                                                    <span class="fw-bold text-muted small">
+                                                                        {{ $index + 1 }}
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <!-- <div class="user-avatar xs bg-primary-dim text-primary me-2 rounded-circle">
+                                                                        <span class="fw-bold">{{ substr($item->product_name, 0, 1) }}</span>
+                                                                    </div> -->
+                                                                    <div class="overflow-hidden">
+                                                                        <span class="fw-bold text-dark d-block text-truncate" style="max-width: 140px;">{{ $item->product_name }}</span>
+                                                                        <span class="small text-muted d-block text-truncate" style="max-width: 140px;">{{ $item->variant_name }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <span class="badge bg-light text-dark fw-bold">{{ $item->total_qty }}</span>
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <span class="d-block fw-bold text-dark small">{{ number_format($item->total_revenue, 0, ',', '.') }}</span>
+                                                                @php
+                                                                    $maxRevenue = $topProducts->first()->total_revenue ?? 1;
+                                                                    $percent = ($item->total_revenue / $maxRevenue) * 100;
+                                                                @endphp
+                                                                <div class="progress progress-xs mt-1 bg-light" style="height: 3px; min-width: 60px;">
+                                                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $percent }}%"></div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="4" class="text-center text-muted py-4">
+                                                                <div class="d-flex flex-column align-items-center justify-content-center">
+                                                                    <div class="bg-light rounded-circle p-3 mb-2">
+                                                                        <em class="icon ni ni-package-fill text-muted opacity-50" style="font-size: 2rem;"></em>
+                                                                    </div>
+                                                                    <span class="small fw-bold">Belum ada data penjualan</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -393,33 +428,41 @@
                                                 <h6 class="title"><em class="icon ni ni-repeat text-primary me-1"></em> Transaksi Terbaru</h6>
                                             </div>
                                         </div>
-                                        <table class="table table-sm">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>Customer</th>
-                                                    <th class="text-end">Total</th>
-                                                    <th class="text-end">Waktu</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($recentTransactions as $trx)
+                                        <div class="table-responsive">
+                                            <table class="table table-borderless table-hover align-middle mb-0">
+                                                <thead class="table-light text-muted small text-uppercase fw-bold">
                                                     <tr>
-                                                        <td>
-                                                            <span class="fw-medium">{{ $trx->customer_name ?: 'Pelanggan Umum' }}</span>
-                                                        </td>
-                                                        <td class="text-end">{{ number_format($trx->final_amount, 0, ',', '.') }}</td>
-                                                        <td class="text-end small text-muted">{{ \Carbon\Carbon::parse($trx->created_at)->diffForHumans() }}</td>
+                                                        <th scope="col">Pelanggan</th>
+                                                        <th scope="col" class="text-end">Total</th>
+                                                        <th scope="col" class="text-end">Waktu</th>
                                                     </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="3" class="text-center text-muted py-3">
-                                                            <em class="icon ni ni-bag d-block mb-1" style="font-size: 2rem;"></em>
-                                                            Belum ada transaksi
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($recentTransactions as $trx)
+                                                        <tr class="border-bottom border-light">
+                                                            <td>
+                                                                <span class="fw-bold text-dark">{{ $trx->customer_name ?: 'Pelanggan Umum' }}</span>
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <span class="fw-bold text-dark">{{ number_format($trx->final_amount, 0, ',', '.') }}</span>
+                                                            </td>
+                                                            <td class="text-end small text-muted">{{ \Carbon\Carbon::parse($trx->created_at)->diffForHumans() }}</td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="3" class="text-center text-muted py-4">
+                                                                <div class="d-flex flex-column align-items-center justify-content-center">
+                                                                    <div class="bg-light rounded-circle p-3 mb-2">
+                                                                        <em class="icon ni ni-bag d-block text-muted opacity-50" style="font-size: 2rem;"></em>
+                                                                    </div>
+                                                                    <span class="small fw-bold">Belum ada transaksi</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -433,36 +476,42 @@
                                                 <h6 class="title text-danger"><em class="icon ni ni-alert-fill text-danger me-1"></em> Stok Rendah</h6>
                                             </div>
                                         </div>
-                                        <table class="table table-sm">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>Produk</th>
-                                                    <th class="text-end">Stok</th>
-                                                    <th class="text-end">Update</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($lowStockProducts as $item)
+                                        <div class="table-responsive">
+                                            <table class="table table-borderless table-hover align-middle mb-0">
+                                                <thead class="table-light text-muted small text-uppercase fw-bold">
                                                     <tr>
-                                                        <td>
-                                                            <span class="fw-medium">{{ $item->product_name }}</span>
-                                                            <br><small class="text-muted">{{ $item->variant_name }}</small>
-                                                        </td>
-                                                        <td class="text-end">
-                                                            <span class="badge bg-danger">{{ $item->closing_stock }}</span>
-                                                        </td>
-                                                        <td class="text-end small text-muted">{{ \Carbon\Carbon::parse($item->last_updated)->format('d M') }}</td>
+                                                        <th scope="col">Produk</th>
+                                                        <th scope="col" class="text-end">Stok</th>
+                                                        <th scope="col" class="text-end">Pembaruan</th>
                                                     </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="3" class="text-center text-success py-3">
-                                                            <em class="icon ni ni-check-circle d-block mb-1" style="font-size: 2rem;"></em>
-                                                            Semua stok aman!
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($lowStockProducts as $item)
+                                                        <tr class="border-bottom border-light">
+                                                            <td>
+                                                                <span class="fw-bold text-dark d-block text-truncate" style="max-width: 150px;">{{ $item->product_name }}</span>
+                                                                <span class="small text-muted d-block text-truncate" style="max-width: 150px;">{{ $item->variant_name }}</span>
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <span class="badge bg-danger-dim text-danger">{{ $item->closing_stock }}</span>
+                                                            </td>
+                                                            <td class="text-end small text-muted">{{ \Carbon\Carbon::parse($item->last_updated)->format('d M') }}</td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="3" class="text-center text-muted py-4">
+                                                                <div class="d-flex flex-column align-items-center justify-content-center">
+                                                                    <div class="bg-success bg-opacity-10 rounded-circle p-3 mb-2">
+                                                                        <em class="icon ni ni-check-circle-fill text-success" style="font-size: 2rem;"></em>
+                                                                    </div>
+                                                                    <span class="fw-bold text-success">Semua stok aman!</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -482,5 +531,4 @@
             }
         };
     </script>
-    @vite(['resources/js/pages/dashboard/index.js'])
 @endsection
