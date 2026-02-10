@@ -131,6 +131,7 @@ export default defineConfig({
                 // Transaction - Sales
                 // ================================
                 'resources/js/pages/transaction/sales/index.js',
+                'resources/js/pages/transaction/sales/form.js',
 
                 // ================================
                 // Transaction - Purchasing
