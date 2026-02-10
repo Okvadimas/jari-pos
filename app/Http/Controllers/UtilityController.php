@@ -28,5 +28,11 @@ class UtilityController extends Controller
         $data = $this->utilityRepository->dataProductVariants($search);
         return response()->json($data);
     }
+
+    public function dataPaymentMethods(Request $request)
+    {
+        $data = \App\Models\PaymentMethod::orderBy('name')->get(['id', 'name']);
+        return response()->json($data);
+    }
     
 }

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 use App\Services\Transaction\SalesService;
 use App\Models\SalesOrder;
+use App\Http\Requests\Transaction\StoreSalesRequest;
 
 class SalesController extends Controller
 {
@@ -76,6 +77,36 @@ class SalesController extends Controller
             'promo_name' => optional($salesOrder->appliedPromo)->name,
             'details' => $details
         ]);
+    }
+
+    /**
+     * Show edit form
+     */
+    public function edit($id)
+    {
+        $salesOrder = SalesOrder::with(['details.variant.product'])->findOrFail($id);
+
+        $data = [
+            'title' => $this->pageTitle,
+            'js' => 'resources/js/pages/transaction/sales/form.js',
+            'salesOrder' => $salesOrder,
+        ];
+
+        return view('transaction.sales.form', $data);
+    }
+
+    /**
+     * Store or update sales order
+     */
+    public function store(StoreSalesRequest $request)
+    {
+        $validated = $request->validated();
+
+        $process = SalesService::store($validated);
+
+        $message = !empty($validated['id']) ? 'Penjualan berhasil diupdate' : 'Penjualan berhasil ditambahkan';
+
+        return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
     }
 
     /**

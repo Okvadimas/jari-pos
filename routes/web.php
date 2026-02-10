@@ -164,6 +164,8 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::get('/sales/datatable', [SalesController::class, 'datatable'])->name('transaction.sales.datatable');
         Route::get('/sales/summary', [SalesController::class, 'summary'])->name('transaction.sales.summary');
         Route::get('/sales/show/{id}', [SalesController::class, 'show'])->name('transaction.sales.show');
+        Route::get('/sales/edit/{id}', [SalesController::class, 'edit'])->name('transaction.sales.edit');
+        Route::post('/sales/store', [SalesController::class, 'store'])->name('transaction.sales.store');
         Route::post('/sales/destroy', [SalesController::class, 'destroy'])->name('transaction.sales.destroy');
 
         Route::get('/purchasing', [PurchasingController::class, 'index'])->name('transaction.purchasing.index');
@@ -180,5 +182,6 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::group(['prefix' => 'utility'], function () {
         Route::get('/companies', [UtilityController::class, 'dataCompanies'])->name('utility.companies');
         Route::get('/variants', [UtilityController::class, 'dataProductVariants'])->name('utility.variants');
+        Route::get('/payment-methods', [UtilityController::class, 'dataPaymentMethods'])->name('utility.payment-methods');
     });
 });
