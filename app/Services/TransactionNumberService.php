@@ -18,6 +18,11 @@ class TransactionNumberService
     const PREFIX_PURCHASE = 'ORD';
 
     /**
+     * Prefix for stock opname
+     */
+    const PREFIX_STOCK_OPNAME = 'SO';
+
+    /**
      * Generate invoice number for sales
      * Format: INV/2026/02/0001
      *
@@ -51,6 +56,26 @@ class TransactionNumberService
         
         return Counter::getNextTransactionNumber(
             self::PREFIX_PURCHASE,
+            $companyId,
+            $date->year,
+            $date->month
+        );
+    }
+
+    /**
+     * Generate opname number for stock opname
+     * Format: SO/2026/02/0001
+     *
+     * @param int $companyId
+     * @param Carbon|null $date Optional date, defaults to current date
+     * @return string
+     */
+    public static function generateStockOpnameNumber(int $companyId, ?Carbon $date = null): string
+    {
+        $date = $date ?? Carbon::now();
+        
+        return Counter::getNextTransactionNumber(
+            self::PREFIX_STOCK_OPNAME,
             $companyId,
             $date->year,
             $date->month

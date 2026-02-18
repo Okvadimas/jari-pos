@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('adjustment_stock')->default(0)->comment('Perubahan manual (barang rusak/hilang) hari ini');
             $table->integer('closing_stock')->default(0)->comment('Stok akhir hari ini: (opening + in + adj) - out');
             $table->tinyInteger('is_locked')->default(0)->comment('1 = locked, 0 = unlocked');
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();

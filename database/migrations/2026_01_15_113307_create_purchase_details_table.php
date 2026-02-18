@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('purchase_id')->constrained('purchases')->cascadeOnDelete();
             $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
             $table->integer('quantity')->comment('Jumlah pcs hasil konversi/repack. Misal: Jadi 20 pcs (untuk varian 500gr)');
-            $table->decimal('cost_price_per_item', 15, 2)->comment('Harga modal per item setelah dipecah');
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->decimal('cost_price_per_item', 15, 0)->comment('Harga modal per item setelah dipecah');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();

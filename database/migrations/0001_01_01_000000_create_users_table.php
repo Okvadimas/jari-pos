@@ -21,8 +21,8 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date');
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();
@@ -31,6 +31,20 @@ return new class extends Migration
             $table->index('email');
             $table->index('role_id');
             $table->index('company_id');
+        });
+
+        // Add FK constraints for audit columns on roles (created before users)
+        Schema::table('roles', function (Blueprint $table) {
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
+        });
+
+        // Add FK constraints for audit columns on companies (created before users)
+        Schema::table('companies', function (Blueprint $table) {
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('deleted_by')->references('id')->on('users')->nullOnDelete();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -54,6 +68,19 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop FK constraints on roles and companies before dropping users
+        Schema::table('roles', function (Blueprint $table) {
+            $table->dropForeign(['created_by']);
+            $table->dropForeign(['updated_by']);
+            $table->dropForeign(['deleted_by']);
+        });
+
+        Schema::table('companies', function (Blueprint $table) {
+            $table->dropForeign(['created_by']);
+            $table->dropForeign(['updated_by']);
+            $table->dropForeign(['deleted_by']);
+        });
+
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
