@@ -2,12 +2,14 @@
 
 namespace App\Repositories\Management;
 
-use App\Models\Payment;
+use App\Models\PaymentMethod;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentRepository {
 
     public static function datatable() {
-        $query = Payment::select('id', 'name', 'type')
+        $query = PaymentMethod::select('id', 'company_id', 'name', 'type')
+                    ->where('company_id', Auth::user()->company_id)
                     ->whereNull('deleted_at')
                     ->orderBy('id', 'desc');
         

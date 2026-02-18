@@ -98,7 +98,7 @@ class DashboardRepository
             ->whereNull('deleted_at')
             ->count();
 
-        $totalCategories = Category::whereNull('deleted_at')->count();
+        $totalCategories = Category::where('company_id', $companyId)->whereNull('deleted_at')->count();
 
         $totalVariants = ProductVariant::whereHas('product', function($q) use ($companyId) {
                 $q->where('company_id', $companyId);

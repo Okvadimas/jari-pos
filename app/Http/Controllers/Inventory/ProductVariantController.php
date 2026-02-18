@@ -39,7 +39,6 @@ class ProductVariantController extends Controller
     {
         $data = [
             'title'         => $this->pageTitle,
-            'sku'           => ProductVariantService::generateSku(),
             'products'      => Product::select('id', 'name')->get(),
             'js'            => 'resources/js/pages/inventory/product-variant/form.js',
         ];
