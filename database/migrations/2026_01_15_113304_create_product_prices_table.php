@@ -17,8 +17,8 @@ return new class extends Migration
             $table->decimal('purchase_price', 15, 0)->comment('Harga beli ke supplier');
             $table->decimal('sell_price', 15, 0)->comment('Harga jual ke customer');
             $table->integer('is_active')->default(1)->comment('1 = Aktif, 0 = Tidak Aktif');
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();

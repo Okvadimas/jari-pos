@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('image');
             $table->string('type')->comment('Platform iklan (multiple), dipisahkan koma: slider, facebook, instagram, tiktok');
             $table->tinyInteger('is_published')->default(0)->comment('1 = published, 0 = draft');
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();

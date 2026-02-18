@@ -17,13 +17,13 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
             $table->string('customer_name');
             $table->date('order_date');
-            $table->decimal('total_amount', 15, 2)->comment('Total sebelum diskon manual');
+            $table->decimal('total_amount', 15, 0)->comment('Total sebelum diskon manual');
             $table->foreignId('applied_promo_id')->nullable()->constrained('promotions')->nullOnDelete();
-            $table->decimal('total_discount_manual', 15, 2)->default(0)->comment('Diskon dari promo');
-            $table->decimal('final_amount', 15, 2)->comment('Total yang dibayar customer');
+            $table->decimal('total_discount_manual', 15, 0)->default(0)->comment('Diskon dari promo');
+            $table->decimal('final_amount', 15, 0)->comment('Total yang dibayar customer');
             $table->foreignId('payment_method_id')->nullable()->constrained('payment_methods')->nullOnDelete();
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();
@@ -33,6 +33,7 @@ return new class extends Migration
             $table->index('applied_promo_id');
             $table->index('company_id');
             $table->index('payment_method_id');
+            $table->unique(['company_id', 'invoice_number'], 'sales_orders_company_invoice_unique');
         });
     }
 

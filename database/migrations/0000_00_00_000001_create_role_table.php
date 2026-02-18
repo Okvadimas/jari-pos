@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 50)->unique();
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->softDeletesWithUser();
+            $table->softDeletes();
+            $table->unsignedBigInteger('deleted_by')->nullable();
 
             $table->index('slug');
         });

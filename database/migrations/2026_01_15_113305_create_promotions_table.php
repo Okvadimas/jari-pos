@@ -22,15 +22,16 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete()->comment('Promo berlaku satu kategori');
             $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete()->comment('Promo berlaku satu produk (semua varian)');
             $table->foreignId('product_variant_id')->nullable()->constrained('product_variants')->nullOnDelete()->comment('Promo spesifik hanya untuk varian tertentu');
-            $table->decimal('min_order_amount', 15, 2)->default(0);
+            $table->decimal('min_order_amount', 15, 0)->default(0);
             $table->integer('priority')->default(1)->comment('Semakin kecil semakin prioritas');
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();
 
             $table->index('category_id');
+            $table->index('company_id');
             $table->index('product_id');
             $table->index('product_variant_id');
             $table->index(['start_date', 'end_date']);
