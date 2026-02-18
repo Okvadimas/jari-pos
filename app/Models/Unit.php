@@ -9,12 +9,17 @@ class Unit extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'units';
-    protected $fillable = ['code', 'name', 'created_by', 'updated_by'];
+    protected $fillable = ['company_id', 'code', 'name', 'created_by', 'updated_by'];
     protected $casts = [];
 
-    public function products()
+    public function company()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsTo(Company::class);
+    }
+
+    public function productVariants()
+    {
+        return $this->hasMany(ProductVariant::class);
     }
 
 }

@@ -18,6 +18,7 @@ const datatable = () => {
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },
             { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
+            { data: 'code', name: 'code' },
             { data: 'name', name: 'name' },
         ],
     });

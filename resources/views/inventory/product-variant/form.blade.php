@@ -64,21 +64,23 @@
                                         </div>
                                     </div>
 
+                                    @if(isset($productVariant))
                                     <div class="row g-3 align-center">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <label class="form-label" for="sku">SKU <span class="text-danger">*</span></label>
-                                                <span class="form-note">Masukkan SKU produk varian</span>
+                                                <label class="form-label" for="sku">SKU</label>
+                                                <span class="form-note">Kode SKU produk varian (auto-generated)</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
                                             <div class="form-group">
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="sku" name="sku" value="{{ isset($productVariant) ? $productVariant->sku : $sku }}">
+                                                    <input type="text" class="form-control" id="sku" name="sku" value="{{ $productVariant->sku }}" readonly>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    @endif
 
                                     @if(isset($productVariant))
                                         <div class="row g-3 align-center">

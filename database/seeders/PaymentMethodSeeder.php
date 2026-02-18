@@ -100,7 +100,7 @@ class PaymentMethodSeeder extends Seeder
         ];
 
         foreach ($paymentMethods as $method) {
-            Payment::create($method);
+            Payment::create(array_merge($method, ['company_id' => 1]));
         }
     }
 }

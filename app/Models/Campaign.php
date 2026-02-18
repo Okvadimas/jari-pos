@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\SoftDeletesWithUser;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Campaign extends Model
 {
-    use HasFactory, SoftDeletesWithUser;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'campaigns';
-    protected $fillable = ['title', 'description', 'image', 'type', 'is_published', 'created_by', 'updated_by'];
+    protected $fillable = ['title', 'description', 'image', 'type', 'is_published'];
 }

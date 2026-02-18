@@ -10,7 +10,7 @@ use App\Services\Management\PaymentService;
 
 // Load Request
 use App\Http\Requests\Management\Payment\StorePaymentRequest;
-use App\Models\Payment;
+use App\Models\PaymentMethod;
 
 class PaymentController extends Controller
 {
@@ -46,7 +46,7 @@ class PaymentController extends Controller
         $data = [
             'title' => $this->pageTitle,
             'js' => 'resources/js/pages/management/payment/form.js',
-            'payment' => Payment::find($id),
+            'payment' => PaymentMethod::find($id),
         ];
 
         return view('management.payment.form', $data);

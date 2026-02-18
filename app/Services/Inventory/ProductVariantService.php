@@ -6,10 +6,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 use App\Repositories\Inventory\ProductVariantRepository;
 
+use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductPrice;
 
@@ -41,7 +42,6 @@ class ProductVariantService
                 $dataProductVariant = [
                     'product_id'    => $data['product'],
                     'name'          => $data['name'],
-                    'sku'           => $data['sku'],
                     'updated_by'    => Auth::user()->id,
                 ];
 
@@ -71,10 +71,12 @@ class ProductVariantService
                 }
             } else {
 
+                $sku = self::generateSku($data['product'], $data['name']);
+
                 $dataProductVariant = [
                     'product_id'    => $data['product'],
                     'name'          => $data['name'],
-                    'sku'           => $data['sku'],
+                    'sku'           => $sku,
                     'created_by'    => Auth::user()->id,
                 ];
 
@@ -100,11 +102,26 @@ class ProductVariantService
         }
     }
 
-    public static function generateSku()
+    /**
+     * Generate SKU untuk produk varian
+     * Format: KAT-0001-VARIAN (product SKU + nama varian uppercase)
+     * Contoh: FOD-0025-PEDAS
+     *
+     * @param int $productId
+     * @param string $variantName
+     * @return string
+     */
+    public static function generateSku(int $productId, string $variantName): string
     {
-        $company = Session::get('company_code');
-        $sku = DB::selectOne('CALL generate_kode(?, ?)', ['PRV', $company])->code;
-        return $sku;
+        $product = Product::findOrFail($productId);
+
+        // Ambil SKU produk induk (misal: FOD-0025)
+        $productSku = $product->sku;
+
+        // Bersihkan nama varian: uppercase, spasi → strip, hapus karakter spesial
+        $cleanVariant = strtoupper(Str::slug($variantName, '-'));
+
+        return $productSku . '-' . $cleanVariant;
     }
 
     public static function destroy($id)

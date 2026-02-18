@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\UserSignatureTrait; // Assuming this trait exists based on other models, but if not sure, I can omit or check. IndexController used models without showing traits. Safe to stick to basics first.
+use App\Traits\SoftDeletesWithUser;
 
 class Promotion extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletesWithUser;
 
     protected $guarded = ['id'];
 
@@ -17,6 +16,11 @@ class Promotion extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function category()
     {
