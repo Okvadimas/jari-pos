@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\Stock\DailyStockBalanceService;
+use App\Services\Stock\StockDailyBalanceService;
 
 class GenerateDailyBalanceCommand extends Command
 {
@@ -19,7 +19,7 @@ class GenerateDailyBalanceCommand extends Command
         $this->newLine();
 
         try {
-            $results = DailyStockBalanceService::generate($companyId);
+            $results = StockDailyBalanceService::generate($companyId);
 
             if (empty($results)) {
                 $this->warn('No companies found.');

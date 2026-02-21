@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\PosRepository;
-use App\Services\Stock\StockService;
+use App\Services\Stock\StockProductService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -127,7 +127,7 @@ class PosService
                 PosRepository::storeOrderDetail($detailData);
 
                 // Update current_stock
-                StockService::decrease($item['variant_id'], $item['quantity']);
+                StockProductService::decrease($item['variant_id'], $item['quantity']);
             }
             
             DB::commit();

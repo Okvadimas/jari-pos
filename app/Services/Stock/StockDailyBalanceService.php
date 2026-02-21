@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Company;
 
-class DailyStockBalanceService
+class StockDailyBalanceService
 {
     /**
      * Main entry point — called by both Artisan Command and Controller.
@@ -28,7 +28,7 @@ class DailyStockBalanceService
                 $result = self::generateForCompany($company);
                 $results[] = $result;
             } catch (\Throwable $e) {
-                Log::error("DailyStockBalanceService::generate - Company {$company->id}: " . $e->getMessage());
+                Log::error("StockDailyBalanceService::generate - Company {$company->id}: " . $e->getMessage());
                 $results[] = [
                     'company_id'   => $company->id,
                     'company_name' => $company->name,

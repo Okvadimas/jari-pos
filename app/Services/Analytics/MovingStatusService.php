@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Stock;
+namespace App\Services\Analytics;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;

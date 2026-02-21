@@ -10,7 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Transaction\SalesRepository;
 use App\Models\SalesOrder;
 use App\Models\SalesOrderDetail;
-use App\Services\TransactionNumberService;
+use App\Services\Utilities\TransactionNumberService;
 
 class RecommendationService
 {

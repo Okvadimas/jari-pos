@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
-use App\Services\Stock\MovingStatusService;
+use App\Services\Analytics\MovingStatusService;
 use App\Repositories\Report\RecommendationRepository;
 
 class RecommendationController extends Controller

@@ -9,7 +9,7 @@ use App\Models\SalesOrderDetail;
 use App\Models\Company;
 use App\Models\ProductVariant;
 use App\Models\User;
-use App\Services\TransactionNumberService;
+use App\Services\Utilities\TransactionNumberService;
 use Carbon\Carbon;
 use Faker\Factory as Faker;
 

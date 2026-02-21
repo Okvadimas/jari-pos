@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\Stock\MovingStatusService;
+use App\Services\Analytics\MovingStatusService;
 
 class CalculateMovingStatusCommand extends Command
 {
