@@ -20,6 +20,11 @@ return new class extends Migration
             $table->decimal('score', 6, 4)->default(0);
             $table->string('moving_status', 10)->default('dead');
             $table->integer('current_stock')->default(0);
+            $table->integer('lead_time')->default(0)->comment('Snapshot lead time (days)');
+            $table->decimal('purchase_price', 15, 0)->default(0)->comment('Snapshot purchase price');
+            $table->decimal('sell_price', 15, 0)->default(0)->comment('Snapshot sell price');
+            $table->integer('safety_stock')->default(0)->comment('ceil(avg_daily_sales × lead_time)');
+            $table->integer('moq')->default(1)->comment('Snapshot minimum order qty');
             $table->timestamps();
             $table->softDeletes();
 

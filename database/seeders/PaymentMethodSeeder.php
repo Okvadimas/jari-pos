@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Payment;
+use App\Models\PaymentMethod;
 
 class PaymentMethodSeeder extends Seeder
 {
@@ -100,7 +100,7 @@ class PaymentMethodSeeder extends Seeder
         ];
 
         foreach ($paymentMethods as $method) {
-            Payment::create(array_merge($method, ['company_id' => 1]));
+            PaymentMethod::create(array_merge($method, ['company_id' => 1]));
         }
     }
 }

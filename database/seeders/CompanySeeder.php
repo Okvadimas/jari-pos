@@ -20,8 +20,8 @@ class CompanySeeder extends Seeder
             'phone' => '08123456789',
             'address' => 'Jl. Contoh No. 123, Jakarta',
             'logo' => null,
-            'created_by' => 1,
-            'updated_by' => 1,
+            'created_by' => null,
+            'updated_by' => null,
         ]);
 
         Company::create([
@@ -31,8 +31,8 @@ class CompanySeeder extends Seeder
             'phone' => '08987654321',
             'address' => 'Jl. Demo No. 456, Bandung',
             'logo' => null,
-            'created_by' => 1,
-            'updated_by' => 1,
+            'created_by' => null,
+            'updated_by' => null,
         ]);
     }
 }
