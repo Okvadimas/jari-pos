@@ -147,7 +147,7 @@
                     @if(isset($item->variant_name) && $item->variant_name)
                     <span class="text-[10px] text-slate-500 block -mt-0.5">{{ $item->variant_name }}</span>
                     @endif
-                    <span class="text-[10px] text-slate-500 font-medium">{{ $item->quantity }} x {{ number_format($item->unit_price, 0, ',', '.') }}</span>
+                    <span class="text-[10px] text-slate-500 font-medium">{{ $item->quantity }} x {{ number_format($item->sell_price, 0, ',', '.') }}</span>
                 </div>
                 @endforeach
             </div>
@@ -161,10 +161,10 @@
                     <span>{{ number_format($order->total_amount, 0, ',', '.') }}</span>
                 </div>
 
-                @if($order->total_discount_manual > 0)
+                @if($order->discount_amount > 0)
                 <div class="flex justify-between text-[11px] text-red-600 font-medium">
                     <span>Discount {{ $order->promo_name ? '('.$order->promo_name.')' : '' }}</span>
-                    <span>-{{ number_format($order->total_discount_manual, 0, ',', '.') }}</span>
+                    <span>-{{ number_format($order->discount_amount, 0, ',', '.') }}</span>
                 </div>
                 @endif
                 

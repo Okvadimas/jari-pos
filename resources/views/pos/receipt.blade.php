@@ -148,7 +148,7 @@
                                 @endif
                             </div>
                             <div class="col-span-2 text-center">{{ $item->quantity }}</div>
-                            <div class="col-span-2 text-right">{{ number_format($item->unit_price, 0, ',', '.') }}</div>
+                            <div class="col-span-2 text-right">{{ number_format($item->sell_price, 0, ',', '.') }}</div>
                             <div class="col-span-2 text-right font-semibold">
                                 {{ number_format($item->subtotal, 0, ',', '.') }}
                             </div>
@@ -164,11 +164,11 @@
                     <span>{{ number_format($order->total_amount, 0, ',', '.') }}</span>
                 </div>
 
-                @if($order->total_discount_manual > 0)
+                @if($order->discount_amount > 0)
                     <div class="flex justify-between text-[10px] text-red-600 font-medium">
                         <span class="uppercase">Discount
                             {{ $order->promo_name ? '(' . $order->promo_name . ')' : '' }}</span>
-                        <span>-{{ number_format($order->total_discount_manual, 0, ',', '.') }}</span>
+                        <span>-{{ number_format($order->discount_amount, 0, ',', '.') }}</span>
                     </div>
                 @endif
 

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\PosRepository;
+use App\Services\Stock\StockService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -85,16 +86,18 @@ class PosService
             }
             
             // 3. Create Order
+            $invoice_number = PosRepository::generateInvoiceSalesOrder();
             $orderData = [
-                'company_id' => $user->company_id,
-                'customer_name' => $request['customer_name'],
-                'order_date' => date('Y-m-d'),
-                'total_amount' => $totalAmount,
-                'applied_promo_id' => $promoId,
-                'total_discount_manual' => $discount,
-                'final_amount' => $totalAmount - $discount,
-                'payment_method_id' => $request['payment_method_id'],
-                'created_by' => $user->id,
+                'invoice_number'        => $invoice_number,
+                'company_id'            => $user->company_id,
+                'customer_name'         => $request['customer_name'],
+                'order_date'            => date('Y-m-d'),
+                'total_amount'          => $totalAmount,
+                'applied_promo_id'      => $promoId,
+                'discount_amount' => $discount,
+                'final_amount'          => $totalAmount - $discount,
+                'payment_method_id'     => $request['payment_method_id'],
+                'created_by'            => $user->id,
             ];
             
             $order = PosRepository::storeOrder($orderData);
@@ -102,21 +105,29 @@ class PosService
             // 4. Create Order Details
             foreach ($items as $item) {
                 $variant = PosRepository::findVariant($item['variant_id']);
-                $price = 0;
+                $sellPrice = 0;
+                $purchasePrice = 0;
                 if ($variant->prices->isNotEmpty()) {
-                    $price = $variant->prices->first()->sell_price;
+                    $activePrice = $variant->prices->first();
+                    $sellPrice = $activePrice->sell_price;
+                    $purchasePrice = $activePrice->purchase_price;
                 }
                 
                 $detailData = [
-                    'sales_order_id' => $order->id,
-                    'product_variant_id' => $item['variant_id'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $price,
-                    'subtotal' => $price * $item['quantity'],
-                    'created_by' => $user->id
+                    'sales_order_id'        => $order->id,
+                    'invoice_number'        => $order->invoice_number,
+                    'product_variant_id'    => $item['variant_id'],
+                    'quantity'              => $item['quantity'],
+                    'sell_price'            => $sellPrice,
+                    'purchase_price'        => $purchasePrice,
+                    'subtotal'              => $sellPrice * $item['quantity'],
+                    'created_by'            => $user->id
                 ];
                 
                 PosRepository::storeOrderDetail($detailData);
+
+                // Update current_stock
+                StockService::decrease($item['variant_id'], $item['quantity']);
             }
             
             DB::commit();

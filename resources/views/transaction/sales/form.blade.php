@@ -56,9 +56,9 @@
                                         </div>
                                         <div class="col-lg-2">
                                             <div class="form-group">
-                                                <label class="form-label" for="total_discount_manual">Diskon Manual</label>
+                                                <label class="form-label" for="discount_amount">Diskon Manual</label>
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control text-end" id="total_discount_manual" name="total_discount_manual" value="{{ isset($salesOrder) ? number_format($salesOrder->total_discount_manual, 0, ',', '.') : '0' }}" placeholder="0">
+                                                    <input type="text" class="form-control text-end" id="discount_amount" name="discount_amount" value="{{ isset($salesOrder) ? number_format($salesOrder->discount_amount, 0, ',', '.') : '0' }}" placeholder="0">
                                                 </div>
                                             </div>
                                         </div>
@@ -137,8 +137,8 @@
                         'product_variant_id' => $d->product_variant_id,
                         'product_name' => optional($d->variant->product)->name . (optional($d->variant)->name ? ' - ' . $d->variant->name : '') . ' (' . optional($d->variant)->sku . ')',
                         'quantity' => $d->quantity,
-                        'unit_price' => $d->unit_price,
-                        'discount_auto_amount' => $d->discount_auto_amount,
+                        'sell_price' => $d->sell_price,
+                        'discount_amount' => $d->discount_amount,
                         'subtotal' => $d->subtotal,
                     ];
                 })->toArray();

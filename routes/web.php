@@ -33,6 +33,9 @@ use App\Http\Controllers\Inventory\StockOpnameController    as StockOpnameContro
 use App\Http\Controllers\Transaction\SalesController        as SalesController;
 use App\Http\Controllers\Transaction\PurchasingController   as PurchasingController;
 
+// Report
+use App\Http\Controllers\Report\RecommendationController   as RecommendationController;
+
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
 // PWA Offline Page
@@ -192,6 +195,14 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::get('/purchasing/edit/{id}', [PurchasingController::class, 'edit'])->name('transaction.purchasing.edit');
         Route::post('/purchasing/store', [PurchasingController::class, 'store'])->name('transaction.purchasing.store');
         Route::post('/purchasing/destroy', [PurchasingController::class, 'destroy'])->name('transaction.purchasing.destroy');
+    });
+
+    // Report
+    Route::group(['prefix' => 'report'], function () {
+        Route::get('/stock-recommendation', [RecommendationController::class, 'index'])->name('report.stock-recommendation.index');
+        Route::post('/stock-recommendation/generate', [RecommendationController::class, 'generate'])->name('report.stock-recommendation.generate');
+        Route::get('/stock-recommendation/datatable', [RecommendationController::class, 'datatable'])->name('report.stock-recommendation.datatable');
+        Route::get('/stock-recommendation/summary/{id}', [RecommendationController::class, 'summary'])->name('report.stock-recommendation.summary');
     });
 
     // Utility Routes

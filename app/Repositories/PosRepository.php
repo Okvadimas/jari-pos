@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 // Load Model
 use App\Models\Product;
@@ -30,7 +31,23 @@ class PosRepository {
             });
         }
 
-        $products = $query->paginate(12);
+        if ($request->has('all_items') && $request->all_items) {
+            $products = $query->get();
+            // Transform manually as paginate() does returned collection transform above
+            $products->transform(function ($product) {
+                $variant = $product->variants->first();
+                $price = 0;
+                if ($variant && $variant->prices->isNotEmpty()) {
+                    $price = $variant->prices->first()->sell_price;
+                }
+                $product->price_display = $price;
+                return $product;
+            });
+            
+            return response()->json(['status' => true, 'data' => $products]);
+        }
+
+        $products = $query->paginate(20);
         
         // Transform data to ensure price is easily accessible and prevent NaN
         $products->getCollection()->transform(function ($product) {
@@ -161,5 +178,10 @@ class PosRepository {
 
     public static function storeOrderDetail($data) {
         return SalesOrderDetail::create($data);
+    }
+
+    public static function generateInvoiceSalesOrder() {
+        $company = Session::get('company_code');
+        return DB::selectOne('CALL generate_transaction_number(?, ?, ?, ?)', ['SO', $company, date('Y'), date('m')])->transaction_number;        
     }
 }

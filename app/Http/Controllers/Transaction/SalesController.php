@@ -64,8 +64,8 @@ class SalesController extends Controller
             return [
                 'product_name' => trim($productName . ' ' . $variantName),
                 'quantity' => $detail->quantity,
-                'unit_price' => $detail->unit_price,
-                'discount' => $detail->discount_auto_amount,
+                'unit_price' => $detail->sell_price,
+                'discount' => $detail->discount_amount,
                 'subtotal' => $detail->subtotal
             ];
         });

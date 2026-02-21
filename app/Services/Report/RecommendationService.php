@@ -11,9 +11,8 @@ use App\Repositories\Transaction\SalesRepository;
 use App\Models\SalesOrder;
 use App\Models\SalesOrderDetail;
 use App\Services\TransactionNumberService;
-use App\Services\Stock\StockService;
 
-class SalesService
+class RecommendationService
 {
     public static function datatable($startDate, $endDate)
     {
@@ -83,9 +82,6 @@ class SalesService
                         'updated_by' => $user->id,
                     ]);
 
-                    // Restore stock from old details before re-creating
-                    StockService::restoreFromSales($salesOrder->id);
-
                     // Delete existing details (soft delete)
                     SalesOrderDetail::where('sales_order_id', $salesOrder->id)->delete();
                 } else {
@@ -108,18 +104,9 @@ class SalesService
                     ]);
                 }
 
-                // Get active purchase prices for all variants in this order
-                $variantIds = collect($data['details'])->pluck('product_variant_id')->toArray();
-                $purchasePrices = DB::table('product_prices')
-                    ->whereIn('product_variant_id', $variantIds)
-                    ->where('is_active', 1)
-                    ->whereNull('deleted_at')
-                    ->pluck('purchase_price', 'product_variant_id');
-
                 // Create new details
                 foreach ($data['details'] as $detail) {
                     $subtotal = ($detail['quantity'] * $detail['sell_price']) - ($detail['discount_amount'] ?? 0);
-                    $purchasePrice = $purchasePrices[$detail['product_variant_id']] ?? 0;
 
                     SalesOrderDetail::create([
                         'sales_order_id' => $salesOrder->id,
@@ -127,14 +114,10 @@ class SalesService
                         'product_variant_id' => $detail['product_variant_id'],
                         'quantity' => $detail['quantity'],
                         'sell_price' => $detail['sell_price'],
-                        'purchase_price' => $purchasePrice,
                         'discount_amount' => $detail['discount_amount'] ?? 0,
                         'subtotal' => $subtotal,
                         'created_by' => $user->id,
                     ]);
-
-                    // Update current_stock
-                    StockService::decrease($detail['product_variant_id'], $detail['quantity']);
                 }
 
                 return $salesOrder;
@@ -152,9 +135,6 @@ class SalesService
         if (!$salesOrder) {
             return false;
         }
-
-        // Restore stock before deleting
-        StockService::restoreFromSales($id);
 
         $salesOrder->deleted_by = Auth::id();
         $salesOrder->deleted_at = now();
