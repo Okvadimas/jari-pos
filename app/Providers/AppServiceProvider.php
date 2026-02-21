@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Database\Schema\Blueprint::macro('softDeletesWithUser', function () {
             /** @var \Illuminate\Database\Schema\Blueprint $this */
             $this->softDeletes();
-            $this->unsignedBigInteger('deleted_by')->nullable();
+            $this->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
         });
 
         LogViewer::auth(function ($request) {

@@ -29,6 +29,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Aksi</th>
+                                            <th>Kode</th>
                                             <th>Nama</th>
                                         </tr>
                                     </thead>

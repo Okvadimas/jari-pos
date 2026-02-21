@@ -92,6 +92,13 @@ class MenuSeeder extends Seeder
                 'icon'      => 'ni ni-list-thumb-fill',
                 'url'       => '/inventory/product-variant',
             ],
+            [
+                'code'      => 'IN-05',
+                'parent'    => 'IN',
+                'name'      => 'Stock Opname',
+                'icon'      => 'ni ni-clip-board-check',
+                'url'       => '/inventory/stock-opname',
+            ],
 
             // Transaksi
             [

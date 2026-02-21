@@ -17,10 +17,10 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
             $table->dateTime('purchase_date');
             $table->string('supplier_name')->nullable();
-            $table->decimal('total_cost', 15, 2)->comment('Total bayar ke supplier');
+            $table->decimal('total_cost', 15, 0)->comment('Total bayar ke supplier');
             $table->text('reference_note')->nullable()->comment('Misal: Beli 10kg Pelet Ikan');
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();
@@ -28,6 +28,7 @@ return new class extends Migration
             $table->index('order_number');
             $table->index('purchase_date');
             $table->index('company_id');
+            $table->unique(['company_id', 'order_number'], 'purchases_company_order_unique');
         });
     }
 

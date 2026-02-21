@@ -27,6 +27,7 @@ use App\Http\Controllers\Inventory\UnitController           as UnitController;
 use App\Http\Controllers\Inventory\CategoryController       as CategoryController;
 use App\Http\Controllers\Inventory\ProductController        as ProductController;
 use App\Http\Controllers\Inventory\ProductVariantController as ProductVariantController;
+use App\Http\Controllers\Inventory\StockOpnameController    as StockOpnameController;
 
 // Transaction
 use App\Http\Controllers\Transaction\SalesController        as SalesController;
@@ -158,6 +159,21 @@ Route::group(['middleware' => ['web', 'auth']], function () {
             Route::get('/product-variant/edit/{id}', [ProductVariantController::class, 'edit'])->name('inventory-product-variant-edit');
             Route::post('/product-variant/store', [ProductVariantController::class, 'store'])->name('inventory-product-variant-store');
             Route::post('/product-variant/destroy/{id}', [ProductVariantController::class, 'destroy'])->name('inventory-product-variant-destroy');
+        });
+
+        // Stock Opname (Menu Code: IN-05)
+        Route::group(['middleware' => 'menu-access:IN-05'], function () {
+            Route::get('/stock-opname', [StockOpnameController::class, 'index'])->name('inventory.stock-opname.index');
+            Route::get('/stock-opname/datatable', [StockOpnameController::class, 'datatable'])->name('inventory.stock-opname.datatable');
+            Route::get('/stock-opname/summary', [StockOpnameController::class, 'summary'])->name('inventory.stock-opname.summary');
+            Route::get('/stock-opname/create', [StockOpnameController::class, 'create'])->name('inventory.stock-opname.create');
+            Route::get('/stock-opname/edit/{id}', [StockOpnameController::class, 'edit'])->name('inventory.stock-opname.edit');
+            Route::get('/stock-opname/show/{id}', [StockOpnameController::class, 'show'])->name('inventory.stock-opname.show');
+            Route::get('/stock-opname/system-stock/{productVariantId}', [StockOpnameController::class, 'getSystemStock'])->name('inventory.stock-opname.system-stock');
+            Route::post('/stock-opname/store', [StockOpnameController::class, 'store'])->name('inventory.stock-opname.store');
+            Route::post('/stock-opname/approve/{id}', [StockOpnameController::class, 'approve'])->name('inventory.stock-opname.approve');
+            Route::post('/stock-opname/cancel/{id}', [StockOpnameController::class, 'cancel'])->name('inventory.stock-opname.cancel');
+            Route::post('/stock-opname/destroy', [StockOpnameController::class, 'destroy'])->name('inventory.stock-opname.destroy');
         });
     });
 

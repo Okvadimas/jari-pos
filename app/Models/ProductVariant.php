@@ -4,12 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\SoftDeletesWithUser;
+use App\Models\Unit;
+use App\Models\Product;
+use App\Models\StockDailyBalance;
+use App\Models\SalesOrderDetail;
+use App\Models\ProductPrice;
 
 class ProductVariant extends Model
 {
     use SoftDeletesWithUser;
     protected $table = 'product_variants';
-    protected $fillable = ['product_id', 'name', 'sku', 'current_stock', 'moving_status', 'moving_score', 'lead_time', 'moq', 'created_by', 'updated_by'];
+    protected $fillable = ['product_id', 'unit_id', 'name', 'sku', 'current_stock', 'moving_status', 'moving_score', 'lead_time', 'moq', 'created_by', 'updated_by'];
 
     public function product()
     {
@@ -29,5 +34,10 @@ class ProductVariant extends Model
     public function prices()
     {
         return $this->hasMany(ProductPrice::class);
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

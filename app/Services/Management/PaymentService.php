@@ -3,7 +3,7 @@
 namespace App\Services\Management;
 
 use App\Repositories\Management\PaymentRepository;
-use App\Models\Payment;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -32,12 +32,12 @@ class PaymentService {
             DB::beginTransaction();
 
             if (!empty($data['id'])) {
-                $payment = Payment::find($data['id']);
+                $payment = PaymentMethod::find($data['id']);
                 $data['updated_by'] = Auth::user()->id;
                 $payment->update($data);
             } else {
                 $data['created_by'] = Auth::user()->id;
-                $payment = Payment::create($data);
+                $payment = PaymentMethod::create($data);
             }
 
             DB::commit();
@@ -52,7 +52,7 @@ class PaymentService {
     public static function destroy($id)
     {
         try {
-            $payment = Payment::find($id);
+            $payment = PaymentMethod::find($id);
             $payment->delete();
             return true;
         } catch (\Throwable $th) {

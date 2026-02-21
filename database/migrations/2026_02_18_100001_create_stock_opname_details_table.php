@@ -11,21 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales_order_details', function (Blueprint $table) {
+        Schema::create('stock_opname_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sales_order_id')->constrained('sales_orders')->cascadeOnDelete();
+            $table->foreignId('stock_opname_id')->constrained('stock_opnames')->cascadeOnDelete();
             $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
-            $table->integer('quantity');
-            $table->decimal('unit_price', 15, 0)->comment('Harga jual normal saat itu');
-            $table->decimal('discount_auto_amount', 15, 0)->default(0)->comment('Potongan harga jika ada promo');
-            $table->decimal('subtotal', 15, 0)->comment('(unit_price - discount_auto) * qty');
+            $table->integer('system_stock')->default(0)->comment('Stok di sistem saat opname dibuat');
+            $table->integer('physical_stock')->default(0)->comment('Stok fisik hasil hitung');
+            $table->integer('difference')->default(0)->comment('physical_stock - system_stock');
+            $table->text('notes')->nullable()->comment('Catatan per item');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();
 
-            $table->index('sales_order_id');
+            $table->index('stock_opname_id');
             $table->index('product_variant_id');
         });
     }
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sales_order_details');
+        Schema::dropIfExists('stock_opname_details');
     }
 };

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Inventory\Unit;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class StoreUnitRequest extends FormRequest
@@ -25,6 +26,7 @@ class StoreUnitRequest extends FormRequest
     public function rules(): array
     {
         $unitId = $this->input('id');
+        $companyId = Auth::user()->company_id;
 
         return [
             'id'    => 'nullable|exists:units,id',
@@ -34,6 +36,7 @@ class StoreUnitRequest extends FormRequest
                 'max:10',
                 Rule::unique('units', 'code')
                     ->ignore($unitId)
+                    ->where('company_id', $companyId)
                     ->whereNull('deleted_at'),
             ],
             'name'  => [
@@ -42,6 +45,7 @@ class StoreUnitRequest extends FormRequest
                 'max:50',
                 Rule::unique('units', 'name')
                     ->ignore($unitId)
+                    ->where('company_id', $companyId)
                     ->whereNull('deleted_at'),
             ],
         ];

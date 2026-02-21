@@ -4,6 +4,7 @@ namespace App\Http\Requests\Management\Payment;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class StorePaymentRequest extends FormRequest
@@ -25,6 +26,7 @@ class StorePaymentRequest extends FormRequest
     public function rules(): array
     {
         $paymentId = $this->input('id');
+        $companyId = Auth::user()->company_id;
 
         return [
             'id'    => 'nullable|exists:payment_methods,id',
@@ -34,6 +36,7 @@ class StorePaymentRequest extends FormRequest
                 'max:255',
                 Rule::unique('payment_methods', 'name')
                     ->ignore($paymentId)
+                    ->where('company_id', $companyId)
                     ->whereNull('deleted_at'),
             ],
             'type'  => 'required|in:cash,bank_transfer,e-wallet,other',

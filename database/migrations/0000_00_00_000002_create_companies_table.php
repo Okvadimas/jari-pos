@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
+         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 5);
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
             $table->string('logo')->nullable();
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->softDeletesWithUser();
+            $table->softDeletes();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
     }
 

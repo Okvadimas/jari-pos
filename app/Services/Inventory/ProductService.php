@@ -7,10 +7,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 use App\Repositories\Inventory\ProductRepository;
 
 use App\Models\Product;
+use App\Models\Category;
 
 class ProductService
 {
@@ -39,6 +41,7 @@ class ProductService
                 $product->update($data);
             } else {
                 $data['created_by'] = Auth::user()->id;
+                $data['sku'] = self::generateSku($data['category_id'], $data['company_id']);
                 $product = Product::create($data);
             }
 
@@ -63,10 +66,25 @@ class ProductService
         }
     }
 
-    public static function generateSku()
+    /**
+     * Generate SKU untuk produk
+     * Format: KAT-0001 (3 huruf kategori + 4 digit auto)
+     * Contoh: FOD-0025
+     *
+     * @param int $categoryId
+     * @param int $companyId
+     * @return string
+     */
+    public static function generateSku(int $categoryId, int $companyId): string
     {
-        $company = Session::get('company_code');
-        $sku = DB::selectOne('CALL generate_kode(?, ?)', ['PRD', $company])->code;
-        return $sku;
+        $category = Category::findOrFail($categoryId);
+        $categoryCode = strtoupper($category->code);
+
+        $result = DB::selectOne('CALL generate_sku(?, ?)', [
+            $categoryCode,
+            (string) $companyId,
+        ]);
+
+        return $result->sku;
     }
 }
