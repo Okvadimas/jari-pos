@@ -6,7 +6,7 @@ use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class StockService
+class StockProductService
 {
     /**
      * Decrease stock (sales / POS checkout).
@@ -22,7 +22,7 @@ class StockService
             ->decrement('current_stock', $qty);
 
         if ($affected === 0) {
-            Log::warning("StockService::decrease - Variant {$variantId} not found or deleted.");
+            Log::warning("StockProductService::decrease - Variant {$variantId} not found or deleted.");
         }
     }
 
@@ -40,7 +40,7 @@ class StockService
             ->increment('current_stock', $qty);
 
         if ($affected === 0) {
-            Log::warning("StockService::increase - Variant {$variantId} not found or deleted.");
+            Log::warning("StockProductService::increase - Variant {$variantId} not found or deleted.");
         }
     }
 

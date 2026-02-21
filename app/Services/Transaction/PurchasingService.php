@@ -10,8 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Transaction\PurchasingRepository;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
-use App\Services\TransactionNumberService;
-use App\Services\Stock\StockService;
+use App\Services\Utilities\TransactionNumberService;
+use App\Services\Stock\StockProductService;
 
 class PurchasingService
 {
@@ -76,7 +76,7 @@ class PurchasingService
                     ]);
 
                     // Restore stock from old details before re-creating
-                    StockService::restoreFromPurchase($purchase->id);
+                    StockProductService::restoreFromPurchase($purchase->id);
 
                     // Delete existing details (soft delete)
                     PurchaseDetail::where('purchase_id', $purchase->id)->delete();
@@ -109,7 +109,7 @@ class PurchasingService
                     ]);
 
                     // Update current_stock
-                    StockService::increase($detail['product_variant_id'], $detail['quantity']);
+                    StockProductService::increase($detail['product_variant_id'], $detail['quantity']);
                 }
 
                 return $purchase;
@@ -134,7 +134,7 @@ class PurchasingService
                 }
 
                 // Restore stock before deleting
-                StockService::restoreFromPurchase($id);
+                StockProductService::restoreFromPurchase($id);
 
                 // Soft delete details first
                 PurchaseDetail::where('purchase_id', $id)->delete();

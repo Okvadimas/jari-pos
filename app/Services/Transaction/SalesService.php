@@ -10,8 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Transaction\SalesRepository;
 use App\Models\SalesOrder;
 use App\Models\SalesOrderDetail;
-use App\Services\TransactionNumberService;
-use App\Services\Stock\StockService;
+use App\Services\Utilities\TransactionNumberService;
+use App\Services\Stock\StockProductService;
 
 class SalesService
 {
@@ -84,7 +84,7 @@ class SalesService
                     ]);
 
                     // Restore stock from old details before re-creating
-                    StockService::restoreFromSales($salesOrder->id);
+                    StockProductService::restoreFromSales($salesOrder->id);
 
                     // Delete existing details (soft delete)
                     SalesOrderDetail::where('sales_order_id', $salesOrder->id)->delete();
@@ -134,7 +134,7 @@ class SalesService
                     ]);
 
                     // Update current_stock
-                    StockService::decrease($detail['product_variant_id'], $detail['quantity']);
+                    StockProductService::decrease($detail['product_variant_id'], $detail['quantity']);
                 }
 
                 return $salesOrder;
@@ -154,7 +154,7 @@ class SalesService
         }
 
         // Restore stock before deleting
-        StockService::restoreFromSales($id);
+        StockProductService::restoreFromSales($id);
 
         $salesOrder->deleted_by = Auth::id();
         $salesOrder->deleted_at = now();

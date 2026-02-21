@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Utilities;
 
 use App\Models\Counter;
 use Carbon\Carbon;

@@ -10,8 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Inventory\StockOpnameRepository;
 use App\Models\StockOpname;
 use App\Models\StockOpnameDetail;
-use App\Models\StockDailyBalance;
-use App\Services\TransactionNumberService;
+
+use App\Services\Utilities\TransactionNumberService;
 
 class StockOpnameService
 {
@@ -155,48 +155,120 @@ class StockOpnameService
                     'updated_by'  => $user->id,
                 ]);
 
-                // Apply adjustments to stock_daily_balances
-                foreach ($opname->details as $detail) {
-                    if ($detail->difference == 0) continue;
+                // Filter details with non-zero difference
+                $adjustableDetails = $opname->details->filter(fn($d) => $d->difference != 0);
 
-                    $balance = StockDailyBalance::where('product_variant_id', $detail->product_variant_id)
-                        ->where('date', $opname->opname_date)
-                        ->whereNull('deleted_at')
-                        ->lockForUpdate()
-                        ->first();
+                if ($adjustableDetails->isEmpty()) {
+                    return true;
+                }
 
-                    if ($balance) {
-                        // Update existing record
-                        $newAdjustment = $balance->adjustment_stock + $detail->difference;
-                        $newClosing = $balance->opening_stock + $balance->in_stock + $newAdjustment - $balance->out_stock;
+                $variantIds = $adjustableDetails->pluck('product_variant_id')->toArray();
+                $now = Carbon::now()->format('Y-m-d H:i:s');
 
-                        $balance->update([
-                            'adjustment_stock' => $newAdjustment,
-                            'closing_stock'    => $newClosing,
-                            'updated_by'       => $user->id,
-                        ]);
-                    } else {
-                        // Create new record for this date
-                        // Get the latest closing_stock as opening_stock
-                        $latestBalance = StockDailyBalance::where('product_variant_id', $detail->product_variant_id)
-                            ->whereNull('deleted_at')
-                            ->where('date', '<', $opname->opname_date)
-                            ->orderByDesc('date')
-                            ->first();
+                // ── Bulk query #1: existing balances for opname date ──
+                $existingBalances = DB::table('stock_daily_balances')
+                    ->whereIn('product_variant_id', $variantIds)
+                    ->where('date', $opname->opname_date)
+                    ->whereNull('deleted_at')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('product_variant_id');
 
-                        $openingStock = $latestBalance ? $latestBalance->closing_stock : 0;
+                // ── Bulk query #2: latest balances for variants without existing record ──
+                $missingIds = array_diff($variantIds, $existingBalances->keys()->toArray());
+                $latestBalances = collect();
 
-                        StockDailyBalance::create([
-                            'product_variant_id' => $detail->product_variant_id,
+                if (!empty($missingIds)) {
+                    $latestBalances = DB::table('stock_daily_balances as sdb')
+                        ->joinSub(
+                            DB::table('stock_daily_balances')
+                                ->whereIn('product_variant_id', $missingIds)
+                                ->whereNull('deleted_at')
+                                ->where('date', '<', $opname->opname_date)
+                                ->groupBy('product_variant_id')
+                                ->selectRaw('product_variant_id, MAX(date) as max_date'),
+                            'latest',
+                            fn($join) => $join
+                                ->on('sdb.product_variant_id', '=', 'latest.product_variant_id')
+                                ->on('sdb.date', '=', 'latest.max_date')
+                        )
+                        ->select('sdb.product_variant_id', 'sdb.closing_stock')
+                        ->get()
+                        ->keyBy('product_variant_id');
+                }
+
+                // ── Process in-memory: build upserts & stock corrections ──
+                $upserts = [];
+                $stockCorrections = []; // variant_id => adjustment
+
+                foreach ($adjustableDetails as $detail) {
+                    $vid  = $detail->product_variant_id;
+                    $diff = $detail->difference;
+                    $existing = $existingBalances->get($vid);
+
+                    if ($existing) {
+                        $newAdj     = $existing->adjustment_stock + $diff;
+                        $newClosing = $existing->opening_stock + $existing->in_stock + $newAdj - $existing->out_stock;
+
+                        $upserts[] = [
+                            'product_variant_id' => $vid,
                             'date'               => $opname->opname_date,
-                            'opening_stock'      => $openingStock,
+                            'opening_stock'      => $existing->opening_stock,
+                            'in_stock'           => $existing->in_stock,
+                            'out_stock'          => $existing->out_stock,
+                            'adjustment_stock'   => $newAdj,
+                            'closing_stock'      => $newClosing,
+                            'created_by'         => $existing->created_by,
+                            'updated_by'         => $user->id,
+                            'created_at'         => $existing->created_at,
+                            'updated_at'         => $now,
+                        ];
+                    } else {
+                        $opening = $latestBalances->has($vid)
+                            ? (int) $latestBalances->get($vid)->closing_stock
+                            : 0;
+
+                        $upserts[] = [
+                            'product_variant_id' => $vid,
+                            'date'               => $opname->opname_date,
+                            'opening_stock'      => $opening,
                             'in_stock'           => 0,
                             'out_stock'          => 0,
-                            'adjustment_stock'   => $detail->difference,
-                            'closing_stock'      => $openingStock + $detail->difference,
+                            'adjustment_stock'   => $diff,
+                            'closing_stock'      => $opening + $diff,
                             'created_by'         => $user->id,
-                        ]);
+                            'updated_by'         => $user->id,
+                            'created_at'         => $now,
+                            'updated_at'         => $now,
+                        ];
                     }
+
+                    $stockCorrections[$vid] = $diff;
+                }
+
+                // ── Bulk write: upsert all balances at once ──
+                DB::table('stock_daily_balances')->upsert(
+                    $upserts,
+                    ['product_variant_id', 'date'],
+                    ['adjustment_stock', 'closing_stock', 'updated_by', 'updated_at']
+                );
+
+                // ── Bulk write: update product_variants.current_stock ──
+                if (!empty($stockCorrections)) {
+                    $caseWhen = '';
+                    $ids = [];
+                    foreach ($stockCorrections as $vid => $diff) {
+                        $ids[] = $vid;
+                        $caseWhen .= "WHEN {$vid} THEN current_stock + ({$diff}) ";
+                    }
+                    $idList = implode(',', $ids);
+
+                    DB::statement("
+                        UPDATE product_variants
+                        SET current_stock = CASE id {$caseWhen} END,
+                            updated_at = '{$now}'
+                        WHERE id IN ({$idList})
+                    ");
                 }
 
                 return true;
