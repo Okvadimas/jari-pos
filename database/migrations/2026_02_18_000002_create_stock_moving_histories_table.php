@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('total_medium')->default(0);
             $table->integer('total_slow')->default(0);
             $table->integer('total_dead')->default(0);
+            $table->decimal('cogs_balance', 15, 0)->nullable()->comment('Modal kembali (purchase_price × qty terjual)');
+            $table->decimal('gross_profit_balance', 15, 0)->nullable()->comment('Keuntungan kotor (revenue - COGS)');
             $table->timestamps();
             $table->softDeletes();
 

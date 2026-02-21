@@ -42,8 +42,8 @@ class RoleSeeder extends Seeder
                 ['slug' => $role['slug']],
                 [
                     'name' => $role['name'],
-                    'created_by' => 1,
-                    'updated_by' => 1,
+                    'created_by' => null,
+                    'updated_by' => null,
                 ]
             );
         }
