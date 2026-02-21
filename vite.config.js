@@ -138,6 +138,11 @@ export default defineConfig({
                 // ================================
                 'resources/js/pages/transaction/purchasing/index.js',
                 'resources/js/pages/transaction/purchasing/form.js',
+
+                // ================================
+                // Report - Stock Recommendation
+                // ================================
+                'resources/js/pages/report/recommendation/index.js',
             ],
             refresh: true,
         }),

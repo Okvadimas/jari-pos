@@ -24,12 +24,12 @@ class StoreSalesRequest extends FormRequest
             'customer_name' => 'nullable|string|max:255',
             'order_date' => 'required|string',
             'payment_method_id' => 'nullable|integer|exists:payment_methods,id',
-            'total_discount_manual' => 'nullable|numeric|min:0',
+            'discount_amount' => 'nullable|numeric|min:0',
             'details' => 'required|array|min:1',
             'details.*.product_variant_id' => 'required|integer|exists:product_variants,id',
             'details.*.quantity' => 'required|integer|min:1',
-            'details.*.unit_price' => 'required|numeric|min:0',
-            'details.*.discount_auto_amount' => 'nullable|numeric|min:0',
+            'details.*.sell_price' => 'required|numeric|min:0',
+            'details.*.discount_amount' => 'nullable|numeric|min:0',
         ];
     }
 
@@ -46,8 +46,8 @@ class StoreSalesRequest extends FormRequest
             'details.*.product_variant_id.exists' => 'Produk tidak valid',
             'details.*.quantity.required' => 'Jumlah wajib diisi',
             'details.*.quantity.min' => 'Jumlah minimal 1',
-            'details.*.unit_price.required' => 'Harga wajib diisi',
-            'details.*.unit_price.min' => 'Harga tidak boleh negatif',
+            'details.*.sell_price.required' => 'Harga wajib diisi',
+            'details.*.sell_price.min' => 'Harga tidak boleh negatif',
         ];
     }
 }

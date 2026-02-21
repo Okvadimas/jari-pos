@@ -112,7 +112,7 @@ function detail(id) {
             
             $('#detail-items').html(itemsHtml);
             $('#detail-total-amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.sales_order.total_amount));
-            $('#detail-discount-manual').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.sales_order.total_discount_manual));
+            $('#detail-discount-manual').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.sales_order.discount_amount));
             $('#detail-final-amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.sales_order.final_amount));
         },
         error: function(xhr) {

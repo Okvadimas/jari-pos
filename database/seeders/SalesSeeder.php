@@ -51,7 +51,7 @@ class SalesSeeder extends Seeder
                     'order_date' => $orderDate,
                     'total_amount' => 0,
                     'applied_promo_id' => null,
-                    'total_discount_manual' => 0,
+                    'discount_amount' => 0,
                     'final_amount' => 0,
                     'created_by' => $createdBy,
                     'updated_by' => $createdBy,
@@ -64,17 +64,20 @@ class SalesSeeder extends Seeder
 
                 for ($j = 0; $j < $numberOfItems; $j++) {
                     $variantId = $faker->randomElement($productVariantIds);
-                    $unitPrice = $faker->numberBetween(10, 500) * 1000;
+                    $sellPrice = $faker->numberBetween(10, 500) * 1000;
+                    $purchasePrice = intval($sellPrice * $faker->randomFloat(2, 0.5, 0.8)); // HPP 50-80% of sell price
 
                     $quantity = $faker->numberBetween(1, 10);
-                    $subtotal = $unitPrice * $quantity;
+                    $subtotal = $sellPrice * $quantity;
 
                     SalesOrderDetail::create([
                         'sales_order_id' => $salesOrder->id,
+                        'invoice_number' => $invoiceNumber,
                         'product_variant_id' => $variantId,
                         'quantity' => $quantity,
-                        'unit_price' => $unitPrice,
-                        'discount_auto_amount' => 0,
+                        'sell_price' => $sellPrice,
+                        'purchase_price' => $purchasePrice,
+                        'discount_amount' => 0,
                         'subtotal' => $subtotal,
                         'created_by' => $createdBy,
                         'updated_by' => $createdBy,

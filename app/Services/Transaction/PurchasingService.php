@@ -11,6 +11,7 @@ use App\Repositories\Transaction\PurchasingRepository;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Services\TransactionNumberService;
+use App\Services\Stock\StockService;
 
 class PurchasingService
 {
@@ -74,6 +75,9 @@ class PurchasingService
                         'updated_by' => $user->id,
                     ]);
 
+                    // Restore stock from old details before re-creating
+                    StockService::restoreFromPurchase($purchase->id);
+
                     // Delete existing details (soft delete)
                     PurchaseDetail::where('purchase_id', $purchase->id)->delete();
                 } else {
@@ -103,6 +107,9 @@ class PurchasingService
                         'cost_price_per_item' => $detail['cost_price_per_item'],
                         'created_by' => $user->id,
                     ]);
+
+                    // Update current_stock
+                    StockService::increase($detail['product_variant_id'], $detail['quantity']);
                 }
 
                 return $purchase;
@@ -125,6 +132,9 @@ class PurchasingService
                 if (!$purchase) {
                     return false;
                 }
+
+                // Restore stock before deleting
+                StockService::restoreFromPurchase($id);
 
                 // Soft delete details first
                 PurchaseDetail::where('purchase_id', $id)->delete();

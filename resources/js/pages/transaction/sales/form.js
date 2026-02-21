@@ -36,7 +36,7 @@ $(document).ready(function() {
     });
 
     // Update totals when manual discount changes
-    $('#total_discount_manual').on('input', function() {
+    $('#discount_amount').on('input', function() {
         calculateTotal();
     });
 
@@ -79,7 +79,7 @@ $(document).ready(function() {
             customer_name: $('#customer_name').val(),
             order_date: $('#order_date').val(),
             payment_method_id: $('#payment_method_id').val() || null,
-            total_discount_manual: parseFloat($('#total_discount_manual').val().replace(/\./g, '').replace(',', '.')) || 0,
+            discount_amount: parseFloat($('#discount_amount').val().replace(/\./g, '').replace(',', '.')) || 0,
             details: []
         };
 
@@ -88,8 +88,8 @@ $(document).ready(function() {
             formData.details.push({
                 product_variant_id: $(this).find('.item-product').val(),
                 quantity: parseInt($(this).find('.item-quantity').val()) || 0,
-                unit_price: parseFloat($(this).find('.item-price').val().replace(/\./g, '').replace(',', '.')) || 0,
-                discount_auto_amount: parseFloat($(this).find('.item-discount').val().replace(/\./g, '').replace(',', '.')) || 0
+                sell_price: parseFloat($(this).find('.item-price').val().replace(/\./g, '').replace(',', '.')) || 0,
+                discount_amount: parseFloat($(this).find('.item-discount').val().replace(/\./g, '').replace(',', '.')) || 0
             });
         });
 
@@ -175,10 +175,10 @@ $(document).ready(function() {
                     <input type="number" class="form-control text-end item-quantity" name="details[${rowIndex}][quantity]" min="1" value="${data ? data.quantity : ''}" placeholder="0">
                 </td>
                 <td>
-                    <input type="text" class="form-control text-end item-price" name="details[${rowIndex}][unit_price]" value="${data ? formatNumber(data.unit_price) : ''}" placeholder="0">
+                    <input type="text" class="form-control text-end item-price" name="details[${rowIndex}][sell_price]" value="${data ? formatNumber(data.sell_price) : ''}" placeholder="0">
                 </td>
                 <td>
-                    <input type="text" class="form-control text-end item-discount" name="details[${rowIndex}][discount_auto_amount]" value="${data ? formatNumber(data.discount_auto_amount) : '0'}" placeholder="0">
+                    <input type="text" class="form-control text-end item-discount" name="details[${rowIndex}][discount_amount]" value="${data ? formatNumber(data.discount_amount) : '0'}" placeholder="0">
                 </td>
                 <td class="text-end item-subtotal">Rp 0</td>
                 <td class="text-center">
@@ -228,7 +228,7 @@ $(document).ready(function() {
             total += (quantity * price) - discount;
         });
 
-        let manualDiscount = parseFloat($('#total_discount_manual').val().replace(/\./g, '').replace(',', '.')) || 0;
+        let manualDiscount = parseFloat($('#discount_amount').val().replace(/\./g, '').replace(',', '.')) || 0;
         let finalTotal = total - manualDiscount;
 
         $('#grand-total').text('Rp ' + new Intl.NumberFormat('id-ID').format(total));

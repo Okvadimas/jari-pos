@@ -12,6 +12,11 @@ $(document).ready(function() {
     setCurrentDate();
     loadCategories();
     loadProducts();
+
+    // Background Sync for Offline Mode
+    if (navigator.onLine) {
+        setTimeout(syncOfflineData, 2000);
+    }
     
     // Feature: Notifications & Settings
     checkNotifications();
@@ -43,6 +48,16 @@ $(document).ready(function() {
             $('.pos-cart-panel').removeClass('expanded');
         }
     });
+
+    // Infinite Scroll Listener
+    $('.pos-products-wrapper').on('scroll', function() {
+        const wrapper = $(this);
+        if (wrapper.scrollTop() + wrapper.innerHeight() >= wrapper[0].scrollHeight - 50) {
+            if (!isLoading && currentPage < lastPage) {
+                loadProducts(true);
+            }
+        }
+    });
 });
 
 // ============================================
@@ -64,6 +79,11 @@ let settings = {
     useQzTray: false,
     qzPrinterName: ''
 };
+
+// Pagination State
+let currentPage = 1;
+let lastPage = 1;
+let isLoading = false;
 
 // Offline State
 let isOffline = !navigator.onLine;
@@ -158,27 +178,81 @@ function renderCategories() {
 }
 
 // ============================================
+// Offline Sync Functions (Background Sync Get All Products) For Prepare Offline Mode
+// ============================================
+async function syncOfflineData() {
+    console.log('[Sync] Starting background sync...');
+    if (typeof OfflineDB === 'undefined') return;
+
+    try {
+        const response = await $.ajax({
+            url: window.posRoutes.products,
+            type: 'GET',
+            data: { all_items: 1 }
+        });
+
+        if (response.status && response.data) {
+            await OfflineDB.cacheProducts(response.data);
+            console.log('[Sync] All products cached successfully (' + response.data.length + ' items)');
+        }
+    } catch (error) {
+        console.error('[Sync] Failed to sync offline data:', error);
+    }
+}
+
+// ============================================
 // Product Functions
 // ============================================
-async function loadProducts() {
+async function loadProducts(isAppend = false) {
+    if (isLoading) return;
+    
+    if (!isAppend) {
+        currentPage = 1;
+        $('#productsGrid').html('<div class="pos-loading"><div class="pos-spinner"></div></div>');
+    }
+
     const categoryId = $('.pos-category-pill.active').data('category');
     const search = $('#searchProduct').val();
     
-    $('#productsGrid').html('<div class="pos-loading"><div class="pos-spinner"></div></div>');
-    
+    // Lock loading
+    isLoading = true;
+
     // Try offline fallback if not online
     if (!navigator.onLine && typeof OfflineDB !== 'undefined') {
         try {
-            const cached = await OfflineDB.getCachedProducts(categoryId, search);
+            // Get ALL cached products (filtered by category/search if possible)
+            let cached = await OfflineDB.getCachedProducts(categoryId, search);
+            
             if (cached.length > 0) {
-                console.log('[Offline] Loading products from cache');
-                renderProductsWithOfflineStock(cached);
+                console.log('[Offline] Loading products from cache. Total:', cached.length);
+                
+                // Manual Pagination Logic
+                const itemsPerPage = 20;
+                lastPage = Math.ceil(cached.length / itemsPerPage);
+                
+                // Valid page check
+                if (currentPage > lastPage) {
+                    isLoading = false;
+                    return; 
+                }
+
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const pagedProducts = cached.slice(startIndex, endIndex);
+
+                renderProducts(pagedProducts, isAppend); // Offline renders same way
+                
+                // Increment page for next scroll
+                currentPage++;
+                
+                isLoading = false;
                 return;
             }
         } catch (e) {
             console.error('[Offline] Failed to load cached products:', e);
         }
-        $('#productsGrid').html(getEmptyStateHTML('📡', 'Tidak ada data produk offline', 'Silakan koneksikan internet untuk memuat data'));
+        $('#productsGrid').html(getEmptyStateHTML('🛒', 'Tidak ada data produk offline', 'Silakan koneksikan internet untuk memuat data'));
+        isLoading = false;
         return;
     }
     
@@ -187,46 +261,65 @@ async function loadProducts() {
         type: 'GET',
         data: {
             category_id: categoryId,
-            search: search
+            search: search,
+            page: currentPage
         },
         success: async function(response) {
             console.log('Products response:', response);
             if (response.status) {
-                const products = response.data.data || response.data;
-                renderProducts(products);
+                // Determine if response.data is pagination object or direct array
+                let products = [];
+                if (response.data.data) {
+                    products = response.data.data;
+                    lastPage = response.data.last_page;
+                    // Only cache first page or handle offline pagination logic later
+                } else {
+                    products = response.data;
+                    lastPage = 1; // Assume single page if no pagination data
+                }
+
+                renderProducts(products, isAppend);
                 checkLowStockProducts(products);
                 
-                // Cache for offline use (only cache all products, not filtered)
-                if (typeof OfflineDB !== 'undefined' && (!categoryId || categoryId === 'all') && !search) {
-                    await OfflineDB.cacheProducts(products);
-                }
+                // Cache for offline use
+                // logic moved to background sync (syncOfflineData) to avoid partial caching issues
+                // But we can still update individual counts or small batches if needed, 
+                // but simpler to rely on background sync for consistency.
+                
+                // Increment page for next load
+                currentPage++;
             } else {
-                $('#productsGrid').html(getEmptyStateHTML('⚠️', 'Gagal memuat produk'));
+                if (!isAppend) $('#productsGrid').html(getEmptyStateHTML('⚠️', 'Gagal memuat produk'));
             }
+            isLoading = false;
         },
         error: async function(xhr, status, error) {
             console.error('Error loading products:', error);
-            // Try cache on error
-            if (typeof OfflineDB !== 'undefined') {
+            // Try cache on error (only for first page)
+            if (!isAppend && typeof OfflineDB !== 'undefined') {
                 const cached = await OfflineDB.getCachedProducts(categoryId, search);
                 if (cached.length > 0) {
                     renderProductsWithOfflineStock(cached);
+                    isLoading = false;
                     return;
                 }
             }
-            $('#productsGrid').html(getEmptyStateHTML('❌', `Gagal memuat produk<br><small>${error}</small>`));
+            if (!isAppend) $('#productsGrid').html(getEmptyStateHTML('❌', `Gagal memuat produk<br><small>${error}</small>`));
+            isLoading = false;
         }
     });
 }
 
-function renderProducts(products) {
-    if (!products || products.length === 0) {
-        $('#productsGrid').html(getEmptyStateHTML('📦', 'Produk tidak ditemukan', 'Coba sesuaikan pencarian atau kategori'));
+function renderProducts(products, isAppend = false) {
+    if ((!products || products.length === 0) && !isAppend) {
+        $('#productsGrid').html(getEmptyStateHTML('🛒', 'Produk tidak ditemukan', 'Coba sesuaikan pencarian atau kategori'));
         return;
     }
     
-    // Store products in global cache for click handler
-    window.productsCache = {};
+    // Ensure cache init
+    if (!window.productsCache) window.productsCache = {};
+
+    // Store products in global cache
     products.forEach(p => {
         window.productsCache[p.id] = {
             id: p.id,
@@ -268,7 +361,11 @@ function renderProducts(products) {
         `;
     });
     
-    $('#productsGrid').html(html);
+    if (isAppend) {
+        $('#productsGrid').append(html);
+    } else {
+        $('#productsGrid').html(html);
+    }
 }
 
 // Helper for Empty State
@@ -1246,7 +1343,7 @@ async function loadProductsWithFallback() {
  */
 function renderProductsWithOfflineStock(products) {
     if (!products || products.length === 0) {
-        $('#productsGrid').html(getEmptyStateHTML('📦', 'Produk tidak ditemukan (offline)', 'Data dari cache lokal'));
+        $('#productsGrid').html(getEmptyStateHTML('📡', 'Produk tidak ditemukan (offline)', 'Data dari cache lokal'));
         return;
     }
     

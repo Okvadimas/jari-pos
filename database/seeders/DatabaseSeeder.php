@@ -33,6 +33,11 @@ class DatabaseSeeder extends Seeder
             SalesSeeder::class,
             PurchaseSeeder::class,
             PromotionSeeder::class,
+
+            // Stock & Moving Status
+            StockDailyBalanceSeeder::class,
+            RecommendationStockSeeder::class,
+            RecommendationStockDetailSeeder::class,
         ]);
     }
 }
