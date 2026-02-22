@@ -72,4 +72,30 @@ class SalesRepository
             ->get()
             ->keyBy('product_variant_id');
     }
+
+    /**
+     * Get the first sale date for a company.
+     * Used by MovingStatusService for adaptive period calculation.
+     */
+    public static function getFirstSaleDate(int $companyId): ?Carbon
+    {
+        $result = DB::table('sales_orders')
+            ->where('company_id', $companyId)
+            ->whereNull('deleted_at')
+            ->min('order_date');
+
+        return $result ? Carbon::parse($result) : null;
+    }
+
+    /**
+     * Get active purchase prices for given variant IDs.
+     */
+    public static function getActivePurchasePrices(array $variantIds)
+    {
+        return DB::table('product_prices')
+            ->whereIn('product_variant_id', $variantIds)
+            ->where('is_active', 1)
+            ->whereNull('deleted_at')
+            ->pluck('purchase_price', 'product_variant_id');
+    }
 }

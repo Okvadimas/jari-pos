@@ -18,4 +18,17 @@ class ProductRepository {
         return $query;
     }
 
+    /**
+     * Generate SKU via stored procedure.
+     */
+    public static function generateSku(string $categoryCode, string $companyId): string
+    {
+        $result = DB::selectOne('CALL generate_sku(?, ?)', [
+            $categoryCode,
+            $companyId,
+        ]);
+
+        return $result->sku;
+    }
+
 }

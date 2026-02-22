@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Company;
+use App\Repositories\Stock\StockDailyBalanceRepository;
 
 class StockDailyBalanceService
 {
@@ -45,7 +46,7 @@ class StockDailyBalanceService
     /**
      * Generate stock daily balances for a single company.
      *
-     * Optimized: uses 3 bulk SELECT queries + bulk writes instead of N+1 per variant.
+     * Optimized: uses bulk SELECT queries + bulk writes instead of N+1 per variant.
      */
     private static function generateForCompany(Company $company): array
     {
@@ -55,16 +56,8 @@ class StockDailyBalanceService
 
         return DB::transaction(function () use ($company, $today, $yesterday, $now) {
 
-            // ──────────────────────────────────────────────
             // 1. Get all active variant IDs + current_stock
-            // ──────────────────────────────────────────────
-            $variants = DB::table('product_variants as pv')
-                ->join('products as p', 'p.id', '=', 'pv.product_id')
-                ->where('p.company_id', $company->id)
-                ->whereNull('pv.deleted_at')
-                ->whereNull('p.deleted_at')
-                ->select('pv.id', 'pv.current_stock')
-                ->get();
+            $variants = StockDailyBalanceRepository::getActiveVariantsWithStock($company->id);
 
             if ($variants->isEmpty()) {
                 return [
@@ -77,50 +70,21 @@ class StockDailyBalanceService
             }
 
             $variantIds = $variants->pluck('id')->toArray();
-            $variantMap = $variants->keyBy('id'); // id => {id, current_stock}
+            $variantMap = $variants->keyBy('id');
 
-            // ──────────────────────────────────────────────────────────────
-            // 2. BULK: yesterday's balances, keyed by product_variant_id
-            // ──────────────────────────────────────────────────────────────
-            $yesterdayBalances = DB::table('stock_daily_balances')
-                ->whereIn('product_variant_id', $variantIds)
-                ->where('date', $yesterday->format('Y-m-d'))
-                ->whereNull('deleted_at')
-                ->get()
-                ->keyBy('product_variant_id');
+            // 2. Yesterday's balances
+            $yesterdayBalances = StockDailyBalanceRepository::getBalancesByDate($variantIds, $yesterday->format('Y-m-d'));
 
-            // ──────────────────────────────────────────────────────────────
-            // 3. BULK: total sales qty per variant for yesterday
-            // ──────────────────────────────────────────────────────────────
-            $salesMap = DB::table('sales_order_details as sod')
-                ->join('sales_orders as so', 'so.id', '=', 'sod.sales_order_id')
-                ->whereIn('sod.product_variant_id', $variantIds)
-                ->whereDate('so.order_date', $yesterday)
-                ->whereNull('so.deleted_at')
-                ->whereNull('sod.deleted_at')
-                ->groupBy('sod.product_variant_id')
-                ->selectRaw('sod.product_variant_id, COALESCE(SUM(sod.quantity), 0) as total_qty')
-                ->pluck('total_qty', 'product_variant_id');
+            // 3. Total sales qty per variant for yesterday
+            $salesMap = StockDailyBalanceRepository::getDailySalesMap($variantIds, $yesterday->format('Y-m-d'));
 
-            // ──────────────────────────────────────────────────────────────
-            // 4. BULK: total purchase qty per variant for yesterday
-            // ──────────────────────────────────────────────────────────────
-            $purchasesMap = DB::table('purchase_details as pd')
-                ->join('purchases as p', 'p.id', '=', 'pd.purchase_id')
-                ->whereIn('pd.product_variant_id', $variantIds)
-                ->whereDate('p.purchase_date', $yesterday)
-                ->whereNull('p.deleted_at')
-                ->whereNull('pd.deleted_at')
-                ->groupBy('pd.product_variant_id')
-                ->selectRaw('pd.product_variant_id, COALESCE(SUM(pd.quantity), 0) as total_qty')
-                ->pluck('total_qty', 'product_variant_id');
+            // 4. Total purchase qty per variant for yesterday
+            $purchasesMap = StockDailyBalanceRepository::getDailyPurchasesMap($variantIds, $yesterday->format('Y-m-d'));
 
-            // ──────────────────────────────────────────────────────────
             // 5. Loop variants — compute closing, collect bulk writes
-            // ──────────────────────────────────────────────────────────
             $yesterdayUpserts = [];
             $todayUpserts     = [];
-            $driftCorrections = []; // variant_id => trueClosing
+            $driftCorrections = [];
             $corrected = 0;
 
             foreach ($variants as $variant) {
@@ -175,38 +139,20 @@ class StockDailyBalanceService
                 }
             }
 
-            // ──────────────────────────────────────────────────
             // 6. BULK WRITE: upsert yesterday's daily balances
-            // ──────────────────────────────────────────────────
             $upsertColumns = [
                 'opening_stock', 'in_stock', 'out_stock', 'adjustment_stock',
                 'closing_stock', 'is_locked', 'updated_at',
             ];
 
-            foreach (array_chunk($yesterdayUpserts, 500) as $chunk) {
-                DB::table('stock_daily_balances')->upsert(
-                    $chunk,
-                    ['product_variant_id', 'date'], // unique key
-                    $upsertColumns
-                );
-            }
+            StockDailyBalanceRepository::upsertBalances($yesterdayUpserts, $upsertColumns);
 
-            // ──────────────────────────────────────────────────
             // 7. BULK WRITE: upsert today's daily balances
-            // ──────────────────────────────────────────────────
-            foreach (array_chunk($todayUpserts, 500) as $chunk) {
-                DB::table('stock_daily_balances')->upsert(
-                    $chunk,
-                    ['product_variant_id', 'date'],
-                    $upsertColumns
-                );
-            }
+            StockDailyBalanceRepository::upsertBalances($todayUpserts, $upsertColumns);
 
-            // ──────────────────────────────────────────────────
             // 8. BULK WRITE: correct drifted product_variants
-            // ──────────────────────────────────────────────────
             if (!empty($driftCorrections)) {
-                self::bulkUpdateCurrentStock($driftCorrections, $now);
+                StockDailyBalanceRepository::bulkSetCurrentStock($driftCorrections, $now);
             }
 
             return [
@@ -216,33 +162,5 @@ class StockDailyBalanceService
                 'corrected'    => $corrected,
             ];
         });
-    }
-
-    /**
-     * Bulk update product_variants.current_stock using a single CASE WHEN query.
-     *
-     * @param array  $corrections  [variant_id => trueClosing, ...]
-     * @param string $now          Timestamp for updated_at
-     */
-    private static function bulkUpdateCurrentStock(array $corrections, string $now): void
-    {
-        foreach (array_chunk($corrections, 500, true) as $chunk) {
-            $caseWhen = '';
-            $ids = [];
-
-            foreach ($chunk as $variantId => $trueClosing) {
-                $ids[] = $variantId;
-                $caseWhen .= "WHEN {$variantId} THEN {$trueClosing} ";
-            }
-
-            $idList = implode(',', $ids);
-
-            DB::statement("
-                UPDATE product_variants
-                SET current_stock = CASE id {$caseWhen} END,
-                    updated_at = '{$now}'
-                WHERE id IN ({$idList})
-            ");
-        }
     }
 }

@@ -76,4 +76,72 @@ class StockOpnameRepository
 
         return $result ? (int) $result->closing_stock : 0;
     }
+
+    /**
+     * Get latest balance before a given date for variants without existing record.
+     */
+    public static function getLatestBalancesBefore(array $variantIds, string $date): \Illuminate\Support\Collection
+    {
+        return DB::table('stock_daily_balances as sdb')
+            ->joinSub(
+                DB::table('stock_daily_balances')
+                    ->whereIn('product_variant_id', $variantIds)
+                    ->whereNull('deleted_at')
+                    ->where('date', '<', $date)
+                    ->groupBy('product_variant_id')
+                    ->selectRaw('product_variant_id, MAX(date) as max_date'),
+                'latest',
+                fn($join) => $join
+                    ->on('sdb.product_variant_id', '=', 'latest.product_variant_id')
+                    ->on('sdb.date', '=', 'latest.max_date')
+            )
+            ->select('sdb.product_variant_id', 'sdb.closing_stock')
+            ->get()
+            ->keyBy('product_variant_id');
+    }
+
+    /**
+     * Bulk adjust product_variants.current_stock by adding differences.
+     */
+    public static function bulkAdjustCurrentStock(array $corrections, string $now): void
+    {
+        foreach (array_chunk($corrections, 500, true) as $chunk) {
+            $caseWhen = '';
+            $ids = [];
+
+            foreach ($chunk as $vid => $diff) {
+                $ids[] = $vid;
+                $caseWhen .= "WHEN {$vid} THEN current_stock + ({$diff}) ";
+            }
+
+            $idList = implode(',', $ids);
+
+            DB::statement("
+                UPDATE product_variants
+                SET current_stock = CASE id {$caseWhen} END,
+                    updated_at = '{$now}'
+                WHERE id IN ({$idList})
+            ");
+        }
+    }
+
+    /**
+     * Bulk insert stock opname details.
+     */
+    public static function bulkInsertDetails(array $details): void
+    {
+        foreach (array_chunk($details, 500) as $chunk) {
+            DB::table('stock_opname_details')->insert($chunk);
+        }
+    }
+
+    /**
+     * Delete all details for a stock opname.
+     */
+    public static function deleteDetailsByOpnameId(int $opnameId): void
+    {
+        DB::table('stock_opname_details')
+            ->where('stock_opname_id', $opnameId)
+            ->update(['deleted_at' => now()]);
+    }
 }

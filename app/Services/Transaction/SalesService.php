@@ -110,11 +110,7 @@ class SalesService
 
                 // Get active purchase prices for all variants in this order
                 $variantIds = collect($data['details'])->pluck('product_variant_id')->toArray();
-                $purchasePrices = DB::table('product_prices')
-                    ->whereIn('product_variant_id', $variantIds)
-                    ->where('is_active', 1)
-                    ->whereNull('deleted_at')
-                    ->pluck('purchase_price', 'product_variant_id');
+                $purchasePrices = SalesRepository::getActivePurchasePrices($variantIds);
 
                 // Create new details
                 foreach ($data['details'] as $detail) {
