@@ -44,7 +44,7 @@ class PosRepository {
                 return $product;
             });
             
-            return response()->json(['status' => true, 'data' => $products]);
+            return $products;
         }
 
         $products = $query->paginate(20);

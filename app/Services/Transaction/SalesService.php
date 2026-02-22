@@ -34,7 +34,8 @@ class SalesService
                 return 'Rp ' . number_format($row->final_amount, 0, ',', '.');
             })
             ->addColumn('action', function ($row) {
-                return '<button class="btn btn-dim btn-sm btn-outline-info" onclick="detail(' . $row->id . ')"><em class="icon ni ni-eye d-none d-sm-inline me-1"></em> Detail</button>
+                return '<button class="btn btn-dim btn-sm btn-outline-success" onclick="cetakStruk(' . $row->id . ')"><em class="icon ni ni-printer d-none d-sm-inline me-1"></em> Cetak Struk</button>
+                        <button class="btn btn-dim btn-sm btn-outline-info" onclick="detail(' . $row->id . ')"><em class="icon ni ni-eye d-none d-sm-inline me-1"></em> Detail</button>
                         <a href="' . url('transaction/sales/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
                         <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
             })

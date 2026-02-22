@@ -94,6 +94,74 @@ class IndexController extends Controller
         return view('pos.receipt', compact('order', 'details', 'paperSize'));
     }
     
+    /**
+     * Get receipt data as JSON for thermal printer
+     */
+    public function getReceiptData(Request $request, $id)
+    {
+        // Fetch Order Header
+        $order = DB::table('sales_orders as so')
+                    ->join('companies as c', 'so.company_id', '=', 'c.id')
+                    ->join('users as u', 'so.created_by', '=', 'u.id')
+                    ->leftJoin('payment_methods as pm', 'so.payment_method_id', '=', 'pm.id')
+                    ->leftJoin('promotions as pr', 'so.applied_promo_id', '=', 'pr.id')
+                    ->select('so.*', 'c.name as company_name', 'c.address as company_address', 'u.name as created_by_name', 'pm.name as payment_method_name', 'pr.name as promo_name')
+                    ->where('so.id', $id)
+                    ->first();
+
+        if (!$order) {
+            return $this->errorResponse('Order tidak ditemukan');
+        }
+
+        // Fetch Order Details
+        $details = DB::table('sales_order_details as sod')
+                    ->join('product_variants as pv', 'sod.product_variant_id', '=', 'pv.id')
+                    ->join('products as p', 'pv.product_id', '=', 'p.id')
+                    ->select('sod.*', 'p.name as product_name', 'pv.name as variant_name')
+                    ->where('sod.sales_order_id', $id)
+                    ->get();
+
+        return $this->successResponse('Data struk berhasil diambil', [
+            'order' => $order,
+            'details' => $details
+        ]);
+    }
+
+    /**
+     * Get transaction history for the POS history modal
+     */
+    public function getTransactionHistory(Request $request)
+    {
+        $user = auth()->user();
+        $query = DB::table('sales_orders as so')
+                    ->join('users as u', 'so.created_by', '=', 'u.id')
+                    ->leftJoin('payment_methods as pm', 'so.payment_method_id', '=', 'pm.id')
+                    ->select(
+                        'so.id', 
+                        'so.invoice_number', 
+                        'so.customer_name', 
+                        'so.order_date', 
+                        'so.final_amount', 
+                        'so.created_at',
+                        'u.name as cashier_name',
+                        'pm.name as payment_method_name'
+                    )
+                    ->where('so.company_id', $user->company_id)
+                    ->orderBy('so.created_at', 'desc');
+
+        // Filter by date if provided
+        if ($request->has('date')) {
+            $query->whereDate('so.order_date', $request->date);
+        } else {
+            // Default: today
+            $query->whereDate('so.order_date', date('Y-m-d'));
+        }
+
+        $transactions = $query->limit(50)->get();
+
+        return $this->successResponse('Data riwayat transaksi', $transactions);
+    }
+
     public function printReceipt2($id)
     {
         // Fetch Order Header
