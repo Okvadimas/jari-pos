@@ -2,9 +2,8 @@
 
 namespace App\Services\Stock;
 
-use App\Models\ProductVariant;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\Stock\StockProductRepository;
 
 class StockProductService
 {
@@ -16,10 +15,7 @@ class StockProductService
     {
         if ($qty <= 0) return;
 
-        $affected = DB::table('product_variants')
-            ->where('id', $variantId)
-            ->whereNull('deleted_at')
-            ->decrement('current_stock', $qty);
+        $affected = StockProductRepository::decrementStock($variantId, $qty);
 
         if ($affected === 0) {
             Log::warning("StockProductService::decrease - Variant {$variantId} not found or deleted.");
@@ -34,10 +30,7 @@ class StockProductService
     {
         if ($qty <= 0) return;
 
-        $affected = DB::table('product_variants')
-            ->where('id', $variantId)
-            ->whereNull('deleted_at')
-            ->increment('current_stock', $qty);
+        $affected = StockProductRepository::incrementStock($variantId, $qty);
 
         if ($affected === 0) {
             Log::warning("StockProductService::increase - Variant {$variantId} not found or deleted.");
@@ -65,11 +58,7 @@ class StockProductService
      */
     public static function restoreFromSales(int $salesOrderId): void
     {
-        $details = DB::table('sales_order_details')
-            ->where('sales_order_id', $salesOrderId)
-            ->whereNull('deleted_at')
-            ->select('product_variant_id', 'quantity')
-            ->get();
+        $details = StockProductRepository::getSalesOrderDetails($salesOrderId);
 
         foreach ($details as $detail) {
             self::increase($detail->product_variant_id, $detail->quantity);
@@ -82,11 +71,7 @@ class StockProductService
      */
     public static function restoreFromPurchase(int $purchaseId): void
     {
-        $details = DB::table('purchase_details')
-            ->where('purchase_id', $purchaseId)
-            ->whereNull('deleted_at')
-            ->select('product_variant_id', 'quantity')
-            ->get();
+        $details = StockProductRepository::getPurchaseDetails($purchaseId);
 
         foreach ($details as $detail) {
             self::decrease($detail->product_variant_id, $detail->quantity);

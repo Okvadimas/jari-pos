@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Inventory\StockOpnameRepository;
+use App\Repositories\Stock\StockDailyBalanceRepository;
 use App\Models\StockOpname;
-use App\Models\StockOpnameDetail;
 
 use App\Services\Utilities\TransactionNumberService;
 
@@ -67,6 +67,7 @@ class StockOpnameService
 
     /**
      * Store or update stock opname (as draft)
+     * Optimized: bulk insert details instead of N+1 creates.
      */
     public static function store($data)
     {
@@ -74,6 +75,7 @@ class StockOpnameService
             return DB::transaction(function () use ($data) {
                 $user = Auth::user();
                 $opnameDate = Carbon::createFromFormat('d/m/Y', $data['opname_date']);
+                $now = Carbon::now()->format('Y-m-d H:i:s');
 
                 if (!empty($data['id'])) {
                     // Update existing opname - only if draft
@@ -90,7 +92,7 @@ class StockOpnameService
                     ]);
 
                     // Delete existing details (soft delete)
-                    StockOpnameDetail::where('stock_opname_id', $opname->id)->delete();
+                    StockOpnameRepository::deleteDetailsByOpnameId($opname->id);
                 } else {
                     // Create new stock opname with auto-generated number
                     $opnameNumber = TransactionNumberService::generateStockOpnameNumber(
@@ -108,22 +110,27 @@ class StockOpnameService
                     ]);
                 }
 
-                // Create detail records
+                // Build detail records (business logic: calculate difference)
+                $details = [];
                 foreach ($data['details'] as $detail) {
                     $systemStock = (int) $detail['system_stock'];
                     $physicalStock = (int) $detail['physical_stock'];
-                    $difference = $physicalStock - $systemStock;
 
-                    StockOpnameDetail::create([
+                    $details[] = [
                         'stock_opname_id'    => $opname->id,
                         'product_variant_id' => $detail['product_variant_id'],
                         'system_stock'       => $systemStock,
                         'physical_stock'     => $physicalStock,
-                        'difference'         => $difference,
+                        'difference'         => $physicalStock - $systemStock,
                         'notes'              => $detail['notes'] ?? null,
                         'created_by'         => $user->id,
-                    ]);
+                        'created_at'         => $now,
+                        'updated_at'         => $now,
+                    ];
                 }
+
+                // Bulk insert all details at once
+                StockOpnameRepository::bulkInsertDetails($details);
 
                 return $opname;
             });
@@ -166,40 +173,26 @@ class StockOpnameService
                 $now = Carbon::now()->format('Y-m-d H:i:s');
 
                 // ── Bulk query #1: existing balances for opname date ──
-                $existingBalances = DB::table('stock_daily_balances')
-                    ->whereIn('product_variant_id', $variantIds)
-                    ->where('date', $opname->opname_date)
-                    ->whereNull('deleted_at')
-                    ->lockForUpdate()
-                    ->get()
-                    ->keyBy('product_variant_id');
+                $existingBalances = StockDailyBalanceRepository::getBalancesByDate(
+                    $variantIds,
+                    $opname->opname_date,
+                    true // lock for update
+                );
 
                 // ── Bulk query #2: latest balances for variants without existing record ──
                 $missingIds = array_diff($variantIds, $existingBalances->keys()->toArray());
                 $latestBalances = collect();
 
                 if (!empty($missingIds)) {
-                    $latestBalances = DB::table('stock_daily_balances as sdb')
-                        ->joinSub(
-                            DB::table('stock_daily_balances')
-                                ->whereIn('product_variant_id', $missingIds)
-                                ->whereNull('deleted_at')
-                                ->where('date', '<', $opname->opname_date)
-                                ->groupBy('product_variant_id')
-                                ->selectRaw('product_variant_id, MAX(date) as max_date'),
-                            'latest',
-                            fn($join) => $join
-                                ->on('sdb.product_variant_id', '=', 'latest.product_variant_id')
-                                ->on('sdb.date', '=', 'latest.max_date')
-                        )
-                        ->select('sdb.product_variant_id', 'sdb.closing_stock')
-                        ->get()
-                        ->keyBy('product_variant_id');
+                    $latestBalances = StockOpnameRepository::getLatestBalancesBefore(
+                        $missingIds,
+                        $opname->opname_date
+                    );
                 }
 
                 // ── Process in-memory: build upserts & stock corrections ──
                 $upserts = [];
-                $stockCorrections = []; // variant_id => adjustment
+                $stockCorrections = [];
 
                 foreach ($adjustableDetails as $detail) {
                     $vid  = $detail->product_variant_id;
@@ -247,28 +240,14 @@ class StockOpnameService
                 }
 
                 // ── Bulk write: upsert all balances at once ──
-                DB::table('stock_daily_balances')->upsert(
+                StockDailyBalanceRepository::upsertBalances(
                     $upserts,
-                    ['product_variant_id', 'date'],
                     ['adjustment_stock', 'closing_stock', 'updated_by', 'updated_at']
                 );
 
                 // ── Bulk write: update product_variants.current_stock ──
                 if (!empty($stockCorrections)) {
-                    $caseWhen = '';
-                    $ids = [];
-                    foreach ($stockCorrections as $vid => $diff) {
-                        $ids[] = $vid;
-                        $caseWhen .= "WHEN {$vid} THEN current_stock + ({$diff}) ";
-                    }
-                    $idList = implode(',', $ids);
-
-                    DB::statement("
-                        UPDATE product_variants
-                        SET current_stock = CASE id {$caseWhen} END,
-                            updated_at = '{$now}'
-                        WHERE id IN ({$idList})
-                    ");
+                    StockOpnameRepository::bulkAdjustCurrentStock($stockCorrections, $now);
                 }
 
                 return true;
@@ -320,7 +299,7 @@ class StockOpnameService
                 }
 
                 // Soft delete details first
-                StockOpnameDetail::where('stock_opname_id', $id)->delete();
+                StockOpnameRepository::deleteDetailsByOpnameId($id);
 
                 // Soft delete opname
                 $opname->delete();

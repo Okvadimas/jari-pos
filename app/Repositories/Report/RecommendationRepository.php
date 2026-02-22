@@ -4,40 +4,9 @@ namespace App\Repositories\Report;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\RecommendationStock;
-use App\Models\RecommendationStockDetail;
 
 class RecommendationRepository
 {
-    /**
-     * Save or update the analysis history header.
-     * Uses updateOrCreate to allow re-running on the same day.
-     */
-    public static function saveHistory(array $data): RecommendationStock
-    {
-        return RecommendationStock::updateOrCreate(
-            [
-                'company_id'    => $data['company_id'],
-                'analysis_date' => $data['analysis_date'],
-            ],
-            $data
-        );
-    }
-
-    /**
-     * Bulk insert analysis details. Deletes old details for the same history first.
-     */
-    public static function saveDetails(int $historyId, array $details): void
-    {
-        // Delete existing details for this history (allows re-run)
-        RecommendationStockDetail::where('recommendation_stock_id', $historyId)->delete();
-
-        // Chunk insert for performance
-        $chunks = array_chunk($details, 500);
-        foreach ($chunks as $chunk) {
-            RecommendationStockDetail::insert($chunk);
-        }
-    }
-
     /**
      * Get history list for a company, ordered by most recent first.
      */

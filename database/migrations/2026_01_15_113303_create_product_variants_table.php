@@ -22,6 +22,8 @@ return new class extends Migration
             $table->integer('moq')->default(1)->comment('Minimum Order Quantity');
             $table->string('moving_status', 10)->nullable()->comment('fast, medium, slow, dead');
             $table->decimal('moving_score', 5, 4)->nullable()->comment('Hybrid score: 0.0000 - 1.0000');
+            $table->integer('min_stock')->default(0)->comment('Minimum stock threshold for notification');
+            $table->boolean('min_stock_custom')->default(false)->comment('True if user manually set min_stock');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();

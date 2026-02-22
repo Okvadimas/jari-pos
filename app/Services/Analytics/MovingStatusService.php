@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\Transaction\SalesRepository;
 use App\Repositories\Inventory\ProductVariantRepository;
-use App\Repositories\Report\RecommendationRepository;
-use App\Models\ProductVariant;
+use App\Repositories\Analytics\MovingStatusRepository;
 
 class MovingStatusService
 {
@@ -33,25 +32,26 @@ class MovingStatusService
     const DEFAULT_PERIOD = 30;
 
     /**
+     * Minimum required days of sales data before auto-updating min_stock.
+     * Auto-update starts on day 8 (> 7 days).
+     */
+    const MIN_DATA_DAYS = 7;
+
+    /**
      * Main entry point — called by both Artisan Command and Controller.
      *
      * @param int|null $companyId  If null, processes all companies.
      * @param int      $periodDays Number of days to analyze (default: 30).
      * @return array   Array of RecommendationStock records created.
      */
-    public static function calculate(?int $companyId = null, int $periodDays = 30): array
+    public static function calculate(?int $companyId = null, int $periodDays = self::DEFAULT_PERIOD): array
     {
         $results = [];
 
         if ($companyId) {
             $companyIds = collect([$companyId]);
         } else {
-            // Get all distinct company IDs that have products
-            $companyIds = DB::table('products')
-                ->whereNull('deleted_at')
-                ->distinct()
-                ->pluck('company_id')
-                ->filter(); // Remove nulls
+            $companyIds = MovingStatusRepository::getActiveCompanyIds();
         }
 
         foreach ($companyIds as $cId) {
@@ -73,9 +73,21 @@ class MovingStatusService
     {
         $today      = Carbon::today();
         $periodEnd  = $today->copy()->subDay(); // Yesterday (last full day of sales)
-        $periodStart = $periodEnd->copy()->subDays($periodDays - 1);
 
-        return DB::transaction(function () use ($companyId, $periodDays, $today, $periodStart, $periodEnd) {
+        // Adaptive period: use actual days if company has less than $periodDays of data
+        $firstSaleDate = SalesRepository::getFirstSaleDate($companyId);
+        $actualDays = $firstSaleDate ? (int) $firstSaleDate->diffInDays($periodEnd) + 1 : 0;
+        $effectivePeriod = $actualDays > 0 ? min($periodDays, $actualDays) : $periodDays;
+
+        $periodStart = $periodEnd->copy()->subDays($effectivePeriod - 1);
+
+        // Check if enough data for auto-updating min_stock (> 7 days)
+        $canAutoUpdateMinStock = $actualDays > self::MIN_DATA_DAYS;
+
+        // Fetch company default_min_stock
+        $companyDefault = MovingStatusRepository::getCompanyDefaultMinStock($companyId);
+
+        return DB::transaction(function () use ($companyId, $periodDays, $effectivePeriod, $today, $periodStart, $periodEnd, $canAutoUpdateMinStock, $companyDefault) {
 
             // 1. Get all active variants
             $variants = ProductVariantRepository::getAllActive($companyId);
@@ -95,18 +107,7 @@ class MovingStatusService
             $stockData = ProductVariantRepository::getLatestStock($companyId);
 
             // 4. Get lead_time, moq, purchase_price, sell_price per variant
-            $variantMeta = DB::table('product_variants as pv')
-                ->join('products as p', 'p.id', '=', 'pv.product_id')
-                ->leftJoin('product_prices as pp', function ($join) {
-                    $join->on('pp.product_variant_id', '=', 'pv.id')
-                        ->where('pp.is_active', 1)
-                        ->whereNull('pp.deleted_at');
-                })
-                ->where('p.company_id', $companyId)
-                ->whereNull('pv.deleted_at')
-                ->select('pv.id', 'pv.lead_time', 'pv.moq', 'pp.purchase_price', 'pp.sell_price')
-                ->get()
-                ->keyBy('id');
+            $variantMeta = MovingStatusRepository::getVariantMeta($companyId);
 
             // 5. Build analysis data for each variant
             $analysisData = collect();
@@ -118,7 +119,7 @@ class MovingStatusService
 
                 $totalQtySold  = $sales ? (int) $sales->total_qty_sold : 0;
                 $totalRevenue  = $sales ? (float) $sales->total_revenue : 0;
-                $avgDailySales = $totalQtySold / $periodDays;
+                $avgDailySales = $totalQtySold / $effectivePeriod;
                 $currentStock  = $stock ? (int) $stock->closing_stock : 0;
                 $leadTime      = $meta ? (int) $meta->lead_time : 1;
                 $moq           = $meta ? (int) $meta->moq : 1;
@@ -142,11 +143,11 @@ class MovingStatusService
                 ]);
             }
 
-            // 5. Normalize: Min-Max scaling
+            // 6. Normalize: Min-Max scaling
             $normQty     = self::normalize($analysisData->pluck('avg_daily_sales'));
             $normRevenue = self::normalize($analysisData->pluck('total_revenue'));
 
-            // 9. Calculate score & classify
+            // 7. Calculate score & classify
             $counters = ['fast' => 0, 'medium' => 0, 'slow' => 0, 'dead' => 0];
             $details  = [];
             $now      = Carbon::now()->format('Y-m-d H:i:s');
@@ -183,11 +184,11 @@ class MovingStatusService
                 ];
             }
 
-            // 10. Save history header (with cogs & gross profit balance)
-            $history = RecommendationRepository::saveHistory([
+            // 8. Save history header (with cogs & gross profit balance)
+            $history = MovingStatusRepository::saveHistory([
                 'company_id'           => $companyId,
                 'analysis_date'        => $today->format('Y-m-d'),
-                'period_days'          => $periodDays,
+                'period_days'          => $effectivePeriod,
                 'period_start'         => $periodStart->format('Y-m-d'),
                 'period_end'           => $periodEnd->format('Y-m-d'),
                 'total_variants'       => count($details),
@@ -199,16 +200,16 @@ class MovingStatusService
                 'gross_profit_balance' => $totalRev - $totalCogs,
             ]);
 
-            // 8. Save details (with history_id)
+            // 9. Save details (with history_id)
             foreach ($details as &$detail) {
                 $detail['recommendation_stock_id'] = $history->id;
             }
             unset($detail);
 
-            RecommendationRepository::saveDetails($history->id, $details);
+            MovingStatusRepository::saveDetails($history->id, $details);
 
-            // 9. Update product_variants.moving_status & moving_score
-            self::updateVariantStatuses($details);
+            // 10. Update product_variants.moving_status, moving_score & min_stock
+            self::updateVariantStatuses($details, $canAutoUpdateMinStock, $companyDefault);
 
             return [
                 'company_id'     => $companyId,
@@ -252,45 +253,35 @@ class MovingStatusService
     }
 
     /**
-     * Bulk update product_variants with their latest moving_status and moving_score.
-     * Uses individual updates wrapped in a single transaction for reliability.
+     * Build data for bulk updating product_variants and delegate to repository.
      */
-    private static function updateVariantStatuses(array $details): void
+    private static function updateVariantStatuses(array $details, bool $canAutoUpdateMinStock, int $companyDefault): void
     {
-        // Build case statements for a single bulk UPDATE query
         $ids      = [];
         $statuses = [];
         $scores   = [];
+        $minStocks = [];
+
+        // Fetch min_stock_custom flags for all variants (bulk)
+        $allIds = array_column($details, 'product_variant_id');
+        $customFlags = MovingStatusRepository::getCustomFlags($allIds);
 
         foreach ($details as $detail) {
             $id = $detail['product_variant_id'];
             $ids[] = $id;
             $statuses[$id] = $detail['moving_status'];
             $scores[$id]   = $detail['score'];
-        }
 
-        // Use chunked updates to avoid overly large queries
-        $chunks = array_chunk($ids, 500);
-
-        foreach ($chunks as $chunkIds) {
-            $statusCase = '';
-            $scoreCase  = '';
-
-            foreach ($chunkIds as $id) {
-                $status = $statuses[$id];
-                $score  = $scores[$id];
-                $statusCase .= "WHEN {$id} THEN '{$status}' ";
-                $scoreCase  .= "WHEN {$id} THEN {$score} ";
+            // Auto-update min_stock if:
+            // 1. canAutoUpdateMinStock (data > 7 days)
+            // 2. min_stock_custom = false
+            // 3. safety_stock > 0 (product has been sold)
+            $isCustom = (bool) ($customFlags[$id] ?? false);
+            if ($canAutoUpdateMinStock && !$isCustom && $detail['safety_stock'] > 0) {
+                $minStocks[$id] = max($detail['safety_stock'], $companyDefault);
             }
-
-            $idList = implode(',', $chunkIds);
-
-            DB::statement("
-                UPDATE product_variants
-                SET moving_status = CASE id {$statusCase} END,
-                    moving_score  = CASE id {$scoreCase} END
-                WHERE id IN ({$idList})
-            ");
         }
+
+        MovingStatusRepository::bulkUpdateStatuses($ids, $statuses, $scores, $minStocks);
     }
 }

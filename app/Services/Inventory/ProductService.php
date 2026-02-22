@@ -80,11 +80,6 @@ class ProductService
         $category = Category::findOrFail($categoryId);
         $categoryCode = strtoupper($category->code);
 
-        $result = DB::selectOne('CALL generate_sku(?, ?)', [
-            $categoryCode,
-            (string) $companyId,
-        ]);
-
-        return $result->sku;
+        return ProductRepository::generateSku($categoryCode, (string) $companyId);
     }
 }
