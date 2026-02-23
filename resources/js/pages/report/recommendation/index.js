@@ -1,15 +1,36 @@
 $(document).ready(function() {
-    console.log('Rekomendasi Stok (Moving Status) page loaded');
+    if (window.TodayHistoryId && window.TodayHistoryId !== 'null') {
+        currentHistoryId = window.TodayHistoryId;
+        loadSummary(currentHistoryId);
+        loadDataTable(currentHistoryId);
+        showSections();
+    }
 });
 
 let currentHistoryId = null;
 let dataTable = null;
+let estimatedTotals = {}; // Stores total nominal per product (rowId)
+let globalTotalCogsLimit = 0; // Stores actual COGS for validation
+
+const calculateGrandTotal = () => {
+    const sum = Object.values(estimatedTotals).reduce((a, b) => a + b, 0);
+    $('#grand-total-estimation').text('Rp ' + sum.toLocaleString('id-ID'));
+    
+    // Check against COGS limit
+    if (globalTotalCogsLimit > 0 && sum > globalTotalCogsLimit) {
+        $('#warn-est-total').text('Rp ' + sum.toLocaleString('id-ID'));
+        $('#warn-cogs-total').text('Rp ' + globalTotalCogsLimit.toLocaleString('id-ID'));
+        $('#estimasi-warning').slideDown(200);
+    } else {
+        $('#estimasi-warning').slideUp(200);
+    }
+}
 
 /**
  * Generate / Process Moving Status Analysis
  */
-$('#btn-generate').on('click', function() {
-    const btn = $(this);
+const generate = () => {
+    const btn = $('#btn-generate');
     const originalText = btn.html();
 
     Swal.fire({
@@ -52,25 +73,48 @@ $('#btn-generate').on('click', function() {
             });
         }
     });
-});
+}
 
 /**
  * Load Summary Cards
  */
-function loadSummary(historyId) {
+const loadSummary = (historyId) => {
     $.ajax({
         url: '/report/stock-recommendation/summary/' + historyId,
         type: 'GET',
         success: function(response) {
             if (response.success) {
                 const d = response.data;
+
+                // Summary cards
                 $('#summary-fast').text(d.total_fast);
                 $('#summary-medium').text(d.total_medium);
                 $('#summary-slow').text(d.total_slow);
                 $('#summary-dead').text(d.total_dead);
-                $('#analysis-info').text(
-                    `Analisis: ${d.analysis_date} | Periode: ${d.period_start} s/d ${d.period_end} (${d.period_days} hari) | Total: ${d.total_variants} produk`
-                );
+
+                // Analysis info panel
+                $('#info-analysis-date').text(d.analysis_date);
+
+                // Set global cogs limit for warning validation
+                globalTotalCogsLimit = d.cogs_balance ? parseFloat(d.cogs_balance) : 0;
+                // Re-validate UI
+                calculateGrandTotal();
+
+                const gross = d.gross_profit_balance != null
+                    ? 'Rp ' + parseInt(d.gross_profit_balance).toLocaleString('id-ID')
+                    : '—';
+                const cogs = d.cogs_balance != null
+                    ? 'Rp ' + parseInt(d.cogs_balance).toLocaleString('id-ID')
+                    : '—';
+
+                $('#info-gross').html('<span class="text-muted fw-normal fs-11px">Gross:</span> ' + gross);
+                $('#info-cogs').html('<span class="text-muted fw-normal fs-11px">COGS:</span> ' + cogs);
+
+                $('#info-period').text(d.period_start + ' s/d ' + d.period_end);
+                $('#info-period-days').text(d.period_days + ' hari');
+                $('#th-period-days').text(d.period_days);
+
+                $('#analysis-info').slideDown(300);
             }
         },
         error: function(xhr) {
@@ -82,40 +126,41 @@ function loadSummary(historyId) {
 /**
  * Initialize or reload DataTable
  */
-function loadDataTable(historyId, movingStatus) {
+const loadDataTable = (historyId) => {
+    // Reset grand total every time a new table is loaded
+    estimatedTotals = {};
+    calculateGrandTotal();
+
     if (dataTable) {
         dataTable.destroy();
-        $('#table-data tbody').empty();
+        $('#table-recommendation tbody').empty();
     }
 
-    dataTable = NioApp.DataTable('#table-data', {
+    dataTable = NioApp.DataTable('#table-recommendation', {
         processing: true,
         serverSide: true,
-        responsive: true,
-        autoWidth: false,
+        responsive: false,
+        scrollX: true,
         ajax: {
             url: '/report/stock-recommendation/datatable',
             type: 'GET',
             data: function(d) {
                 d.history_id = historyId;
-                d.moving_status = movingStatus || '';
             },
             error: function(xhr) {
                 console.error('DataTable error', xhr);
             }
         },
-        order: [[7, 'desc']], // Order by score descending
+        order: [[3, 'desc']], // Default order by performance
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
             { data: 'product_display', name: 'product_name' },
-            { data: 'sku', name: 'sku' },
-            { data: 'category_name', name: 'category_name' },
-            { data: 'total_qty_sold', name: 'total_qty_sold', className: 'text-center' },
-            { data: 'total_revenue', name: 'total_revenue', className: 'text-end' },
-            { data: 'avg_daily_sales', name: 'avg_daily_sales', className: 'text-center' },
-            { data: 'score', name: 'score', className: 'text-center' },
-            { data: 'status_badge', name: 'moving_status', className: 'text-center' },
             { data: 'current_stock', name: 'current_stock', className: 'text-center' },
+            { data: 'performance_display', name: 'performance_display', orderable: false, searchable: false },
+            { data: 'purchase_price_display', name: 'purchase_price', className: 'text-end' },
+            { data: 'qty_recommendation', name: 'qty_recommendation', orderable: false, searchable: false, className: 'text-center' },
+            { data: 'estimated_nominal', name: 'estimated_nominal', orderable: false, searchable: false, className: 'text-end' },
+            { data: 'ai_description', name: 'ai_description', orderable: false, searchable: false, className: 'text-center' },
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },
@@ -124,38 +169,46 @@ function loadDataTable(historyId, movingStatus) {
 }
 
 /**
- * Filter by moving status (pill buttons)
- */
-$(document).on('click', '.filter-status', function() {
-    $('.filter-status').removeClass('active');
-    $(this).addClass('active');
-
-    const status = $(this).data('status');
-
-    if (currentHistoryId) {
-        loadDataTable(currentHistoryId, status);
-    }
-});
-
-/**
- * View a specific history from the history table
- */
-$(document).on('click', '.btn-view-history', function() {
-    const historyId = $(this).data('id');
-    currentHistoryId = historyId;
-    loadSummary(historyId);
-    loadDataTable(historyId);
-    showSections();
-
-    // Scroll to top
-    $('html, body').animate({ scrollTop: $('#summary-section').offset().top - 80 }, 400);
-});
-
-/**
  * Show the sections that are initially hidden
  */
-function showSections() {
+const showSections = () => {
     $('#summary-section').slideDown(300);
     $('#filter-section').slideDown(300);
     $('#table-section').slideDown(300);
 }
+
+// Bind Generate event
+$('#btn-generate').on('click', generate);
+
+/**
+ * Calculate Estimated Nominal when Qty Recommendation changes
+ */
+$(document).on('input change', '.qty-input', function() {
+    let qty = parseInt($(this).val()) || 0;
+    
+    // Prevent negative numbers
+    if (qty < 0) {
+        qty = 0;
+        $(this).val(0);
+    }
+    
+    const price = parseFloat($(this).data('price')) || 0;
+    const rowId = $(this).data('id');
+    const total = qty * price;
+    
+    // Format to IDR
+    const formattedTotal = 'Rp ' + total.toLocaleString('id-ID');
+    
+    // Update the nominal label in the datatable row
+    $('#est-' + rowId).text(formattedTotal).attr('data-value', total);
+    
+    // Update Grand Total in the state dictionary
+    estimatedTotals[rowId] = total;
+    calculateGrandTotal();
+});
+
+window.generate = generate;
+window.loadSummary = loadSummary;
+window.loadDataTable = loadDataTable;
+window.calculateGrandTotal = calculateGrandTotal;
+window.showSections = showSections;
