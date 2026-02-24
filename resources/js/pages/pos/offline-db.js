@@ -104,6 +104,12 @@ async function getDB() {
  * @param {Array} products - Array of product objects
  */
 export async function cacheProducts(products) {
+    // Defensive: pastikan products adalah array
+    if (!Array.isArray(products)) {
+        console.warn('[OfflineDB] cacheProducts received non-array:', typeof products, products);
+        return;
+    }
+
     const database = await getDB();
     const transaction = database.transaction(STORES.PRODUCTS, 'readwrite');
     const store = transaction.objectStore(STORES.PRODUCTS);

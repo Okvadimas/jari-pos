@@ -156,3 +156,14 @@ function hapus(id) {
 
 window.detail = detail;
 window.hapus = hapus;
+
+// Cetak Struk
+function cetakStruk(id) {
+    let url = '/pos/print/' + id + '?size=80';
+    let printWindow = window.open(url, 'receipt_' + id, 'width=400,height=600,scrollbars=yes');
+    if (printWindow) {
+        printWindow.focus();
+    }
+}
+
+window.cetakStruk = cetakStruk;

@@ -1870,3 +1870,156 @@ input:checked + .slider:before {
 [data-theme="dark"] .pos-offline-bar.online {
     background: linear-gradient(135deg, #059669, #047857);
 }
+
+/* ============================================
+    Printer Status Indicator
+    ============================================ */
+.pos-navbar-btn {
+    position: relative;
+}
+
+.printer-status-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #9ca3af;
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.printer-status-dot.connected {
+    background-color: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+    animation: printer-pulse 2s infinite;
+}
+
+@keyframes printer-pulse {
+    0%, 100% { box-shadow: 0 0 4px rgba(16, 185, 129, 0.4); }
+    50% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); }
+}
+
+.pos-navbar-btn.printer-connected {
+    border-color: rgba(16, 185, 129, 0.5);
+    background-color: rgba(16, 185, 129, 0.15);
+}
+
+/* ============================================
+    Transaction History List
+    ============================================ */
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--pos-border-light, #f3f4f6);
+    transition: background-color 0.15s ease;
+    cursor: default;
+}
+
+.history-item:hover {
+    background-color: var(--pos-bg, #f5f6fa);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.history-item-invoice {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--pos-text, #1a1a1a);
+}
+
+.history-item-meta {
+    font-size: 0.78rem;
+    color: var(--pos-text-muted, #6b7280);
+}
+
+.history-item-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.history-item-amount {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--pos-primary, #2263b3);
+    white-space: nowrap;
+}
+
+.history-print-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--pos-border, #e5e7eb);
+    border-radius: 8px;
+    background: var(--pos-card-bg, #fff);
+    color: var(--pos-text, #1a1a1a);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.history-print-btn:hover {
+    background: var(--pos-primary, #2263b3);
+    color: white;
+    border-color: var(--pos-primary, #2263b3);
+}
+
+.history-print-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ============================================
+    Order Success Modal Animation
+    ============================================ */
+#orderSuccessModal .modal-content {
+    border: none;
+    border-radius: 16px;
+    overflow: visible;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+#orderSuccessModal .modal-body {
+    padding: 28px 24px 24px;
+}
+
+#orderSuccessModal .btn-print-receipt {
+    padding: 10px 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+#orderSuccessModal .btn-print-receipt:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes success-bounce {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+#orderSuccessModal.show .modal-body > div:first-child > div:first-child {
+    animation: success-bounce 0.5s ease-out;
+}

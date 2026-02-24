@@ -44,6 +44,21 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                         </svg>
                     </button>
+
+                    <!-- Printer Status Button -->
+                    <button class="pos-navbar-btn me-2" id="printerNavBtn" title="Printer: Tidak Terhubung" onclick="handlePrinterNavClick()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                        </svg>
+                        <span class="printer-status-dot" id="printerStatusIndicator"></span>
+                    </button>
+
+                    <!-- Transaction History Button -->
+                    <button class="pos-navbar-btn me-2" title="Riwayat Transaksi" onclick="openHistoryModal()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
                     
                     <!-- Notification Dropdown -->
                     <div class="dropdown d-inline-block me-2">
@@ -369,6 +384,42 @@
                 
                 <hr>
 
+                <!-- Bluetooth Printer Settings -->
+                <div class="pos-settings-section">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Printer Bluetooth</h6>
+                    
+                    <div class="d-flex align-items-center justify-content-between mb-3 p-3 rounded" style="background: var(--pos-bg-secondary, #f1f5f9);">
+                        <div>
+                            <div class="small text-muted">Status Printer</div>
+                            <div class="fw-bold" id="printerStatusText">Tidak terhubung</div>
+                            <div class="small text-muted" id="connectedPrinterName">-</div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-primary" id="btnConnectPrinter" onclick="connectBluetoothPrinter()">
+                                <em class="icon ni ni-bluetooth me-1"></em> Hubungkan
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" id="btnDisconnectPrinter" onclick="disconnectBluetoothPrinter()" style="display: none;">
+                                <em class="icon ni ni-cross me-1"></em> Putuskan
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-sm btn-outline-secondary w-100 mb-2" onclick="testPrintThermal()">
+                        <em class="icon ni ni-printer me-1"></em> Test Print
+                    </button>
+
+                    <button class="btn btn-sm btn-outline-warning w-100" onclick="forgetPrinterDevice()">
+                        <em class="icon ni ni-trash me-1"></em> Lupakan Perangkat (Ganti Printer)
+                    </button>
+
+                    <small class="text-muted d-block mt-2">
+                        <em class="icon ni ni-info me-1"></em>
+                        Gunakan browser Chrome/Edge. Printer yang didukung: VSC MP-58C dan printer thermal Bluetooth lainnya.
+                    </small>
+                </div>
+
+                <hr>
+
                 <!-- QZ Tray Settings -->
                 <div class="pos-settings-section">
                     <h6 class="fw-bold mb-3 border-bottom pb-2">Integrasi QZ Tray (Desktop)</h6>
@@ -486,13 +537,81 @@
     </div>
 </div>
 
+<!-- Order Success Modal -->
+<div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 360px;">
+        <div class="modal-content" style="border: none; border-radius: 16px;">
+            <div class="modal-body text-center" style="padding: 32px 24px 24px; position: relative;">
+                <!-- Close Button -->
+                <button type="button" class="btn-close" onclick="closeOrderSuccessModal()" 
+                    style="position: absolute; top: 14px; right: 14px; z-index: 10; opacity: 0.4;"></button>
+
+                <!-- Success Icon -->
+                <div style="margin-bottom: 16px;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);">
+                        <svg width="32" height="32" fill="none" stroke="white" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold" style="font-size: 1.15rem; margin-bottom: 6px;">Pesanan Berhasil!</h5>
+                <p class="text-muted" id="successOrderInfo" style="font-size: 0.85rem; margin-bottom: 24px;">-</p>
+                
+                <!-- Action Buttons -->
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn btn-primary w-100 btn-print-receipt" id="btnPrintReceiptBluetooth" onclick="handlePrintReceiptBluetooth()" disabled>
+                        <em class="icon ni ni-printer me-1"></em> Cetak Struk (Bluetooth)
+                    </button>
+                    <button class="btn btn-outline-secondary w-100" onclick="handlePrintReceiptBrowser()" style="padding: 8px 16px;">
+                        <em class="icon ni ni-printer me-1"></em> Cetak via Browser
+                    </button>
+                    <button class="btn btn-light w-100" onclick="closeOrderSuccessModal()" style="padding: 8px 16px;">
+                        <em class="icon ni ni-check me-1"></em> Selesai
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transaction History Modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Riwayat Transaksi Hari Ini</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3 border-bottom d-flex align-items-center gap-2">
+                    <input type="date" class="form-control form-control-sm" id="historyDateFilter" style="max-width: 200px;">
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadTransactionHistory()">
+                        <em class="icon ni ni-search"></em>
+                    </button>
+                </div>
+                <div class="history-list" id="historyList" style="max-height: 400px; overflow-y: auto;">
+                    <div class="text-center p-4 text-muted">
+                        <em class="icon ni ni-loader ni-spin fs-3"></em>
+                        <p class="small mt-2">Memuat data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     window.posRoutes = {
         categories: "{{ route('pos.categories') }}",
         products: "{{ route('pos.products') }}",
         vouchers: "{{ route('pos.vouchers') }}",
         sync: "{{ route('pos.sync.transactions') }}",
-        store: "{{ route('pos.store') }}"
+        store: "{{ route('pos.store') }}",
+        receiptData: "{{ url('pos/receipt-data') }}",
+        transactions: "{{ route('pos.transactions') }}"
     };
 </script>
 <script src="{{ asset('js/pos/offline-db.js') }}"></script>

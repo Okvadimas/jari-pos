@@ -125,6 +125,7 @@ export default defineConfig({
                 // POS
                 // ================================
                 'resources/css/pages/pos/index.css',
+                'resources/js/pages/pos/thermal-printer.js',
                 'resources/js/pages/pos/index.js',
 
                 // ================================

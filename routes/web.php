@@ -72,6 +72,9 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::get('/test-receipt', [POSController::class, 'testReceipt'])->name('pos.test-receipt');
         Route::get('/test-receipt-2', [POSController::class, 'testReceipt2'])->name('pos.test-receipt-2');
         Route::post('/sync/transactions', [POSSyncController::class, 'syncTransactions'])->name('pos.sync.transactions');
+        Route::get('/receipt-data/{id}', [POSController::class, 'getReceiptData'])->name('pos.receipt-data');
+        Route::get('/transactions', [POSController::class, 'getTransactionHistory'])->name('pos.transactions');
+
     });
 
     // Management

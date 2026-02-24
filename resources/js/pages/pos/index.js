@@ -21,6 +21,9 @@ $(document).ready(function() {
     // Feature: Notifications & Settings
     checkNotifications();
     loadSettings();
+
+    // Auto-reconnect Bluetooth printer
+    initBluetoothPrinter();
     
     // Connection Listener
     window.addEventListener('online',  handleConnectionChange);
@@ -77,7 +80,8 @@ let settings = {
     enableTax: true,
     taxRate: 11,
     useQzTray: false,
-    qzPrinterName: ''
+    qzPrinterName: '',
+    useBluetoothPrinter: true
 };
 
 // Pagination State
@@ -192,8 +196,16 @@ async function syncOfflineData() {
         });
 
         if (response.status && response.data) {
-            await OfflineDB.cacheProducts(response.data);
-            console.log('[Sync] All products cached successfully (' + response.data.length + ' items)');
+            // Extract products array - handle paginated or direct array response
+            let products = response.data;
+            if (!Array.isArray(products) && products.data) {
+                products = products.data;
+            }
+            if (!Array.isArray(products)) {
+                products = Object.values(products);
+            }
+            await OfflineDB.cacheProducts(products);
+            console.log('[Sync] All products cached successfully (' + products.length + ' items)');
         }
     } catch (error) {
         console.error('[Sync] Failed to sync offline data:', error);
@@ -539,7 +551,7 @@ function renderCart() {
 function clearCart() {
     if (cart.length === 0) return;
     
-    NioApp.Swal.fire({
+    Swal.fire({
         title: 'Kosongkan Keranjang?',
         text: "Semua produk dalam keranjang akan dihapus.",
         icon: 'warning',
@@ -826,15 +838,23 @@ function placeOrder() {
             btn.prop('disabled', false).text(originalText);
             
             if (response.status) {
-                NioApp.Toast(response.message || 'Pesanan Berhasil Ditempatkan!', 'success', { position: 'top-right' });
-                
-                // Print Receipt if auto-print enabled
-                if (settings && settings.autoPrint) {
-                    console.log('Auto Printing Receipt for Order ID:', response.data.id);
-                    printReceipt(response.data.id); 
+                // Close checkout modal
+                closeCheckoutModal();
+
+                // Store last order ID for printing
+                window.lastOrderId = response.data.id;
+                window.lastOrderInvoice = response.data.invoice_number || '';
+                window.lastOrderAmount = response.data.final_amount || 0;
+
+                // Auto-print via QZ Tray if enabled (legacy desktop flow)
+                if (settings && settings.autoPrint && settings.useQzTray) {
+                    printReceipt(response.data.id);
                 }
 
-                // Clear everything after success
+                // Show success modal with print options
+                showOrderSuccessModal(response.data);
+
+                // Clear cart state
                 cart = [];
                 selectedVoucher = null;
                 $('#customerName').val('');
@@ -844,7 +864,6 @@ function placeOrder() {
                 renderCart();
                 updateProductButtons();
                 calculateTotal();
-                closeCheckoutModal();
             } else {
                  NioApp.Toast(response.message || 'Gagal menyimpan pesanan', 'error', { position: 'top-right' });
             }
@@ -1735,3 +1754,318 @@ window.findPrinters = findPrinters;
 window.toggleQzSettings = toggleQzSettings;
 window.syncPendingTransactions = syncPendingTransactions;
 
+// ============================================
+// Bluetooth Printer Functions
+// ============================================
+
+/**
+ * Initialize Bluetooth printer - auto-reconnect if previously paired
+ */
+function initBluetoothPrinter() {
+    if (typeof ThermalPrinter === 'undefined') {
+        console.log('[BTPrinter] ThermalPrinter module not loaded');
+        return;
+    }
+
+    // Update UI with current state
+    ThermalPrinter.updateUI();
+
+    // Try auto-reconnect if we have a saved printer
+    const saved = ThermalPrinter.getSavedPrinter();
+    if (saved) {
+        console.log('[BTPrinter] Found saved printer:', saved.name);
+        ThermalPrinter.autoReconnect().then(success => {
+            if (success) {
+                console.log('[BTPrinter] Auto-reconnect initiated for:', saved.name);
+            }
+        });
+    }
+}
+
+/**
+ * Connect to Bluetooth printer (called from Settings modal)
+ */
+async function connectBluetoothPrinter() {
+    try {
+        NioApp.Toast('Membuka dialog Bluetooth...', 'info', { position: 'top-right' });
+        const result = await ThermalPrinter.connectPrinter();
+        NioApp.Toast(`Terhubung ke ${result.name}!`, 'success', { position: 'top-right' });
+    } catch (e) {
+        NioApp.Toast(e.message || 'Gagal menghubungkan printer', 'error', { position: 'top-right' });
+    }
+}
+
+/**
+ * Disconnect Bluetooth printer
+ */
+function disconnectBluetoothPrinter() {
+    if (typeof ThermalPrinter !== 'undefined') {
+        ThermalPrinter.disconnectPrinter();
+        NioApp.Toast('Printer diputuskan', 'info', { position: 'top-right' });
+    }
+}
+
+/**
+ * Forget saved printer device (for switching to different printer)
+ */
+function forgetPrinterDevice() {
+    Swal.fire({
+        title: 'Lupakan Perangkat?',
+        text: 'Printer akan diputus dan data perangkat dihapus. Anda perlu menghubungkan ulang.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Lupakan',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.value) {
+            ThermalPrinter.forgetPrinter();
+            NioApp.Toast('Perangkat printer berhasil dilupakan', 'info', { position: 'top-right' });
+        }
+    });
+}
+
+/**
+ * Test print via Bluetooth thermal printer
+ */
+async function testPrintThermal() {
+    try {
+        if (!ThermalPrinter.isConnected()) {
+            NioApp.Toast('Printer belum terhubung. Silakan hubungkan terlebih dahulu.', 'warning', { position: 'top-right' });
+            return;
+        }
+        NioApp.Toast('Mengirim test print...', 'info', { position: 'top-right' });
+        await ThermalPrinter.printTestPage();
+        NioApp.Toast('Test print berhasil!', 'success', { position: 'top-right' });
+    } catch (e) {
+        NioApp.Toast('Test print gagal: ' + e.message, 'error', { position: 'top-right' });
+    }
+}
+
+/**
+ * Handle printer nav button click
+ */
+function handlePrinterNavClick() {
+    if (typeof ThermalPrinter !== 'undefined' && ThermalPrinter.isConnected()) {
+        // Already connected - open settings to manage
+        openSettingsModal();
+    } else {
+        // Not connected - try to connect directly
+        connectBluetoothPrinter();
+    }
+}
+
+window.connectBluetoothPrinter = connectBluetoothPrinter;
+window.disconnectBluetoothPrinter = disconnectBluetoothPrinter;
+window.forgetPrinterDevice = forgetPrinterDevice;
+window.testPrintThermal = testPrintThermal;
+window.handlePrinterNavClick = handlePrinterNavClick;
+
+// ============================================
+// Order Success Modal Functions
+// ============================================
+
+/**
+ * Show order success modal after successful order
+ */
+function showOrderSuccessModal(orderData) {
+    const invoiceNum = orderData.invoice_number || '#' + String(orderData.id).padStart(5, '0');
+    const totalFormatted = formatRupiah(orderData.final_amount || 0);
+    
+    $('#successOrderInfo').html(`Invoice: <strong>${invoiceNum}</strong><br>Total: <strong>${totalFormatted}</strong>`);
+    
+    // Update Bluetooth print button state
+    if (typeof ThermalPrinter !== 'undefined') {
+        ThermalPrinter.updateUI();
+    }
+    
+    $('#orderSuccessModal').modal('show');
+}
+
+/**
+ * Handle print receipt via Bluetooth thermal printer
+ */
+async function handlePrintReceiptBluetooth() {
+    const orderId = window.lastOrderId;
+    if (!orderId) {
+        NioApp.Toast('Order ID tidak ditemukan', 'error', { position: 'top-right' });
+        return;
+    }
+
+    if (!ThermalPrinter.isConnected()) {
+        NioApp.Toast('Printer Bluetooth tidak terhubung', 'warning', { position: 'top-right' });
+        return;
+    }
+
+    try {
+        const btn = $('#btnPrintReceiptBluetooth');
+        btn.prop('disabled', true).html('<em class="icon ni ni-loader ni-spin me-1"></em> Mencetak...');
+
+        // Fetch receipt data from server
+        const response = await $.ajax({
+            url: window.posRoutes.receiptData + '/' + orderId,
+            type: 'GET'
+        });
+
+        if (response.status && response.data) {
+            await ThermalPrinter.printReceipt(response.data);
+            NioApp.Toast('Struk berhasil dicetak!', 'success', { position: 'top-right' });
+        } else {
+            NioApp.Toast('Gagal mengambil data struk', 'error', { position: 'top-right' });
+        }
+
+        btn.prop('disabled', false).html('<em class="icon ni ni-printer me-1"></em> Cetak Struk (Bluetooth)');
+    } catch (e) {
+        NioApp.Toast('Gagal mencetak: ' + e.message, 'error', { position: 'top-right' });
+        $('#btnPrintReceiptBluetooth').prop('disabled', false).html('<em class="icon ni ni-printer me-1"></em> Cetak Struk (Bluetooth)');
+    }
+}
+
+/**
+ * Handle print receipt via browser (fallback)
+ */
+function handlePrintReceiptBrowser() {
+    const orderId = window.lastOrderId;
+    if (!orderId) {
+        NioApp.Toast('Order ID tidak ditemukan', 'error', { position: 'top-right' });
+        return;
+    }
+    printReceipt(orderId);
+}
+
+/**
+ * Close order success modal
+ */
+function closeOrderSuccessModal() {
+    $('#orderSuccessModal').modal('hide');
+}
+
+window.showOrderSuccessModal = showOrderSuccessModal;
+window.handlePrintReceiptBluetooth = handlePrintReceiptBluetooth;
+window.handlePrintReceiptBrowser = handlePrintReceiptBrowser;
+window.closeOrderSuccessModal = closeOrderSuccessModal;
+
+// ============================================
+// Transaction History Functions
+// ============================================
+
+/**
+ * Open transaction history modal
+ */
+function openHistoryModal() {
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    $('#historyDateFilter').val(today);
+    
+    $('#historyModal').modal('show');
+    loadTransactionHistory();
+}
+
+/**
+ * Load transaction history
+ */
+function loadTransactionHistory() {
+    const date = $('#historyDateFilter').val();
+    
+    $('#historyList').html(`
+        <div class="text-center p-4 text-muted">
+            <em class="icon ni ni-loader ni-spin fs-3"></em>
+            <p class="small mt-2">Memuat data...</p>
+        </div>
+    `);
+
+    $.ajax({
+        url: window.posRoutes.transactions,
+        type: 'GET',
+        data: { date: date },
+        success: function(response) {
+            if (response.status && response.data && response.data.length > 0) {
+                renderTransactionHistory(response.data);
+            } else {
+                $('#historyList').html(`
+                    <div class="text-center p-4 text-muted">
+                        <em class="icon ni ni-calendar fs-3 d-block mb-2"></em>
+                        <p class="small">Belum ada transaksi pada tanggal ini</p>
+                    </div>
+                `);
+            }
+        },
+        error: function() {
+            $('#historyList').html(`
+                <div class="text-center p-4 text-danger">
+                    <em class="icon ni ni-alert-circle fs-3 d-block mb-2"></em>
+                    <p class="small">Gagal memuat riwayat transaksi</p>
+                </div>
+            `);
+        }
+    });
+}
+
+/**
+ * Render transaction history list
+ */
+function renderTransactionHistory(transactions) {
+    let html = '';
+    const printerConnected = typeof ThermalPrinter !== 'undefined' && ThermalPrinter.isConnected();
+
+    transactions.forEach(tx => {
+        const time = tx.created_at ? new Date(tx.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-';
+        const amount = formatRupiah(tx.final_amount || 0);
+        const invoice = tx.invoice_number || '#' + String(tx.id).padStart(5, '0');
+
+        html += `
+            <div class="history-item">
+                <div class="history-item-left">
+                    <div class="history-item-invoice">${invoice}</div>
+                    <div class="history-item-meta">
+                        ${time} &bull; ${tx.customer_name || 'Pelanggan'} &bull; ${tx.payment_method_name || '-'}
+                    </div>
+                </div>
+                <div class="history-item-right">
+                    <div class="history-item-amount">${amount}</div>
+                    <button class="history-print-btn btn-print-receipt" 
+                            onclick="reprintReceipt(${tx.id})" 
+                            ${!printerConnected ? 'disabled title=\"Printer tidak terhubung\"' : 'title=\"Cetak ulang struk\"'}>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                        </svg>
+                        Cetak
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    $('#historyList').html(html);
+}
+
+/**
+ * Reprint receipt from transaction history
+ */
+async function reprintReceipt(orderId) {
+    if (typeof ThermalPrinter !== 'undefined' && ThermalPrinter.isConnected()) {
+        // Print via Bluetooth
+        try {
+            NioApp.Toast('Mencetak ulang struk...', 'info', { position: 'top-right' });
+            const response = await $.ajax({
+                url: window.posRoutes.receiptData + '/' + orderId,
+                type: 'GET'
+            });
+
+            if (response.status && response.data) {
+                await ThermalPrinter.printReceipt(response.data);
+                NioApp.Toast('Struk berhasil dicetak ulang!', 'success', { position: 'top-right' });
+            } else {
+                NioApp.Toast('Gagal mengambil data struk', 'error', { position: 'top-right' });
+            }
+        } catch (e) {
+            NioApp.Toast('Gagal mencetak: ' + e.message, 'error', { position: 'top-right' });
+        }
+    } else {
+        // Fallback to browser print
+        printReceipt(orderId);
+    }
+}
+
+window.openHistoryModal = openHistoryModal;
+window.loadTransactionHistory = loadTransactionHistory;
+window.reprintReceipt = reprintReceipt;

@@ -33,7 +33,7 @@ class MenuService {
                 </li>';
 
                 foreach ($children as $detail) {
-                    $menuHtml .= '<li class="nk-menu-item active current-page">
+                    $menuHtml .= '<li class="nk-menu-item">
                         <a href="' . $detail->url . '" class="nk-menu-link ">
                             <span class="nk-menu-icon">
                                 <em class="icon ' . $detail->icon . '"></em>
