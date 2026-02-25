@@ -143,8 +143,9 @@ const loadDataTable = (historyId) => {
         scrollX: true,
         ajax: {
             url: '/report/stock-recommendation/datatable',
-            type: 'GET',
+            type: 'post',
             data: function(d) {
+                d._token = token;
                 d.history_id = historyId;
             },
             error: function(xhr) {

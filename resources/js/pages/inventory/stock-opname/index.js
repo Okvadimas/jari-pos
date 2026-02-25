@@ -12,8 +12,9 @@ const datatable = () => {
         autoWidth: false,
         ajax: {
             url: '/inventory/stock-opname/datatable',
-            type: 'GET',
+            type: 'POST',
             data: function (d) {
+                d._token = token;
                 d.start_date = $('#start_date').val();
                 d.end_date = $('#end_date').val();
                 d.status = $('#filter_status').val();
@@ -24,14 +25,14 @@ const datatable = () => {
         },
         order: [3, 'desc'],
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', orderable: false, searchable: false },
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
-            { data: 'opname_number', name: 'opname_number' },
-            { data: 'opname_date', name: 'opname_date' },
-            { data: 'status_badge', name: 'status', orderable: false, searchable: false, className: 'text-center' },
-            { data: 'total_items', name: 'total_items', className: 'text-center' },
-            { data: 'total_difference', name: 'total_difference', className: 'text-center' },
-            { data: 'notes', name: 'notes' },
+            { data: 'opname_number', name: 'so.opname_number' },
+            { data: 'opname_date', name: 'so.opname_date' },
+            { data: 'status_badge', name: 'so.status', orderable: false, searchable: false, className: 'text-center' },
+            { data: 'total_items', className: 'text-center', orderable: false, searchable: false},
+            { data: 'total_difference', className: 'text-center', orderable: false, searchable: false},
+            { data: 'notes', name: 'so.notes' },
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },

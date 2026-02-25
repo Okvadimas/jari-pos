@@ -6,23 +6,27 @@ $(document).ready(function() {
 const datatable = () => {
     NioApp.DataTable('#table-data', {
         processing: true,
+        serverSide: true,
         responsive: false,
         scrollX: true,
         ajax: {
             url: '/inventory/product-variant/datatable',
-            type: 'GET',
+            type: 'POST',
+            data: function (d) {
+                d._token = token;
+            },
             error: function (xhr) {
                 handleAjaxError(xhr);
             }
         },
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },
-            { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
-            { data: 'nama_produk', name: 'nama_produk' },
-            { data: 'nama_varian', name: 'nama_varian' },
-            { data: 'nama_kategori', name: 'nama_kategori' },
-            { data: 'harga_beli', name: 'harga_beli', render: function(data) { return formatCurrency(data); } },
-            { data: 'harga_jual', name: 'harga_jual', render: function(data) { return formatCurrency(data); } },
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'action', name: 'action', orderable: false, searchable: false },
+            { data: 'nama_produk', name: 'p.name' },
+            { data: 'nama_varian', name: 'pv.name' },
+            { data: 'nama_kategori', name: 'c.name' },
+            { data: 'harga_beli', name: 'price.purchase_price', render: function(data) { return formatCurrency(data); } },
+            { data: 'harga_jual', name: 'price.sell_price', render: function(data) { return formatCurrency(data); } },
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },
