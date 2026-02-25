@@ -1,0 +1,64 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE & Editor files
+.idea
+.vscode
+.fleet
+.nova
+.zed
+.editorconfig
+.phpactor.json
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.backup
+.env.production
+
+# Dependencies (will be installed during build)
+node_modules
+vendor
+
+# Build artifacts
+public/build
+public/build.zip
+public/hot
+public/storage
+
+# Storage (runtime data)
+storage/*.key
+storage/pail
+storage/logs
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+
+# Testing
+.phpunit.cache
+.phpunit.result.cache
+phpunit.xml
+tests
+
+# Docker files (no need to copy into image)
+docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Documentation
+*.md
+docs
+
+# Misc
+auth.json
+Homestead.json
+Homestead.yaml
+*.log

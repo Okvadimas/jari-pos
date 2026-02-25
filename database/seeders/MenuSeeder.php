@@ -96,7 +96,7 @@ class MenuSeeder extends Seeder
                 'code'      => 'IN-05',
                 'parent'    => 'IN',
                 'name'      => 'Stock Opname',
-                'icon'      => 'ni ni-clip-board-check',
+                'icon'      => 'ni ni-clipboard',
                 'url'       => '/inventory/stock-opname',
             ],
 

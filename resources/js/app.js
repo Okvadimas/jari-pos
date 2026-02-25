@@ -9,9 +9,11 @@
 
 // Add your global JavaScript here
 console.log('App.js loaded - jQuery ready!');
+const token = $("meta[name='csrf-token']").attr("content");
 
 // Global JavaScript that runs on every page
 $(document).ready(function() {
+
     // Example: Global CSRF token setup for $.ajax
     $.ajaxSetup({
         headers: {
@@ -122,3 +124,4 @@ function handleAjaxError(response, options = {}) {
 window.formatCurrency = formatCurrency;
 window.formatRupiah = formatRupiah;
 window.handleAjaxError = handleAjaxError;
+window.token = token;

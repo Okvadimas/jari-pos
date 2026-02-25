@@ -6,22 +6,25 @@ $(document).ready(function() {
 const datatable = () => {
     NioApp.DataTable('#table-data', {
         processing: true,
+        serverSide: true,
         responsive: false,
         scrollX: true,
-        destroy: true,
         ajax: {
             url: '/management/user/datatable',
-            type: 'GET',
+            type: 'POST',
+            data: function (d) {
+                d._token = token;
+            },
             error: function (xhr) {
                 handleAjaxError(xhr);
             }
         },
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },
-            { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
-            { data: 'nama_company', name: 'nama_company' },
-            { data: 'name', name: 'name' },
-            { data: 'nama_role', name: 'nama_role' },
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'action', name: 'action', orderable: false, searchable: false },
+            { data: 'nama_company', name: 'companies.name' },
+            { data: 'name', name: 'users.name' },
+            { data: 'nama_role', name: 'roles.name' },
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },
