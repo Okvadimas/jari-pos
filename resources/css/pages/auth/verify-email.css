@@ -1,0 +1,34 @@
+/* Verify Email Page Styles */
+
+.verify-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--app-primary), var(--app-sidebar-bg));
+    margin: 0 auto;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.verify-icon {
+    font-size: 36px;
+    color: #fff;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(var(--app-primary-rgb, 54, 109, 175), 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(var(--app-primary-rgb, 54, 109, 175), 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(var(--app-primary-rgb, 54, 109, 175), 0);
+    }
+}
+
+.max-w-500px {
+    max-width: 500px;
+}

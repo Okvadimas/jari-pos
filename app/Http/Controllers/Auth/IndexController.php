@@ -3,125 +3,138 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
-use App\Mail\ResetPasswordMail;
+// Load Service
+use App\Services\Auth\AuthService;
 
-use App\Models\User;
+// Load Request
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+
+// Load Model
 use App\Models\Campaign;
-
-use App\Services\Management\MenuService;
 
 class IndexController extends Controller
 {
-    public function login() {
-        $title      = 'Login | Jari POS';
-        $sliders    = Campaign::where('type', 'slider')->where('is_published', 1)->get();  
-        $css        = 'resources/css/pages/auth/login.css';
-        $js         = 'resources/js/pages/auth/login.js';  
+    public function login()
+    {
+        $title   = 'Login | Jari POS';
+        $sliders = Campaign::where('type', 'slider')->where('is_published', 1)->get();
+        $css     = 'resources/css/pages/auth/login.css';
+        $js      = 'resources/js/pages/auth/login.js';
+
         return view('auth.login', compact('css', 'js', 'title', 'sliders'));
     }
 
-    public function processLogin(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required',
-            'password' => 'required',
-        ], [
-            'username.required' => 'Username wajib diisi',
-            'password.required' => 'Kata Sandi wajib diisi',
-        ]);
-   
-        if($validator->stopOnFirstFailure()->fails()){
-            return $this->errorResponse($validator->errors()->first(), 422);       
-        }
+    public function processLogin(LoginRequest $request)
+    {
+        $result = AuthService::login(
+            $request->only('username', 'password'),
+            $request
+        );
 
-        $credential = $request->only('username', 'password');
-        if(Auth::attempt($credential)) {
-            $request->session()->regenerate();
-            $request->session()->put('role_slug', Auth::user()->role->slug);
-            $request->session()->put('company_id', Auth::user()->company_id);
-            $request->session()->put('company_code', Auth::user()->company->code);
-            
-            $menu = MenuService::generateMenu();
-            $request->session()->put('menu', $menu);
-
-            return $this->successResponse('Berhasil masuk dashboard');
-        } else {
-            return $this->errorResponse('Username atau kata sandi salah. Silahkan cek kembali.', 422);
-        }
+        return $result['status']
+            ? $this->successResponse($result['message'])
+            : $this->errorResponse($result['message'], 422);
     }
 
-    public function register() {
-        $title      = 'Register | Jari POS';
-        $sliders    = Campaign::where('type', 'slider')->where('is_published', 1)->get();
-        $css        = 'resources/css/pages/auth/register.css';
-        $js         = 'resources/js/pages/auth/register.js';  
+    public function register()
+    {
+        $title   = 'Register | Jari POS';
+        $sliders = Campaign::where('type', 'slider')->where('is_published', 1)->get();
+        $css     = 'resources/css/pages/auth/register.css';
+        $js      = 'resources/js/pages/auth/register.js';
+
         return view('auth.register', compact('css', 'js', 'title', 'sliders'));
     }
 
-    public function processRegister(Request $request) {
-        $validated = $request->validate([
-            'name'      => 'required',
-            'username'  => 'required',
-            'email'     => 'required|email|unique:users,email',
-            'password'  => 'required|min:4',
-        ], [
-            'name.required'     => 'Nama Lengkap wajib diisi',
-            'username.required' => 'Username wajib diisi',
-            'email.required'    => 'Email wajib diisi',
-            'email.email'       => 'Email tidak valid',
-            'email.unique'      => 'Email sudah terdaftar',
-            'password.required' => 'Kata Sandi wajib diisi',
-            'password.min'      => 'Kata Sandi minimal 4 karakter',
-        ]);
+    public function processRegister(RegisterRequest $request)
+    {
+        $result = AuthService::register($request->validated());
 
-        $user = User::create([
-            'name'      => $request->name,
-            'username'  => $request->username,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-        ]);
-
-        // Auto Login
-        Auth::login($user);
-
-        return $this->successResponse('Berhasil mendaftar');
+        return $result['status']
+            ? $this->successResponse($result['message'])
+            : $this->errorResponse($result['message'], 500);
     }
 
-    public function resetPassword() {
+    /**
+     * Show email verification notice page
+     */
+    public function verifyNotice()
+    {
+        $title = 'Verifikasi Email | Jari POS';
+        $css   = 'resources/css/pages/auth/verify-email.css';
+        $js    = 'resources/js/pages/auth/verify-email.js';
+
+        return view('auth.verify-email', compact('title', 'css', 'js'));
+    }
+
+    /**
+     * Handle email verification link
+     */
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        $result = AuthService::verifyEmail($id, $hash);
+
+        return redirect()->route('login')
+            ->with($result['type'], $result['message']);
+    }
+
+    /**
+     * Resend email verification
+     */
+    public function resendVerification(Request $request)
+    {
+        $request->validate(['email' => 'required|email'], [
+            'email.required' => 'Email wajib diisi',
+            'email.email'    => 'Email tidak valid',
+        ]);
+
+        $result = AuthService::resendVerification($request->email);
+
+        return $result['status']
+            ? $this->successResponse($result['message'])
+            : $this->errorResponse($result['message'], 404);
+    }
+
+    public function resetPassword()
+    {
         return view('auth.reset-password');
     }
 
-    public function processResetPassword(Request $request) {
-        $validated = $request->validate([
-            'email' => 'required|email',
-        ]);
+    public function processResetPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
 
-        $user = User::where('email', $validated['email'])->first();
+        $result = AuthService::resetPassword($request->email);
 
-        if (!$user) {
-            return back()->withErrors([
-                'email' => 'The provided email does not match our records.',
-            ]);
+        if (!$result['status']) {
+            return back()->withErrors(['email' => $result['message']]);
         }
-
-        $password = Str::random(8);
-        $user->password = Hash::make($password);
-        $user->save();
-
-        Mail::to($user->email)->send(new ResetPasswordMail($user, $password));
 
         return redirect()->route('login');
     }
 
-    public function logout() {
-        Auth::logout();
+    public function logout()
+    {
+        \Illuminate\Support\Facades\Auth::logout();
         return redirect()->route('login');
+    }
+
+    public function lockScreen()
+    {
+        return view('auth.lock-screen');
+    }
+
+    public function unlockScreen(Request $request)
+    {
+        $request->validate(['password' => 'required']);
+
+        if (\Illuminate\Support\Facades\Hash::check($request->password, \Illuminate\Support\Facades\Auth::user()->password)) {
+            return $this->successResponse('Berhasil membuka kunci layar');
+        }
+
+        return $this->errorResponse('Kata sandi salah', 422);
     }
 }

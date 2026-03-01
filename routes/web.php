@@ -47,6 +47,9 @@ Route::get('/login',            [AuthController::class, 'login'])->middleware('r
 Route::post('/login',           [AuthController::class, 'processLogin'])->middleware('ajax-request');
 Route::get('/register',         [AuthController::class, 'register'])->name('register');
 Route::post('/register',        [AuthController::class, 'processRegister']);
+Route::get('/email/verify',     [AuthController::class, 'verifyNotice'])->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
+Route::post('/email/verification-resend', [AuthController::class, 'resendVerification'])->name('verification.resend');
 Route::get('/reset-password',   [AuthController::class, 'resetPassword'])->name('reset-password');
 Route::post('/reset-password',  [AuthController::class, 'processResetPassword']);
 

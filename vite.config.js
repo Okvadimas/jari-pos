@@ -71,8 +71,10 @@ export default defineConfig({
                 // ================================
                 'resources/js/pages/auth/login.js',
                 'resources/js/pages/auth/register.js',
+                'resources/js/pages/auth/verify-email.js',
                 'resources/css/pages/auth/login.css',
                 'resources/css/pages/auth/register.css',
+                'resources/css/pages/auth/verify-email.css',
 
                 // ================================
                 // Dashboard
