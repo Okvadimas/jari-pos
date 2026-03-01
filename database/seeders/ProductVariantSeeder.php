@@ -86,7 +86,13 @@ class ProductVariantSeeder extends Seeder
             ['id' => 40, 'product_id' => 15, 'unit_id' => 7, 'name' => '3 Pipet', 'sku' => 'OAK-3P', 'current_stock' => 10],
         ];
 
+        $faker = \Faker\Factory::create();
+
         foreach ($variants as $variant) {
+            // Generate some logical realistic defaults if we want
+            $moq = in_array($variant['unit_id'], [1]) ? rand(1, 3) * 5 : rand(1, 5) * 10; // Kg vs gr
+            $leadTime = rand(1, 7);
+            
             DB::table('product_variants')->updateOrInsert(
                 ['id' => $variant['id']],
                 [
@@ -94,6 +100,10 @@ class ProductVariantSeeder extends Seeder
                     'unit_id' => $variant['unit_id'],
                     'name' => $variant['name'],
                     'sku' => $variant['sku'],
+                    'current_stock' => $variant['current_stock'] ?? 0,
+                    'moq' => $moq,
+                    'min_stock' => rand(10, 50),
+                    'lead_time' => $leadTime,
                     'created_by' => 1,
                     'updated_by' => 1,
                     'created_at' => now(),

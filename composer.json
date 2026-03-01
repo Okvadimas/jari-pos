@@ -7,9 +7,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^3.1",
+        "laravel/ai": "^0.2.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "opcodesio/log-viewer": "^3.21",
+        "probots-io/pinecone-php": "^1.1",
+        "spatie/pdf-to-text": "^1.55",
         "yajra/laravel-datatables": "^12.0"
     },
     "require-dev": {
@@ -84,6 +88,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.4.5"
         }
     },
     "minimum-stability": "stable",

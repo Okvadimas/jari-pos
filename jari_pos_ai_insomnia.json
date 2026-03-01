@@ -1,0 +1,222 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2026-02-23T07:44:00.000Z",
+    "__export_source": "insomnia.desktop.app:v2023.5.8",
+    "resources": [
+        {
+            "_id": "wrk_jari_pos_ai_api",
+            "parentId": null,
+            "modified": 1718000000000,
+            "created": 1718000000000,
+            "name": "Jari POS AI API (Stateless)",
+            "description": "API Collection for testing AI Stock Recommendation and RAG Chatbot without CSRF hassle.",
+            "scope": "collection",
+            "_type": "workspace"
+        },
+        {
+            "_id": "req_api_stock_recommendation",
+            "parentId": "wrk_jari_pos_ai_api",
+            "modified": 1718000000000,
+            "created": 1718000000000,
+            "url": "{{ _.base_url }}/api/stock-recommendation/ai-analyse/1",
+            "name": "1. AI Stock Recommendation",
+            "description": "Ganti angka 1 di ujung URL dengan ID riwayat (history_id) dari tabel recommendation_stocks.",
+            "method": "POST",
+            "body": [],
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": [],
+            "metaSortKey": -1718000000000,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_api_chatbot_upload",
+            "parentId": "wrk_jari_pos_ai_api",
+            "modified": 1718000000000,
+            "created": 1718000000000,
+            "url": "{{ _.base_url }}/api/chatbot/upload",
+            "name": "2. RAG Chatbot - Upload Document",
+            "description": "Upload file PDF atau TXT. company_id bisa ditambahkan tapi default 1.",
+            "method": "POST",
+            "body": {
+                "mimeType": "multipart/form-data",
+                "params": [
+                    {
+                        "id": "pair_file",
+                        "name": "file",
+                        "value": "",
+                        "description": "",
+                        "type": "file",
+                        "fileName": ""
+                    },
+                    {
+                        "id": "pair_company_id",
+                        "name": "company_id",
+                        "value": "1",
+                        "description": "",
+                        "type": "text",
+                        "disabled": true
+                    }
+                ]
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "multipart/form-data"
+                }
+            ],
+            "authentication": [],
+            "metaSortKey": -1718000000001,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_api_chatbot_ask",
+            "parentId": "wrk_jari_pos_ai_api",
+            "modified": 1718000000000,
+            "created": 1718000000000,
+            "url": "{{ _.base_url }}/api/chatbot/ask",
+            "name": "3. RAG Chatbot - Ask Question",
+            "description": "Tanya dokumen",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"company_id\": 1,\n\t\"message\": \"Berdasarkan dokumen, apa saja resep untuk membuat Nasi Goreng?\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": [],
+            "metaSortKey": -1718000000002,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_api_chatbot_delete",
+            "parentId": "wrk_jari_pos_ai_api",
+            "modified": 1718000000000,
+            "created": 1718000000000,
+            "url": "{{ _.base_url }}/api/chatbot/document/1",
+            "name": "4. RAG Chatbot - Delete Document",
+            "description": "Ganti 1 di path dengan ID tabel knowledge_base_documents.",
+            "method": "DELETE",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"company_id\": 1\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": [],
+            "metaSortKey": -1718000000003,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_api_chatbot_delete_all",
+            "parentId": "wrk_jari_pos_ai_api",
+            "modified": 1718000000000,
+            "created": 1718000000000,
+            "url": "{{ _.base_url }}/api/chatbot/documents",
+            "name": "5. RAG Chatbot - Delete All Documents",
+            "description": "Menghapus SELURUH dokumen AI dari perusahaan ini (termasuk vector pinecone dan file fisik).",
+            "method": "DELETE",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"company_id\": 1\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "authentication": [],
+            "metaSortKey": -1718000000004,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "env_api_jari_pos_ai",
+            "parentId": "wrk_jari_pos_ai_api",
+            "modified": 1718000000000,
+            "created": 1718000000000,
+            "name": "Jari POS Environment",
+            "data": {
+                "base_url": "http://localhost"
+            },
+            "dataPropertyOrder": {
+                "&": [
+                    "base_url"
+                ]
+            },
+            "color": "#e05697",
+            "isPrivate": false,
+            "metaSortKey": 1718000000000,
+            "_type": "environment"
+        }
+    ]
+}

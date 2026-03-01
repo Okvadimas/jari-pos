@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\SoftDeletesWithUser;
 
 class RecommendationStock extends Model
 {
+    use SoftDeletesWithUser;
+
     protected $table = 'recommendation_stocks';
 
     protected $fillable = [
@@ -21,14 +24,16 @@ class RecommendationStock extends Model
         'total_dead',
         'cogs_balance',
         'gross_profit_balance',
+        'total_estimated_nominal',
     ];
 
     protected $casts = [
-        'analysis_date'        => 'date',
-        'period_start'         => 'date',
-        'period_end'           => 'date',
-        'cogs_balance'         => 'decimal:0',
-        'gross_profit_balance' => 'decimal:0',
+        'analysis_date'           => 'date',
+        'period_start'            => 'date',
+        'period_end'              => 'date',
+        'cogs_balance'            => 'decimal:0',
+        'gross_profit_balance'    => 'decimal:0',
+        'total_estimated_nominal' => 'decimal:2',
     ];
 
     public function company()

@@ -1486,13 +1486,13 @@ async function syncPendingTransactions() {
                     console.log('[Offline] Sync result:', result);
                     
                     // Remove synced transactions
-                    if (result.results?.accepted) {
-                        for (const txn of result.results.accepted) {
+                    if (result.data?.results?.accepted) {
+                        for (const txn of result.data.results.accepted) {
                             await OfflineDB.removePendingTransaction(txn.client_id);
                         }
                     }
                     
-                    NioApp.Toast(`Sinkronisasi: ${result.accepted} berhasil`, 'success', { position: 'top-right' });
+                    NioApp.Toast(`Sinkronisasi: ${result.data ? result.data.accepted : 0} berhasil`, 'success', { position: 'top-right' });
                     await updateOfflineStatus();
                     refreshStockFromServer();
                 },
