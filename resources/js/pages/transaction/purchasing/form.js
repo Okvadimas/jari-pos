@@ -115,7 +115,7 @@ $(document).ready(function() {
             url: '/utility/variants',
             type: 'GET',
             success: function(response) {
-                productVariants = response;
+                productVariants = response.data || response;
                 
                 // Initialize rows AFTER variants are loaded
                 if (window.existingDetails && window.existingDetails.length > 0) {

@@ -22,8 +22,11 @@ return new class extends Migration
             $table->integer('total_dead')->default(0);
             $table->decimal('cogs_balance', 15, 0)->nullable()->comment('Modal kembali (purchase_price × qty terjual)');
             $table->decimal('gross_profit_balance', 15, 0)->nullable()->comment('Keuntungan kotor (revenue - COGS)');
-            $table->timestamps();
-            $table->softDeletes();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletesWithUser();
 
             // Prevent duplicate analysis per company per day
             $table->unique(['company_id', 'analysis_date']);

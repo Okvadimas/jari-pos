@@ -48,9 +48,9 @@ const loadSummary = () => {
             end_date: $('#end_date').val()
         },
         success: function(response) {
-            $('#summary-total-opname').text(response.total_opname);
-            $('#summary-selisih-plus').text('+' + response.total_selisih_plus);
-            $('#summary-selisih-minus').text('-' + response.total_selisih_minus);
+            $('#summary-total-opname').text(response.data.total_opname);
+            $('#summary-selisih-plus').text('+' + response.data.total_selisih_plus);
+            $('#summary-selisih-minus').text('-' + response.data.total_selisih_minus);
         },
         error: function(xhr) {
             handleAjaxError(xhr);
@@ -82,9 +82,10 @@ function detail(id) {
         url: url,
         type: 'GET',
         success: function(response) {
-            $('#detail-number').text(response.opname.opname_number);
-            $('#detail-date').text(response.opname_date_formatted);
-            $('#detail-note').text(response.opname.notes || 'Tidak ada catatan');
+            const data = response.data;
+            $('#detail-number').text(data.opname.opname_number);
+            $('#detail-date').text(data.opname_date_formatted);
+            $('#detail-note').text(data.opname.notes || 'Tidak ada catatan');
 
             // Status badge
             const badges = {
@@ -92,21 +93,21 @@ function detail(id) {
                 'approved': '<span class="badge bg-success">Approved</span>',
                 'cancelled': '<span class="badge bg-danger">Cancelled</span>',
             };
-            $('#detail-status').html(badges[response.opname.status] || '-');
+            $('#detail-status').html(badges[data.opname.status] || '-');
 
             // Approval info
-            if (response.opname.status === 'approved' && response.approved_by_name) {
+            if (data.opname.status === 'approved' && data.approved_by_name) {
                 $('#detail-approval-info').show();
-                $('#detail-approved-by').text(response.approved_by_name);
-                $('#detail-approved-at').text(response.approved_at_formatted || '-');
+                $('#detail-approved-by').text(data.approved_by_name);
+                $('#detail-approved-at').text(data.approved_at_formatted || '-');
             } else {
                 $('#detail-approval-info').hide();
             }
 
             let itemsHtml = '';
 
-            if (response.details && response.details.length > 0) {
-                response.details.forEach(item => {
+            if (data.details && data.details.length > 0) {
+                data.details.forEach(item => {
                     let diffClass = 'text-muted';
                     let diffPrefix = '';
                     if (item.difference > 0) { diffClass = 'text-success'; diffPrefix = '+'; }

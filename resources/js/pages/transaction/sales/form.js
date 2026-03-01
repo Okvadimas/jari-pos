@@ -123,7 +123,7 @@ $(document).ready(function() {
             url: '/utility/variants',
             type: 'GET',
             success: function(response) {
-                productVariants = response;
+                productVariants = response.data || response;
                 
                 // Initialize rows AFTER variants are loaded
                 if (window.existingDetails && window.existingDetails.length > 0) {
@@ -147,7 +147,8 @@ $(document).ready(function() {
             type: 'GET',
             success: function(response) {
                 let $select = $('#payment_method_id');
-                response.forEach(function(item) {
+                let paymentData = response.data || response;
+                paymentData.forEach(function(item) {
                     $select.append(new Option(item.name, item.id));
                 });
 

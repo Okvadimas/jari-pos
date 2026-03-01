@@ -36,6 +36,9 @@ use App\Http\Controllers\Transaction\PurchasingController   as PurchasingControl
 // Report
 use App\Http\Controllers\Report\RecommendationController   as RecommendationController;
 
+// Chatbot
+use App\Http\Controllers\Chatbot\ChatbotController         as ChatbotController;
+
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
 // PWA Offline Page
@@ -199,10 +202,17 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
     // Report
     Route::group(['prefix' => 'report'], function () {
-        Route::get('/stock-recommendation', [RecommendationController::class, 'index'])->name('report.stock-recommendation.index');
+        Route::get('/stock-recommendation', [RecommendationController::class, 'index'])->name('report.stock-recommendation');
+        Route::get('/stock-recommendation/detail/{id?}', [RecommendationController::class, 'detail'])->name('report.stock-recommendation.detail');
+        Route::get('/stock-recommendation/form/{id?}', [RecommendationController::class, 'form'])->name('report.stock-recommendation.form');
         Route::post('/stock-recommendation/generate', [RecommendationController::class, 'generate'])->name('report.stock-recommendation.generate');
         Route::get('/stock-recommendation/datatable', [RecommendationController::class, 'datatable'])->name('report.stock-recommendation.datatable');
-        Route::get('/stock-recommendation/summary/{id}', [RecommendationController::class, 'summary'])->name('report.stock-recommendation.summary');
+        Route::get('/stock-recommendation/summary/{id?}', [RecommendationController::class, 'summary'])->name('report.stock-recommendation.summary');
+        Route::post('/stock-recommendation/update-qty', [RecommendationController::class, 'updateQty'])->name('report.stock-recommendation.update-qty');
+        Route::post('/stock-recommendation/save/{id}', [RecommendationController::class, 'save'])->name('report.stock-recommendation.save');
+        Route::get('/stock-recommendation/download-pdf/{id}', [RecommendationController::class, 'downloadPdf'])->name('report.stock-recommendation.download-pdf');
+        Route::get('/stock-recommendation/ai/{id}', [RecommendationController::class, 'getAiRecommendations'])->name('report.stock-recommendation.ai');
+        Route::delete('/stock-recommendation/destroy/{id}', [RecommendationController::class, 'destroy'])->name('report.stock-recommendation.destroy');
     });
 
     // Utility Routes

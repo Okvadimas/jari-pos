@@ -19,20 +19,20 @@ class UtilityController extends Controller
     {
         $search = $request->search;
         $data = $this->utilityRepository->dataCompanies($search);
-        return response()->json($data);
+        return $this->successResponse('Success', $data);
     }
 
     public function dataProductVariants(Request $request)
     {
         $search = $request->search;
         $data = $this->utilityRepository->dataProductVariants($search);
-        return response()->json($data);
+        return $this->successResponse('Success', $data);
     }
 
     public function dataPaymentMethods(Request $request)
     {
         $data = \App\Models\PaymentMethod::orderBy('name')->get(['id', 'name']);
-        return response()->json($data);
+        return $this->successResponse('Success', $data);
     }
     
 }

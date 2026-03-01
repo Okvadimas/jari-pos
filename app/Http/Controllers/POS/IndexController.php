@@ -77,7 +77,7 @@ class IndexController extends Controller
                     ->first();
 
         if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
+            return $this->errorResponse('Order not found', 404);
         }
 
         // Fetch Order Details
@@ -107,7 +107,7 @@ class IndexController extends Controller
                     ->first();
 
         if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
+            return $this->errorResponse('Order not found', 404);
         }
 
         // Fetch Order Details

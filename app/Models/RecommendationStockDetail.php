@@ -24,6 +24,7 @@ class RecommendationStockDetail extends Model
         'sell_price',
         'safety_stock',
         'moq',
+        'qty_restock',
     ];
 
     protected $casts = [

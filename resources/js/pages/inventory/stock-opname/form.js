@@ -73,7 +73,7 @@ function addItemRow(data = null) {
                 return { q: params.term };
             },
             processResults: function (data) {
-                return { results: data };
+                return { results: data.data || data };
             },
             cache: true
         },
@@ -92,7 +92,7 @@ $(document).on('change', '.select-product', function () {
             url: '/inventory/stock-opname/system-stock/' + variantId,
             type: 'GET',
             success: function (response) {
-                const systemStock = response.system_stock || 0;
+                const systemStock = response.data ? response.data.system_stock : 0;
                 $(`#system-stock-${rowIdx}`).text(systemStock);
                 $(`#system-stock-input-${rowIdx}`).val(systemStock);
                 calculateDifference(rowIdx);

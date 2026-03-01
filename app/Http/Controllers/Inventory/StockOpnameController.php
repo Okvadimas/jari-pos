@@ -55,7 +55,7 @@ class StockOpnameController extends Controller
 
         $summary = StockOpnameService::getSummary($startDate, $endDate);
 
-        return response()->json([
+        return $this->successResponse('Success', [
             'total_opname'       => number_format($summary->total_opname, 0, ',', '.'),
             'total_selisih_plus' => number_format($summary->total_selisih_plus, 0, ',', '.'),
             'total_selisih_minus'=> number_format($summary->total_selisih_minus, 0, ',', '.'),
@@ -83,7 +83,7 @@ class StockOpnameController extends Controller
             ];
         });
 
-        return response()->json([
+        return $this->successResponse('Success', [
             'opname'    => $opname,
             'details'   => $details,
             'opname_date_formatted' => Carbon::parse($opname->opname_date)->format('d M Y'),
@@ -187,6 +187,6 @@ class StockOpnameController extends Controller
     {
         $stock = StockOpnameRepository::getSystemStock($productVariantId);
 
-        return response()->json(['system_stock' => $stock]);
+        return $this->successResponse('Success', ['system_stock' => $stock]);
     }
 }

@@ -138,20 +138,6 @@ class MenuSeeder extends Seeder
             [
                 'code'      => 'LP-01',
                 'parent'    => 'LP',
-                'name'      => 'Laporan Pembelian',
-                'icon'      => 'ni ni-cart-fill',
-                'url'       => '/report/purchasing',
-            ],
-            [
-                'code'      => 'LP-02',
-                'parent'    => 'LP',
-                'name'      => 'Laporan Penjualan',
-                'icon'      => 'ni ni-cc-alt2-fill',
-                'url'       => '/report/sales',
-            ],
-            [
-                'code'      => 'LP-03',
-                'parent'    => 'LP',
                 'name'      => 'Rekomendasi Stok',
                 'icon'      => 'ni ni-cc-alt2-fill',
                 'url'       => '/report/stock-recommendation',

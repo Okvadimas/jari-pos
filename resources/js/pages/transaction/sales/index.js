@@ -46,10 +46,11 @@ const loadSummary = () => {
             end_date: $('#end_date').val()
         },
         success: function(response) {
-            $('#summary-total-transaksi').text(response.total_transaksi);
-            $('#summary-total-penjualan').text(response.total_penjualan);
-            $('#summary-total-diskon').text(response.total_diskon);
-            $('#summary-total-pendapatan').text(response.total_pendapatan);
+            const data = response.data || response;
+            $('#summary-total-transaksi').text(data.total_transaksi);
+            $('#summary-total-penjualan').text(data.total_penjualan);
+            $('#summary-total-diskon').text(data.total_diskon);
+            $('#summary-total-pendapatan').text(data.total_pendapatan);
         },
         error: function(xhr) {
             handleAjaxError(xhr);
@@ -82,20 +83,21 @@ function detail(id) {
         url: url,
         type: 'GET',
         success: function(response) {
-            $('#detail-customer').text(response.customer_name);
-            $('#detail-date').text(response.order_date_formatted);
+            const data = response.data || response;
+            $('#detail-customer').text(data.customer_name);
+            $('#detail-date').text(data.order_date_formatted);
             
             // Handle promo display
-            if (response.promo_name) {
-                $('#detail-promo').text(response.promo_name).removeClass('bg-secondary').addClass('bg-primary');
+            if (data.promo_name) {
+                $('#detail-promo').text(data.promo_name).removeClass('bg-secondary').addClass('bg-primary');
             } else {
                 $('#detail-promo').text('Tidak ada').removeClass('bg-primary').addClass('bg-secondary');
             }
             
             let itemsHtml = '';
             
-            if (response.details && response.details.length > 0) {
-                response.details.forEach(item => {
+            if (data.details && data.details.length > 0) {
+                data.details.forEach(item => {
                     itemsHtml += `
                         <tr>
                             <td>${item.product_name}</td>
@@ -111,9 +113,9 @@ function detail(id) {
             }
             
             $('#detail-items').html(itemsHtml);
-            $('#detail-total-amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.sales_order.total_amount));
-            $('#detail-discount-manual').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.sales_order.discount_amount));
-            $('#detail-final-amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.sales_order.final_amount));
+            $('#detail-total-amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(data.sales_order.total_amount));
+            $('#detail-discount-manual').text('Rp ' + new Intl.NumberFormat('id-ID').format(data.sales_order.discount_amount));
+            $('#detail-final-amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(data.sales_order.final_amount));
         },
         error: function(xhr) {
             handleAjaxError(xhr);
