@@ -17,7 +17,7 @@
         @vite($css_library)
     @endif
 
-    @vite(['resources/css/pages/pos/index.css', 'resources/js/pages/pos/index.js'])
+    @vite(['resources/css/pages/pos/index.css', 'resources/js/pages/pos/thermal-printer.js', 'resources/js/pages/pos/index.js'])
 </head>
 <body>
     @yield('content')
@@ -39,11 +39,11 @@
             
             if (currentTheme === 'dark') {
                 html.removeAttribute('data-theme');
-                toggle.classList.remove('active');
+                toggle?.classList.remove('active');
                 localStorage.setItem('pos-theme', 'light');
             } else {
                 html.setAttribute('data-theme', 'dark');
-                toggle.classList.add('active');
+                toggle?.classList.add('active');
                 localStorage.setItem('pos-theme', 'dark');
             }
         }

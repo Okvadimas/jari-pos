@@ -6,11 +6,15 @@ $(document).ready(function () {
 const datatable = () => {
     NioApp.DataTable('#table-data', {
         processing: true,
+        serverSide: true,
         responsive: false,
         scrollX: true,
         ajax: {
             url: "/management/payment/datatable",
-            type: 'GET',
+            type: 'POST',
+            data: function (d) {
+                d._token = token;
+            },
             error: function (xhr) {
                 handleAjaxError(xhr);
             }

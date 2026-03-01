@@ -40,6 +40,16 @@ class PosService
         return $paymentMethods;
     }
 
+    public static function getOrderWithDetails($id)
+    {
+        return PosRepository::getOrderWithDetails($id);
+    }
+
+    public static function getTransactionHistory($request)
+    {
+        return PosRepository::getTransactionHistory($request);
+    }
+
     public static function store($request)
     {
         try {

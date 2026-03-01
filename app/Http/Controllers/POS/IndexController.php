@@ -4,12 +4,10 @@ namespace App\Http\Controllers\POS;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 // Load Service
 use App\Services\PosService;
 use App\Http\Requests\POS\StorePosRequest;
-use App\Models\SalesOrder;
 
 class IndexController extends Controller
 {
@@ -66,59 +64,53 @@ class IndexController extends Controller
 
     public function printReceipt(Request $request, $id)
     {
-        // Fetch Order Header
-        $order = DB::table('sales_orders as so')
-                    ->join('companies as c', 'so.company_id', '=', 'c.id')
-                    ->join('users as u', 'so.created_by', '=', 'u.id')
-                    ->leftJoin('payment_methods as pm', 'so.payment_method_id', '=', 'pm.id')
-                    ->leftJoin('promotions as pr', 'so.applied_promo_id', '=', 'pr.id')
-                    ->select('so.*', 'c.name as company_name', 'c.address as company_address', 'u.name as created_by_name', 'pm.name as payment_method_name', 'pr.name as promo_name')
-                    ->where('so.id', $id)
-                    ->first();
+        $data = PosService::getOrderWithDetails($id);
 
         if (!$order) {
             return $this->errorResponse('Order not found', 404);
         }
 
-        // Fetch Order Details
-        $details = DB::table('sales_order_details as sod')
-                    ->join('product_variants as pv', 'sod.product_variant_id', '=', 'pv.id')
-                    ->join('products as p', 'pv.product_id', '=', 'p.id')
-                    ->select('sod.*', 'p.name as product_name', 'pv.name as variant_name')
-                    ->where('sod.sales_order_id', $id)
-                    ->get();
-        
+        $order = $data['order'];
+        $details = $data['details'];
         $paperSize = $request->query('size', '80');
 
-        // Pass both to view
         return view('pos.receipt', compact('order', 'details', 'paperSize'));
     }
     
+    /**
+     * Get receipt data as JSON for thermal printer
+     */
+    public function getReceiptData(Request $request, $id)
+    {
+        $data = PosService::getOrderWithDetails($id);
+
+        if (!$data) {
+            return $this->errorResponse('Order tidak ditemukan');
+        }
+
+        return $this->successResponse('Data struk berhasil diambil', $data);
+    }
+
+    /**
+     * Get transaction history for the POS history modal
+     */
+    public function getTransactionHistory(Request $request)
+    {
+        $transactions = PosService::getTransactionHistory($request);
+        return $this->successResponse('Data riwayat transaksi', $transactions);
+    }
+
     public function printReceipt2($id)
     {
-        // Fetch Order Header
-        $order = DB::table('sales_orders as so')
-                    ->join('companies as c', 'so.company_id', '=', 'c.id')
-                    ->join('users as u', 'so.created_by', '=', 'u.id')
-                    ->leftJoin('payment_methods as pm', 'so.payment_method_id', '=', 'pm.id')
-                    ->leftJoin('promotions as pr', 'so.applied_promo_id', '=', 'pr.id')
-                    ->select('so.*', 'c.name as company_name', 'c.address as company_address', 'u.name as created_by_name', 'pm.name as payment_method_name', 'pr.name as promo_name')
-                    ->where('so.id', $id)
-                    ->first();
+        $data = PosService::getOrderWithDetails($id);
 
         if (!$order) {
             return $this->errorResponse('Order not found', 404);
         }
 
-        // Fetch Order Details
-        $details = DB::table('sales_order_details as sod')
-                    ->join('product_variants as pv', 'sod.product_variant_id', '=', 'pv.id')
-                    ->join('products as p', 'pv.product_id', '=', 'p.id')
-                    ->select('sod.*', 'p.name as product_name', 'pv.name as variant_name')
-                    ->where('sod.sales_order_id', $id)
-                    ->get();
+        $order = $data['order'];
+        $details = $data['details'];
         
-        // Pass both to view
         return view('pos.receipt-2', compact('order', 'details'));
     }
 }

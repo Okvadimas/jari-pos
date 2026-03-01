@@ -94,6 +94,12 @@ const OfflineDB = (function() {
      * @returns {Promise<void>}
      */
     async function cacheProducts(products) {
+        // Defensive: pastikan products adalah array
+        if (!Array.isArray(products)) {
+            console.warn('[OfflineDB] cacheProducts received non-array:', typeof products, products);
+            return;
+        }
+
         if (!db) await initDB();
         
         return new Promise((resolve, reject) => {

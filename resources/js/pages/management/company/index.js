@@ -6,18 +6,22 @@ $(document).ready(function() {
 const datatable = () => {
     NioApp.DataTable('#table-data', {
         processing: true,
+        serverSide: true,
         responsive: false,
         scrollX: true,
         ajax: {
             url: '/management/company/datatable',
-            type: 'GET',
+            type: 'POST',   
+            data: function (d) {
+                d._token = token;
+            },
             error: function (xhr) {
                 handleAjaxError(xhr);
             }
         },
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', searchable: false },
-            { data: 'action', name: 'action', width: '10%', orderable: false, searchable: false },
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'action', name: 'action', orderable: false, searchable: false },
             { data: 'name', name: 'name' },
             { data: 'email', name: 'email' },
             { data: 'phone', name: 'phone' },

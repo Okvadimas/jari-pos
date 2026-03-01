@@ -8,12 +8,13 @@ const datatable = () => {
     NioApp.DataTable('#table-data', {
         processing: true,
         serverSide: true,
-        responsive: true,
-        autoWidth: false,
+        responsive: false,
+        scrollX: true,
         ajax: {
             url: '/transaction/sales/datatable',
-            type: 'GET',
+            type: 'POST',
             data: function (d) {
+                d._token = token;
                 d.start_date = $('#start_date').val();
                 d.end_date = $('#end_date').val();
             },
@@ -158,3 +159,14 @@ function hapus(id) {
 
 window.detail = detail;
 window.hapus = hapus;
+
+// Cetak Struk
+function cetakStruk(id) {
+    let url = '/pos/print/' + id + '?size=80';
+    let printWindow = window.open(url, 'receipt_' + id, 'width=400,height=600,scrollbars=yes');
+    if (printWindow) {
+        printWindow.focus();
+    }
+}
+
+window.cetakStruk = cetakStruk;
