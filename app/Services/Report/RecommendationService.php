@@ -24,10 +24,10 @@ class RecommendationService
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('analysis_date_display', function ($row) {
-                // Determine format
-                $dateFormatted = \Carbon\Carbon::parse($row->analysis_date)->translatedFormat('d F Y');
-                $startFormatted = \Carbon\Carbon::parse($row->period_start)->translatedFormat('d M Y');
-                $endFormatted = \Carbon\Carbon::parse($row->period_end)->translatedFormat('d M Y');
+                // Format tanggal ke Bahasa Indonesia via helper
+                $dateFormatted = formatTanggal($row->analysis_date);
+                $startFormatted = formatTanggal($row->period_start, 'd M Y', true);
+                $endFormatted = formatTanggal($row->period_end, 'd M Y', true);
                 
                 return '
                     <div class="user-info">
@@ -51,7 +51,7 @@ class RecommendationService
                 return '<span class="text-danger fw-bold">' . $row->total_dead . '</span>';
             })
             ->addColumn('action', function ($row) {
-                return '<a href="' . route('report.stock-recommendation.detail', ['id' => $row->id]) . '" class="btn btn-dim btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Detail"><em class="icon ni ni-eye d-none d-sm-inline me-1"></em> Detail</a>
+                return '<a href="' . route('report.stock-recommendation.detail', ['id' => $row->id]) . '" class="btn btn-dim btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Detail"><em class="icon ni ni-eye d-none d-sm-inline me-1"></em> Detail</a>
                         <a href="' . route('report.stock-recommendation.form', ['id' => $row->id]) . '" class="btn btn-dim btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
                         <a href="' . route('report.stock-recommendation.download-pdf', ['id' => $row->id]) . '" class="btn btn-dim btn-sm btn-outline-success" data-bs-toggle="tooltip" title="Download PDF" target="_blank"><em class="icon ni ni-download-cloud d-none d-sm-inline me-1"></em> Download</a>
                         <button type="button" class="btn btn-dim btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Hapus" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>

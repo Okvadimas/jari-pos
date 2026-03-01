@@ -228,11 +228,14 @@ $('#btn-save-recommendation').on('click', function(e) {
     }));
 
     if (items.length === 0) {
-        NioApp.Toast('Tidak ada data rekomendasi / kuantitas re-stok yang dimasukkan.', 'info', { position: 'top-right' });
+        const msg = window.IsEdit
+            ? 'Tidak ada perubahan kuantitas yang dilakukan.'
+            : 'Silakan masukkan kuantitas re-stok terlebih dahulu.';
+        NioApp.Toast(msg, 'info', { position: 'top-right' });
         return;
     }
 
-    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...');
+    btn.prop('disabled', true).html('<em class="spinner-border spinner-border-sm me-1"></em><span>Menyimpan Rekomendasi</span>');
 
     $.ajax({
         url: '/report/stock-recommendation/save/' + currentHistoryId,
@@ -319,8 +322,8 @@ $('#btn-generate-ai').on('click', function(e) {
                     // Difference = AI qty vs original
                     editedNominalDifferences[p.id] = (aiQty - originalQty) * price;
 
-                    // Store for save button
-                    if (aiQty > 0) savedQuantities[p.id] = aiQty;
+                    // Store ALL quantities (including 0) so backend stays in sync
+                    savedQuantities[p.id] = aiQty;
 
                     // Store AI description
                     if (ai && ai.desc) savedDescriptions[p.id] = ai.desc;
