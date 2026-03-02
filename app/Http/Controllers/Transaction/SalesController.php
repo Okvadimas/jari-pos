@@ -44,7 +44,7 @@ class SalesController extends Controller
 
         $summary = SalesService::getSummary($startDate, $endDate);
 
-        return response()->json([
+        return $this->successResponse('Success', [
             'total_transaksi' => number_format($summary->total_transaksi, 0, ',', '.'),
             'total_penjualan' => 'Rp ' . number_format($summary->total_penjualan, 0, ',', '.'),
             'total_diskon' => 'Rp ' . number_format($summary->total_diskon, 0, ',', '.'),
@@ -70,7 +70,7 @@ class SalesController extends Controller
             ];
         });
 
-        return response()->json([
+        return $this->successResponse('Success', [
             'sales_order' => $salesOrder,
             'customer_name' => $salesOrder->customer_name ?: (optional($salesOrder->company)->name ?? 'Guest'),
             'order_date_formatted' => Carbon::parse($salesOrder->order_date)->format('d M Y H:i'),

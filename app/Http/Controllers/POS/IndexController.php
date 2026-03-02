@@ -66,8 +66,8 @@ class IndexController extends Controller
     {
         $data = PosService::getOrderWithDetails($id);
 
-        if (!$data) {
-            return response()->json(['message' => 'Order not found'], 404);
+        if (!$order) {
+            return $this->errorResponse('Order not found', 404);
         }
 
         $order = $data['order'];
@@ -104,8 +104,8 @@ class IndexController extends Controller
     {
         $data = PosService::getOrderWithDetails($id);
 
-        if (!$data) {
-            return response()->json(['message' => 'Order not found'], 404);
+        if (!$order) {
+            return $this->errorResponse('Order not found', 404);
         }
 
         $order = $data['order'];

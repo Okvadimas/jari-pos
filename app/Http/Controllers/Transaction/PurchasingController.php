@@ -44,7 +44,7 @@ class PurchasingController extends Controller
 
         $summary = PurchasingService::getSummary($startDate, $endDate);
 
-        return response()->json([
+        return $this->successResponse('Success', [
             'total_transaksi' => number_format($summary->total_transaksi, 0, ',', '.'),
             'total_pembelian' => 'Rp ' . number_format($summary->total_pembelian, 0, ',', '.'),
         ]);
@@ -68,7 +68,7 @@ class PurchasingController extends Controller
             ];
         });
 
-        return response()->json([
+        return $this->successResponse('Success', [
             'purchase' => $purchase,
             'company_name' => $purchase->company ? $purchase->company->name : $purchase->supplier_name,
             'purchase_date_formatted' => Carbon::parse($purchase->purchase_date)->format('d M Y H:i'),

@@ -1,120 +1,37 @@
 $(document).ready(function() {
-    if (window.TodayHistoryId && window.TodayHistoryId !== 'null') {
-        currentHistoryId = window.TodayHistoryId;
-        loadSummary(currentHistoryId);
-        loadDataTable(currentHistoryId);
-        showSections();
-    }
+    loadSummary();
+    datatable();
 });
 
-let currentHistoryId = null;
-let dataTable = null;
-let estimatedTotals = {}; // Stores total nominal per product (rowId)
-let globalTotalCogsLimit = 0; // Stores actual COGS for validation
-
-const calculateGrandTotal = () => {
-    const sum = Object.values(estimatedTotals).reduce((a, b) => a + b, 0);
-    $('#grand-total-estimation').text('Rp ' + sum.toLocaleString('id-ID'));
-    
-    // Check against COGS limit
-    if (globalTotalCogsLimit > 0 && sum > globalTotalCogsLimit) {
-        $('#warn-est-total').text('Rp ' + sum.toLocaleString('id-ID'));
-        $('#warn-cogs-total').text('Rp ' + globalTotalCogsLimit.toLocaleString('id-ID'));
-        $('#estimasi-warning').slideDown(200);
-    } else {
-        $('#estimasi-warning').slideUp(200);
-    }
-}
-
 /**
- * Generate / Process Moving Status Analysis
+ * Load Summary Card    s
  */
-const generate = () => {
-    const btn = $('#btn-generate');
-    const originalText = btn.html();
-
-    Swal.fire({
-        title: 'Proses Analisis Moving Stock?',
-        text: 'Sistem akan menganalisis data penjualan 30 hari terakhir dan mengklasifikasikan semua produk.',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Proses!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Memproses...');
-
-            $.ajax({
-                url: '/report/stock-recommendation/generate',
-                type: 'POST',
-                success: function(response) {
-                    if (response.success) {
-                        NioApp.Toast(response.message, 'success', { position: 'top-right' });
-                        currentHistoryId = response.history_id;
-                        loadSummary(response.history_id);
-                        loadDataTable(response.history_id);
-                        showSections();
-
-                        // Reload page after short delay to update history list
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                    } else {
-                        NioApp.Toast(response.message, 'warning', { position: 'top-right' });
-                    }
-                },
-                error: function(xhr) {
-                    const msg = xhr.responseJSON?.message || 'Terjadi kesalahan.';
-                    NioApp.Toast(msg, 'error', { position: 'top-right' });
-                },
-                complete: function() {
-                    btn.prop('disabled', false).html(originalText);
-                }
-            });
-        }
-    });
-}
-
-/**
- * Load Summary Cards
- */
-const loadSummary = (historyId) => {
+const loadSummary = () => {
     $.ajax({
-        url: '/report/stock-recommendation/summary/' + historyId,
+        url: '/report/stock-recommendation/summary',
         type: 'GET',
         success: function(response) {
-            if (response.success) {
+            if (response.status) {
                 const d = response.data;
 
-                // Summary cards
-                $('#summary-fast').text(d.total_fast);
-                $('#summary-medium').text(d.total_medium);
-                $('#summary-slow').text(d.total_slow);
-                $('#summary-dead').text(d.total_dead);
+                const total     = d.total_variants > 0 ? d.total_variants : 1;
+                const pctFast   = Math.round((d.total_fast / total) * 100);
+                const pctMedium = Math.round((d.total_medium / total) * 100);
+                const pctSlow   = Math.round((d.total_slow / total) * 100);
+                const pctDead   = Math.round((d.total_dead / total) * 100);
 
-                // Analysis info panel
-                $('#info-analysis-date').text(d.analysis_date);
+                // Main Stat Cards
+                $('#stat-fast').text(d.total_fast);
+                $('#pct-fast-text').text(pctFast + '% dari total');
 
-                // Set global cogs limit for warning validation
-                globalTotalCogsLimit = d.cogs_balance ? parseFloat(d.cogs_balance) : 0;
-                // Re-validate UI
-                calculateGrandTotal();
+                $('#stat-medium').text(d.total_medium);
+                $('#pct-medium-text').text(pctMedium + '% dari total');
 
-                const gross = d.gross_profit_balance != null
-                    ? 'Rp ' + parseInt(d.gross_profit_balance).toLocaleString('id-ID')
-                    : '—';
-                const cogs = d.cogs_balance != null
-                    ? 'Rp ' + parseInt(d.cogs_balance).toLocaleString('id-ID')
-                    : '—';
+                $('#stat-slow').text(d.total_slow);
+                $('#pct-slow-text').text(pctSlow + '% dari total');
 
-                $('#info-gross').html('<span class="text-muted fw-normal fs-11px">Gross:</span> ' + gross);
-                $('#info-cogs').html('<span class="text-muted fw-normal fs-11px">COGS:</span> ' + cogs);
-
-                $('#info-period').text(d.period_start + ' s/d ' + d.period_end);
-                $('#info-period-days').text(d.period_days + ' hari');
-                $('#th-period-days').text(d.period_days);
-
-                $('#analysis-info').slideDown(300);
+                $('#stat-dead').text(d.total_dead);
+                $('#pct-dead-text').text(pctDead + '% dari total');
             }
         },
         error: function(xhr) {
@@ -126,42 +43,33 @@ const loadSummary = (historyId) => {
 /**
  * Initialize or reload DataTable
  */
-const loadDataTable = (historyId) => {
-    // Reset grand total every time a new table is loaded
-    estimatedTotals = {};
-    calculateGrandTotal();
+const datatable = () => {
 
-    if (dataTable) {
-        dataTable.destroy();
-        $('#table-recommendation tbody').empty();
-    }
-
-    dataTable = NioApp.DataTable('#table-recommendation', {
+    return NioApp.DataTable('#table-recommendation', {
         processing: true,
         serverSide: true,
         responsive: false,
         scrollX: true,
+        destroy: true,
         ajax: {
             url: '/report/stock-recommendation/datatable',
-            type: 'post',
-            data: function(d) {
-                d._token = token;
-                d.history_id = historyId;
-            },
+            type: 'GET',
             error: function(xhr) {
                 console.error('DataTable error', xhr);
             }
         },
-        order: [[3, 'desc']], // Default order by performance
+        order: [[1, 'desc']], // Default order by analysis date
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
-            { data: 'product_display', name: 'product_name' },
-            { data: 'current_stock', name: 'current_stock', className: 'text-center' },
-            { data: 'performance_display', name: 'performance_display', orderable: false, searchable: false },
-            { data: 'purchase_price_display', name: 'purchase_price', className: 'text-end' },
-            { data: 'qty_recommendation', name: 'qty_recommendation', orderable: false, searchable: false, className: 'text-center' },
-            { data: 'estimated_nominal', name: 'estimated_nominal', orderable: false, searchable: false, className: 'text-end' },
-            { data: 'ai_description', name: 'ai_description', orderable: false, searchable: false, className: 'text-center' },
+            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
+            { data: 'analysis_date_display', name: 'analysis_date' },
+            { data: 'total_variants', name: 'total_variants'},
+            { data: 'fast_display', name: 'fast_display' },
+            { data: 'medium_display', name: 'medium_display' },
+            { data: 'slow_display', name: 'slow_display' },
+            { data: 'dead_display', name: 'dead_display' },
+            { data: 'cogs_balance_display', name: 'cogs_balance' },
+            { data: 'total_estimated_amount_display', name: 'total_estimated_amount' },
         ],
         columnDefs: [
             { targets: '_all', className: 'nk-tb-col' },
@@ -169,47 +77,100 @@ const loadDataTable = (historyId) => {
     });
 }
 
-/**
- * Show the sections that are initially hidden
- */
-const showSections = () => {
-    $('#summary-section').slideDown(300);
-    $('#filter-section').slideDown(300);
-    $('#table-section').slideDown(300);
-}
-
 // Bind Generate event
-$('#btn-generate').on('click', generate);
-
-/**
- * Calculate Estimated Nominal when Qty Recommendation changes
- */
-$(document).on('input change', '.qty-input', function() {
-    let qty = parseInt($(this).val()) || 0;
+$('.btn-generate').on('click', function(e) {
+    e.preventDefault();
     
-    // Prevent negative numbers
-    if (qty < 0) {
-        qty = 0;
-        $(this).val(0);
-    }
-    
-    const price = parseFloat($(this).data('price')) || 0;
-    const rowId = $(this).data('id');
-    const total = qty * price;
-    
-    // Format to IDR
-    const formattedTotal = 'Rp ' + total.toLocaleString('id-ID');
-    
-    // Update the nominal label in the datatable row
-    $('#est-' + rowId).text(formattedTotal).attr('data-value', total);
-    
-    // Update Grand Total in the state dictionary
-    estimatedTotals[rowId] = total;
-    calculateGrandTotal();
+    // Show Modal
+    $('#modalGenerate').modal('show');
 });
 
-window.generate = generate;
+// Bind Submit
+$('#form-generate').on('submit', function(e) {
+    e.preventDefault();
+
+    const startDateVal = $('#start_date').val();
+    if (!startDateVal) {
+        NioApp.Toast('Tanggal mulai wajib diisi', 'warning', { position: 'top-right' });
+        return;
+    }
+
+    const btn = $('.btn-submit-generate');
+    const originalText = btn.first().html();
+    
+    // Calculate period_days based on selected start date vs yesterday
+    const startDate = new Date(startDateVal);
+    const today = new Date();
+    const diffTime = Math.abs(today - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    const periodDays = diffDays > 0 ? diffDays : 1;
+
+    btn.prop('disabled', true).html('<em class="spinner-border spinner-border-sm me-1"></em> <span>Memproses</span>');
+
+    $.ajax({
+        url: '/report/stock-recommendation/generate',
+        type: 'POST',
+        data: {
+            period_days: periodDays
+        },
+        success: function(response) {
+            if (response.status) {
+                NioApp.Toast(response.message, 'success', { position: 'top-right' });
+                $('#modalGenerate').modal('hide');
+                
+                // Reload page after short delay to update history list
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                NioApp.Toast(response.message, 'warning', { position: 'top-right' });
+            }
+        },
+        error: function(xhr) {
+            const msg = xhr.responseJSON?.message || 'Terjadi kesalahan.';
+            NioApp.Toast(msg, 'error', { position: 'top-right' });
+        },
+        complete: function() {
+            btn.prop('disabled', false).html(originalText);
+        }
+    });
+});
+
+// Handle Delete Action
+const hapus = (id) => {
+    Swal.fire({
+        title: 'Hapus Rekomendasi?',
+        text: "Data histori rekomendasi beserta detailnya akan dihapus",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/report/stock-recommendation/destroy/${id}`,
+                type: 'DELETE',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.status) {
+                        NioApp.Toast(response.message, 'success', { position: 'top-right' });
+                        $('#table-recommendation').DataTable().ajax.reload(null, false);
+                    } else {
+                        NioApp.Toast(response.message, 'error', { position: 'top-right' });
+                    }
+                },
+                error: function(xhr) {
+                    const msg = xhr.responseJSON?.message || 'Terjadi kesalahan saat menghapus data.';
+                    NioApp.Toast(msg, 'error', { position: 'top-right' });
+                }
+            });
+        }
+    });
+}
+
 window.loadSummary = loadSummary;
-window.loadDataTable = loadDataTable;
-window.calculateGrandTotal = calculateGrandTotal;
-window.showSections = showSections;
+window.datatable = datatable;
+window.hapus = hapus;

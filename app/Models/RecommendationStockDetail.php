@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RecommendationStockDetail extends Model
 {
     protected $table = 'recommendation_stock_details';
+    public $timestamps = false;
 
     protected $fillable = [
         'recommendation_stock_id',
@@ -24,6 +25,7 @@ class RecommendationStockDetail extends Model
         'sell_price',
         'safety_stock',
         'moq',
+        'qty_restock',
     ];
 
     protected $casts = [

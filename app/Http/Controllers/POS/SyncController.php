@@ -149,8 +149,7 @@ class SyncController extends Controller
             }
         }
         
-        return response()->json([
-            'status' => 'success',
+        return $this->successResponse('Sinkronisasi selesai', [
             'total' => count($transactions),
             'accepted' => count($accepted),
             'backorders' => count($backorders),
