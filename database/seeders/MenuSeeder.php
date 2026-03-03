@@ -125,6 +125,24 @@ class MenuSeeder extends Seeder
                 'url'       => '/transaction/sales',
             ],
 
+            // Chatbot
+            [
+                'code'      => 'CB',
+                'parent'    => '0',
+                'name'      => 'CHATBOT',
+                'icon'      => 'ni ni-chat-fill',
+                'url'       => null,
+            ],
+
+            // Child Chatbot
+            [
+                'code'      => 'CB-01',
+                'parent'    => 'CB',
+                'name'      => 'Asisten Virtual',
+                'icon'      => 'ni ni-chat-fill',
+                'url'       => '/chatbot/chatbot',
+            ],
+
             // Laporan
             [
                 'code'      => 'LP',

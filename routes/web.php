@@ -218,6 +218,15 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::delete('/stock-recommendation/destroy/{id}', [RecommendationController::class, 'destroy'])->name('report.stock-recommendation.destroy');
     });
 
+    // Chatbot
+    Route::group(['prefix' => 'chatbot', 'middleware' => 'menu-access:CB-01'], function () {
+        Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
+        Route::post('/ask', [ChatbotController::class, 'ask'])->name('chatbot.ask');
+        Route::post('/upload', [ChatbotController::class, 'uploadDocument'])->name('chatbot.upload');
+        Route::get('/documents', [ChatbotController::class, 'listDocuments'])->name('chatbot.documents');
+        Route::delete('/document/{id}', [ChatbotController::class, 'deleteDocument'])->name('chatbot.delete-document');
+    });
+
     // Utility Routes
     Route::group(['prefix' => 'utility'], function () {
         Route::get('/companies', [UtilityController::class, 'dataCompanies'])->name('utility.companies');
