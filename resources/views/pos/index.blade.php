@@ -514,7 +514,7 @@
                         <span class="text-muted small" id="storageInfo">Memuat info cache...</span>
                     </div>
 
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2 cache-actions">
                         <button class="btn btn-sm btn-outline-secondary" onclick="clearProductCache()">
                             <em class="icon ni ni-box me-1"></em> Hapus Produk
                         </button>

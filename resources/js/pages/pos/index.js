@@ -8,6 +8,9 @@ $(document).ready(function() {
     // Initialize OfflineDB
     initOfflineMode();
     
+    // Load saved settings from localStorage
+    loadSettings();
+    
     // Initialize
     setCurrentDate();
     loadCategories();
@@ -862,8 +865,8 @@ function placeOrder() {
                 $('#orderType').val('dine_in');
                 
                 renderCart();
-                updateProductButtons();
                 calculateTotal();
+                loadProducts(); // Refresh products to update stock & button states
             } else {
                  NioApp.Toast(response.message || 'Gagal menyimpan pesanan', 'error', { position: 'top-right' });
             }
@@ -1034,13 +1037,24 @@ function clearNotifications() {
 // ============================================
 // Settings Functions
 // ============================================
+
+/**
+ * Load settings from localStorage on page init
+ */
 function loadSettings() {
     const saved = localStorage.getItem('pos-settings');
     if (saved) {
-        // Merge saved settings with default to ensure new keys exist
-        settings = { ...settings, ...JSON.parse(saved) };
+        try {
+            const parsed = JSON.parse(saved);
+            // Merge saved settings into defaults (preserves any new keys)
+            Object.assign(settings, parsed);
+            console.log('[POS] Settings loaded from localStorage:', settings);
+        } catch (e) {
+            console.warn('[POS] Failed to parse saved settings:', e);
+        }
     }
     applySettings();
+    calculateTotal(); // Apply tax settings immediately
 }
 
 function openSettingsModal() {
