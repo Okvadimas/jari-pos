@@ -82,7 +82,7 @@
                                                 <form class="form-validate is-alter" id="form-data">
                                                     <div class="form-group">
                                                         <div class="form-label-group">
-                                                            <label class="form-label" for="username">Username</label>
+                                                            <label class="form-label" for="username">Username/Email</label>
                                                         </div>
                                                         <div class="form-control-wrap">
                                                             <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Masukkan username Anda" required>
@@ -104,6 +104,9 @@
                                                         <button type="submit" class="btn btn-lg btn-primary btn-block" id="btn-submit">Masuk</button>
                                                     </div>
                                                 </form>
+                                                <div class="form-note-s2 text-center pt-4">
+                                                    Belum punya akun? <a href="{{ route('register') }}"><strong>Daftar disini</strong></a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

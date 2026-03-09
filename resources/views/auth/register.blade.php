@@ -80,6 +80,7 @@
                                                     </div>
                                                 </div>
                                                 <form class="form-validate is-alter" id="form-data">
+                                                    <h6 class="text-primary mb-3"><em class="icon ni ni-user"></em> Data Pribadi</h6>
                                                     <div class="form-group">
                                                         <div class="form-label-group">
                                                             <label class="form-label" for="name">Nama Lengkap</label>
@@ -93,7 +94,7 @@
                                                             <label class="form-label" for="username">Username</label>
                                                         </div>
                                                         <div class="form-control-wrap">
-                                                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Masukkan username Anda" required>
+                                                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Masukkan username Anda" required pattern="^[a-z0-9]+$" title="Username hanya boleh huruf kecil dan angka, tanpa spasi" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '')">
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -113,14 +114,64 @@
                                                                 <em class="passcode-icon icon-show icon ni ni-eye"></em>
                                                                 <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
                                                             </a>
-                                                            <input type="password" class="form-control form-control-lg" name="password" id="password" placeholder="Masukkan kata sandi Anda" required>
+                                                            <input type="password" class="form-control form-control-lg" name="password" id="password" placeholder="Masukkan kata sandi Anda" required minlength="8" pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$" title="Minimal 8 karakter, harus ada huruf besar dan angka">
+                                                        </div>
+                                                        <div class="form-note mt-1 text-soft"><em class="icon ni ni-info"></em> Minimal 8 karakter, harus mengandung huruf besar dan angka</div>
+                                                    </div>
+
+                                                    <hr class="my-4">
+                                                    <h6 class="text-primary mb-3"><em class="icon ni ni-building"></em> Data Perusahaan</h6>
+
+                                                    <div class="form-group">
+                                                        <div class="form-label-group">
+                                                            <label class="form-label" for="company_name">Nama Perusahaan</label>
+                                                        </div>
+                                                        <div class="form-control-wrap">
+                                                            <input type="text" class="form-control form-control-lg" id="company_name" name="company_name" placeholder="Masukkan nama perusahaan" required>
                                                         </div>
                                                     </div>
+                                                    <div class="form-group">
+                                                        <div class="form-label-group">
+                                                            <label class="form-label" for="business_category">Kategori Usaha</label>
+                                                        </div>
+                                                        <div class="form-control-wrap">
+                                                            <select class="form-select form-control form-control-lg" id="business_category" name="business_category" required>
+                                                                <option value="" disabled selected>Pilih Kategori Usaha</option>
+                                                                <option value="retail">Retail</option>
+                                                                <option value="restoran">Restoran</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="form-label-group">
+                                                            <label class="form-label" for="company_email">Email Perusahaan</label>
+                                                        </div>
+                                                        <div class="form-control-wrap">
+                                                            <input type="email" class="form-control form-control-lg" id="company_email" name="company_email" placeholder="Masukkan email perusahaan" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="form-label-group">
+                                                            <label class="form-label" for="company_phone">Telepon Perusahaan</label>
+                                                        </div>
+                                                        <div class="form-control-wrap">
+                                                            <input type="text" class="form-control form-control-lg" id="company_phone" name="company_phone" placeholder="Masukkan nomor telepon perusahaan">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="form-label-group">
+                                                            <label class="form-label" for="company_address">Alamat Perusahaan</label>
+                                                        </div>
+                                                        <div class="form-control-wrap">
+                                                            <textarea class="form-control" id="company_address" name="company_address" placeholder="Masukkan alamat perusahaan" rows="2"></textarea>
+                                                        </div>
+                                                    </div>
+
                                                     <div class="form-group mt-5">
-                                                        <button type="submit" class="btn btn-lg btn-primary btn-block">Daftar</button>
+                                                        <button type="submit" class="btn btn-lg btn-primary btn-block" id="btn-submit">Daftar</button>
                                                     </div>
                                                 </form>
-                                                <div class="form-note-s2 text-center pt-4"> Sudah punya akun? <a href="{{ route('login') }}">Masuk disinis</a>
+                                                <div class="form-note-s2 text-center pt-4"> Sudah punya akun? <a href="{{ route('login') }}">Masuk disini</a>
                                                 </div>
                                             </div>
                                         </div>
