@@ -66,10 +66,16 @@ class AuthService
      */
     public static function login(array $credentials, Request $request): array
     {
-        if (!Auth::attempt($credentials)) {
+        $loginField = $credentials['username'];
+        $password   = $credentials['password'];
+
+        // Detect if input is email or username
+        $fieldName  = filter_var($loginField, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        if (!Auth::attempt([$fieldName => $loginField, 'password' => $password])) {
             return [
                 'status'  => false,
-                'message' => 'Username atau kata sandi salah. Silahkan cek kembali.',
+                'message' => 'Username/Email atau kata sandi salah. Silahkan cek kembali.',
             ];
         }
 

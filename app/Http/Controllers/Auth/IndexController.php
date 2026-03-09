@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 // Load Service
 use App\Services\Auth\AuthService;
@@ -118,7 +120,7 @@ class IndexController extends Controller
 
     public function logout()
     {
-        \Illuminate\Support\Facades\Auth::logout();
+        Auth::logout();
         return redirect()->route('login');
     }
 
@@ -131,7 +133,7 @@ class IndexController extends Controller
     {
         $request->validate(['password' => 'required']);
 
-        if (\Illuminate\Support\Facades\Hash::check($request->password, \Illuminate\Support\Facades\Auth::user()->password)) {
+        if (Hash::check($request->password, Auth::user()->password)) {
             return $this->successResponse('Berhasil membuka kunci layar');
         }
 

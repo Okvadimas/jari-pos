@@ -16,7 +16,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required',
+            'username' => 'required|string',
             'password' => 'required',
         ];
     }
@@ -24,7 +24,7 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username.required' => 'Username wajib diisi',
+            'username.required' => 'Username/Email wajib diisi',
             'password.required' => 'Kata Sandi wajib diisi',
         ];
     }

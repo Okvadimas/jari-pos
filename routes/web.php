@@ -47,20 +47,24 @@ Route::get('/offline', function () {
 })->name('offline');
 
 Route::get('/login',            [AuthController::class, 'login'])->middleware('redirect-if-authenticated')->name('login');
-Route::post('/login',           [AuthController::class, 'processLogin'])->middleware('ajax-request');
+Route::post('/login',           [AuthController::class, 'processLogin'])->middleware(['ajax-request', 'throttle:5,1']);
 Route::get('/register',         [AuthController::class, 'register'])->name('register');
 Route::post('/register',        [AuthController::class, 'processRegister']);
 Route::get('/email/verify',     [AuthController::class, 'verifyNotice'])->name('verification.notice');
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
-Route::post('/email/verification-resend', [AuthController::class, 'resendVerification'])->name('verification.resend');
+Route::post('/email/verification-resend', [AuthController::class, 'resendVerification'])->middleware('throttle:3,1')->name('verification.resend');
 Route::get('/reset-password',   [AuthController::class, 'resetPassword'])->name('reset-password');
-Route::post('/reset-password',  [AuthController::class, 'processResetPassword']);
+Route::post('/reset-password',  [AuthController::class, 'processResetPassword'])->middleware('throttle:5,1');
 
+// Auth routes (no email verification required)
 Route::group(['middleware' => ['web', 'auth']], function () {
-
     Route::get('/logout',           [AuthController::class, 'logout'])->name('logout');
     Route::get('/lock-screen',      [AuthController::class, 'lockScreen'])->name('lock-screen');
     Route::post('/unlock-screen',   [AuthController::class, 'unlockScreen'])->name('unlock-screen');
+});
+
+// Auth + Verified routes (email verification required)
+Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
 
     // Dashboard
     Route::get('/dashboard',        [DashboardController::class, 'index'])->name('dashboard');

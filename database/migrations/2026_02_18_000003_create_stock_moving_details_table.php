@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('purchase_price', 15, 0)->default(0)->comment('Snapshot purchase price');
             $table->decimal('sell_price', 15, 0)->default(0)->comment('Snapshot sell price');
             $table->integer('safety_stock')->default(0)->comment('ceil(avg_daily_sales × lead_time)');
+            $table->integer('qty_restock')->nullable()->default(0);
             $table->integer('moq')->default(1)->comment('Snapshot minimum order qty');
 
             $table->index('recommendation_stock_id');

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('total_dead')->default(0);
             $table->decimal('cogs_balance', 15, 0)->nullable()->comment('Modal kembali (purchase_price × qty terjual)');
             $table->decimal('gross_profit_balance', 15, 0)->nullable()->comment('Keuntungan kotor (revenue - COGS)');
+            $table->decimal('total_estimated_nominal', 15, 2)->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();

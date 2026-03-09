@@ -18,9 +18,9 @@ class RegisterRequest extends FormRequest
         return [
             // User fields
             'name'              => 'required|string|max:255',
-            'username'          => 'required|string|max:255|unique:users,username',
+            'username'          => 'required|string|alpha_num|regex:/^[a-z0-9]+$/|max:255|unique:users,username',
             'email'             => 'required|email|unique:users,email',
-            'password'          => 'required|min:4',
+            'password'          => ['required', 'min:8', 'regex:/^(?=.*[A-Z])(?=.*[0-9]).+$/'],
             // Company fields
             'company_name'      => 'required|string|max:255',
             'business_category' => 'required|in:retail,restoran',
@@ -35,12 +35,15 @@ class RegisterRequest extends FormRequest
         return [
             'name.required'              => 'Nama Lengkap wajib diisi',
             'username.required'          => 'Username wajib diisi',
+            'username.alpha_num'         => 'Username hanya boleh huruf dan angka',
+            'username.regex'             => 'Username hanya boleh huruf kecil dan angka, tanpa spasi',
             'username.unique'            => 'Username sudah digunakan',
             'email.required'             => 'Email wajib diisi',
             'email.email'                => 'Email tidak valid',
             'email.unique'               => 'Email sudah terdaftar',
             'password.required'          => 'Kata Sandi wajib diisi',
-            'password.min'               => 'Kata Sandi minimal 4 karakter',
+            'password.min'               => 'Kata Sandi minimal 8 karakter',
+            'password.regex'             => 'Kata Sandi harus mengandung minimal 1 huruf besar dan 1 angka',
             'company_name.required'      => 'Nama Perusahaan wajib diisi',
             'business_category.required' => 'Kategori Usaha wajib dipilih',
             'business_category.in'       => 'Kategori Usaha tidak valid',

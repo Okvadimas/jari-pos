@@ -94,7 +94,7 @@
                                                             <label class="form-label" for="username">Username</label>
                                                         </div>
                                                         <div class="form-control-wrap">
-                                                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Masukkan username Anda" required>
+                                                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Masukkan username Anda" required pattern="^[a-z0-9]+$" title="Username hanya boleh huruf kecil dan angka, tanpa spasi" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '')">
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -114,8 +114,9 @@
                                                                 <em class="passcode-icon icon-show icon ni ni-eye"></em>
                                                                 <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
                                                             </a>
-                                                            <input type="password" class="form-control form-control-lg" name="password" id="password" placeholder="Masukkan kata sandi Anda" required>
+                                                            <input type="password" class="form-control form-control-lg" name="password" id="password" placeholder="Masukkan kata sandi Anda" required minlength="8" pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$" title="Minimal 8 karakter, harus ada huruf besar dan angka">
                                                         </div>
+                                                        <div class="form-note mt-1 text-soft"><em class="icon ni ni-info"></em> Minimal 8 karakter, harus mengandung huruf besar dan angka</div>
                                                     </div>
 
                                                     <hr class="my-4">
