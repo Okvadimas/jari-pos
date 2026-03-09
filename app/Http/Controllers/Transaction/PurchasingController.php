@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 use App\Services\Transaction\PurchasingService;
 use App\Models\Purchase;
-use App\Http\Requests\Transaction\StorePurchasingRequest;
+use App\Http\Requests\Transaction\Purchasing\StorePurchasingRequest;
 
 class PurchasingController extends Controller
 {

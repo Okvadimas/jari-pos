@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use App\Services\Inventory\StockOpnameService;
 use App\Repositories\Inventory\StockOpnameRepository;
 use App\Models\StockOpname;
-use App\Http\Requests\Inventory\StoreStockOpnameRequest;
+use App\Http\Requests\Inventory\StockOpname\StoreStockOpnameRequest;
 
 class StockOpnameController extends Controller
 {

@@ -12,11 +12,11 @@
                                 <h3 class="nk-block-title page-title">Manajemen Akses</h3>
                             </div>
                             <div class="nk-block-head-content d-none d-lg-block">
-                                <a href="{{ route('akses-management') }}" class="btn btn-primary"><em class="icon ni ni-arrow-left"></em><span>Kembali</span></a>
+                                <a href="{{ route('management.permission.index') }}" class="btn btn-primary"><em class="icon ni ni-arrow-left"></em><span>Kembali</span></a>
                             </div>
                         </div>
                         <div class="nk-block-head-content mt-3 d-block d-lg-none">
-                            <a href="{{ route('akses-management') }}" class="btn btn-primary"><em class="icon ni ni-arrow-left"></em><span>Kembali</span></a>
+                            <a href="{{ route('management.permission.index') }}" class="btn btn-primary"><em class="icon ni ni-arrow-left"></em><span>Kembali</span></a>
                         </div>
                     </div>
                     <div class="nk-block">

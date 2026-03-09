@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 // Load Service
 use App\Services\Dashboard\DashboardService;
 
-class IndexController extends Controller
+class DashboardController extends Controller
 {
     private $pageTitle = 'Dashboard';
 

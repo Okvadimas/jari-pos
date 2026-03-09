@@ -12,11 +12,11 @@
                                 <h3 class="nk-block-title page-title">Manajemen User</h3>
                             </div>
                             <div class="nk-block-head-content d-none d-lg-block">
-                                <a href="{{ route('user-management') }}" class="btn btn-primary"><em class="icon ni ni-arrow-left"></em><span>Kembali</span></a>
+                                <a href="{{ route('management.user.index') }}" class="btn btn-primary"><em class="icon ni ni-arrow-left"></em><span>Kembali</span></a>
                             </div>
                         </div>
                         <div class="nk-block-head-content mt-3 d-block d-lg-none">
-                            <a href="{{ route('user-management') }}" class="btn btn-primary"><em class="icon ni ni-arrow-left"></em><span>Kembali</span></a>
+                            <a href="{{ route('management.user.index') }}" class="btn btn-primary"><em class="icon ni ni-arrow-left"></em><span>Kembali</span></a>
                         </div>
                     </div>
                     <div class="nk-block">
