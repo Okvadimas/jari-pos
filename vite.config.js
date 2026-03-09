@@ -146,6 +146,12 @@ export default defineConfig({
                 // Report - Stock Recommendation
                 // ================================
                 'resources/js/pages/report/recommendation/index.js',
+
+                // ================================
+                // Chatbot
+                // ================================
+                'resources/js/pages/chatbot/index.js',
+                'resources/css/pages/chatbot/index.css',
             ],
             refresh: true,
         }),

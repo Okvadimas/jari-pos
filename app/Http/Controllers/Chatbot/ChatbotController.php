@@ -22,7 +22,42 @@ class ChatbotController extends Controller
     }
 
     /**
-     * Handle chat messages from the Admin
+     * Render the Chatbot full-page view
+     */
+    public function index()
+    {
+        $companyId = Auth::user()->company_id;
+        $documents = KnowledgeBaseDocument::where('company_id', $companyId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('chatbot.index', [
+            'title' => 'Asisten Virtual',
+            'documents' => $documents,
+            'css' => ['resources/css/pages/chatbot/index.css'],
+            'js' => ['resources/js/pages/chatbot/index.js'],
+        ]);
+    }
+
+    /**
+     * List Knowledge Base documents for the authenticated user's company
+     */
+    public function listDocuments()
+    {
+        try {
+            $companyId = Auth::user()->company_id;
+            $documents = KnowledgeBaseDocument::where('company_id', $companyId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return $this->successResponse('Success', $documents);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Gagal memuat daftar dokumen: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Handle chat messages
      */
     public function ask(Request $request)
     {
@@ -31,8 +66,7 @@ class ChatbotController extends Controller
         ]);
 
         try {
-            // For API testing, default to company_id = 1 if not provided
-            $companyId = $request->input('company_id', 1);
+            $companyId = Auth::user()->company_id;
             $reply = $this->chatbotService->ask($companyId, $request->message);
 
             return $this->successResponse('Success', [
@@ -53,8 +87,7 @@ class ChatbotController extends Controller
         ]);
 
         try {
-            // For API testing, default to company_id = 1 if not provided
-            $companyId = $request->input('company_id', 1);
+            $companyId = Auth::user()->company_id;
             $file = $request->file('file');
             
             // Store file
@@ -66,13 +99,13 @@ class ChatbotController extends Controller
                 'filename' => $file->getClientOriginalName(),
                 'file_path' => $path,
                 'type' => $file->getClientOriginalExtension(),
-                'status' => 'pending' // chunking might take time, ideal for jobs, but sync for now
+                'status' => 'pending'
             ]);
 
             // Process in background using Job
             \App\Jobs\ProcessKnowledgeBaseDocument::dispatch($document);
 
-            return $this->successResponse('Dokumen berhasil diunggah. AI sedang mempelajari dokumen Anda di latar belakang.', $document);
+            return $this->successResponse('Dokumen berhasil diunggah. AI sedang mempelajari dokumen Anda.', $document);
 
         } catch (\Exception $e) {
             return $this->errorResponse('Gagal mengunggah dokumen: ' . $e->getMessage(), 500);
@@ -82,14 +115,13 @@ class ChatbotController extends Controller
     /**
      * Delete a Document from DB, file storage, and Pinecone
      */
-    public function deleteDocument(Request $request, $id)
+    public function deleteDocument($id, Request $request)
     {
         try {
-            // For API testing, default to company_id = 1 if not provided
-            $companyId = $request->input('company_id', 1);
+            $companyId = Auth::user()->company_id ?? $request->company_id;
             $document = KnowledgeBaseDocument::where('company_id', $companyId)->find($id);
 
-            // 1. Delete vectors from Pinecone (Always attempt to clear vector DB to be strongly idempotent)
+            // 1. Delete vectors from Pinecone
             $this->chunkerService->deleteDocumentVectors($companyId, $id);
             
             if ($document) {
@@ -115,8 +147,7 @@ class ChatbotController extends Controller
     public function deleteAllDocuments(Request $request)
     {
         try {
-            // For API testing, default to company_id = 1 if not provided
-            $companyId = $request->input('company_id', 1);
+            $companyId = Auth::user()->company_id ?? $request->company_id;
             $documents = KnowledgeBaseDocument::where('company_id', $companyId)->get();
 
             // 1. Delete all vectors from Pinecone for this company
@@ -132,7 +163,7 @@ class ChatbotController extends Controller
             // 3. Delete DB records
             KnowledgeBaseDocument::where('company_id', $companyId)->delete();
 
-            return $this->successResponse('Seluruh dokumen berhasil dihapus dari basis pengetahuan perusahaan ini.');
+            return $this->successResponse('Seluruh dokumen berhasil dihapus dari basis pengetahuan.');
 
         } catch (\Exception $e) {
             return $this->errorResponse('Gagal menghapus seluruh dokumen: ' . $e->getMessage(), 500);
