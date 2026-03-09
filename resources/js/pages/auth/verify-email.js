@@ -1,28 +1,24 @@
 /**
- * Register Page JavaScript
- * 
- * This file contains JavaScript specific to the register page.
- * Load this in your register blade template with:
- * @vite('resources/js/pages/auth/register.js')
+ * Verify Email Page JavaScript
  */
 
 $(document).ready(function() {
-    console.log('Register page scripts loaded');
+    console.log('Verify email page scripts loaded');
 
-    $('#form-data').submit(function(e) {
+    $('#resend-form').submit(function(e) {
         e.preventDefault();
         
-        let $btn = $('#btn-submit');
+        let $btn = $('#btn-resend');
         $btn.attr('disabled', true);
-        $btn.html('<em class="icon spinner-border spinner-border-sm" role="status" aria-hidden="true"></em><span> Mendaftar...</span>');
+        $btn.html('<em class="icon spinner-border spinner-border-sm" role="status" aria-hidden="true"></em><span> Mengirim...</span>');
 
         $.ajax({
-            url: '/register',
+            url: '/email/verification-resend',
             type: 'POST',
             data: $(this).serialize(),
             complete: function() {
                 $btn.attr('disabled', false);
-                $btn.html('Daftar');
+                $btn.html('<em class="icon ni ni-send"></em><span>Kirim Ulang Email Verifikasi</span>');
             },
             success: function(response) {
                 if (response.status) {
@@ -30,9 +26,6 @@ $(document).ready(function() {
                         position: 'top-right',
                         duration: 3000
                     });
-                    setTimeout(() => {
-                        window.location.href = '/email/verify';
-                    }, 2000);
                 } else {
                     NioApp.Toast(response.message, 'error', {
                         position: 'top-right',
@@ -43,6 +36,6 @@ $(document).ready(function() {
             error: function(xhr) {
                 handleAjaxError(xhr);
             }
-        });        
+        });
     });
 });

@@ -12,11 +12,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        $isMysql = DB::connection()->getDriverName() === 'mysql';
+
         // Create counters table
-        Schema::create('counters', function (Blueprint $table) {
+        Schema::create('counters', function (Blueprint $table) use ($isMysql) {
             $table->id();
-            $table->string('company', 5)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
-            $table->string('modul', 5)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+
+            $company = $table->string('company', 5);
+            $modul = $table->string('modul', 5);
+
+            if ($isMysql) {
+                $company->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+                $modul->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            }
+
             $table->integer('year');
             $table->integer('month');
             $table->integer('counter_value');
@@ -24,6 +33,11 @@ return new class extends Migration
             // Unique constraint for company, modul, year, month combination
             $table->unique(['company', 'modul', 'year', 'month'], 'uniq_company_modul_year_month');
         });
+
+        // Stored procedures are MySQL-only; skip on SQLite (used in tests)
+        if (! $isMysql) {
+            return;
+        }
 
         // Create stored procedure with FOR UPDATE locking
         DB::unprepared('DROP PROCEDURE IF EXISTS generate_transaction_number');

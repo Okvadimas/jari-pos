@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code', 10)->nullable()->unique();
             $table->string('name');
+            $table->enum('business_category', ['retail', 'restoran'])->nullable();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
