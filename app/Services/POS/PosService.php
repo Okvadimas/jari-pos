@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\POS;
 
-use App\Repositories\PosRepository;
+use App\Repositories\POS\PosRepository;
 use App\Services\Stock\StockProductService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;

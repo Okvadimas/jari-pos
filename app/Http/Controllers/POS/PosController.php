@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 // Load Service
-use App\Services\PosService;
+use App\Services\POS\PosService;
 use App\Http\Requests\POS\StorePosRequest;
 
-class IndexController extends Controller
+class PosController extends Controller
 {
     public function index()
     {

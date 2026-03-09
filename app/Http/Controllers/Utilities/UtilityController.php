@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Utilities;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Repositories\UtilityRepository;
+use App\Repositories\Utilities\UtilityRepository;
 
 class UtilityController extends Controller
 {
