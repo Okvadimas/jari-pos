@@ -128,9 +128,16 @@
                 <div class="chat-body flex-grow-1 position-relative" id="chat-body">
                     <div class="chat-messages" id="chat-messages">
                         {{-- Welcome message --}}
+                        @php
+                            $hasIndexedDocs = $documents->whereIn('status', ['ready', 'completed'])->count() > 0;
+                        @endphp
                         <div class="cb-msg cb-msg-bot">
                             <div class="cb-msg-body">
-                                <div class="cb-msg-bubble">Halo! Saya asisten AI Anda. Ada yang bisa saya bantu terkait dokumen yang telah diunggah?</div>
+                                @if($hasIndexedDocs)
+                                    <div class="cb-msg-bubble">Halo! Saya asisten AI Anda. Ada yang bisa saya bantu terkait dokumen yang telah diunggah?</div>
+                                @else
+                                    <div class="cb-msg-bubble">Halo! Sebelum kita mulai, silakan upload minimal 1 dokumen ke basis pengetahuan dan pastikan statusnya sudah <strong>Indexed</strong>. Setelah itu, Anda bisa langsung bertanya kepada saya.</div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -200,6 +207,7 @@
             deleteDocument: "{{ url('/chatbot/document') }}",
         },
         csrfToken: "{{ csrf_token() }}",
+        hasIndexedDocs: {{ $hasIndexedDocs ? 'true' : 'false' }},
         dropzone: {
             maxFileSize: {{ config('chatbot.dropzone.max_file_size', 10) }},
             maxFiles: {{ config('chatbot.dropzone.max_files', 1) }},

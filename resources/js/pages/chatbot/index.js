@@ -14,6 +14,9 @@ const DROPZONE = CONFIG.dropzone || {
     acceptedExtensions: '.pdf,.txt'
 };
 
+// Whether at least one document with status 'ready'/'completed' exists for this company
+let hasIndexedDocs = CONFIG.hasIndexedDocs || false;
+
 let isSending  = false;
 let selectedFile = null;
 
@@ -118,6 +121,16 @@ const sendMessage = () => {
     const message = $input.val().trim();
     if (!message || isSending) return;
 
+    // Guard: no indexed documents
+    if (!hasIndexedDocs) {
+        renderMessage('user', message);
+        $input.val('').css('height', 'auto');
+        updateCharCount();
+        renderMessage('bot', 'Silakan upload minimal 1 dokumen yang sudah berhasil diindeks (status: Indexed) terlebih dahulu sebelum memulai percakapan.');
+        scrollToBottom();
+        return;
+    }
+
     isSending = true;
     $('#btn-send').prop('disabled', true);
 
@@ -192,6 +205,8 @@ const renderMessage = (role, text) => {
 const formatBotMessage = (text) => {
     let html = escapeHtml(text);
 
+    // Strip markdown headings (###, ##, #) — replace with bold text instead
+    html = html.replace(/^#{1,6}\s+(.+)/gm, '<strong>$1</strong>');
     // Code blocks ```...```
     html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
     // Inline code
@@ -267,8 +282,8 @@ const updateCharCount = () => {
     }
     $('#char-count').text(`${val.length}/100`);
     
-    // Only enable if there's text AND not currently sending
-    $('#btn-send').prop('disabled', val.trim().length === 0 || isSending);
+    // Enable only if: text present + not sending + has indexed documents
+    $('#btn-send').prop('disabled', val.trim().length === 0 || isSending || !hasIndexedDocs);
 };
 
 /**
@@ -569,6 +584,10 @@ const refreshDocumentList = () => {
 const renderDocumentList = (documents) => {
     const $list = $('#doc-list');
     $list.empty();
+
+    // Recompute indexed docs state so button stays accurate without page reload
+    hasIndexedDocs = documents.some(d => d.status === 'ready' || d.status === 'completed');
+    updateCharCount(); // re-evaluate button disabled state
 
     if (documents.length === 0) {
         $list.html(`
