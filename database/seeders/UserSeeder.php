@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
             'company_id' => 1, // Jari POS Official
             'start_date' => now(),
             'end_date' => now()->addYears(5),
+            'email_verified_at' => now(),
             'created_by' => 1,
             'updated_by' => 1,
         ]);
@@ -33,6 +34,7 @@ class UserSeeder extends Seeder
             'company_id' => 2, // Demo Company
             'start_date' => now(),
             'end_date' => now()->addYears(5),
+            'email_verified_at' => now(),
             'created_by' => 1,
             'updated_by' => 1,
         ]);

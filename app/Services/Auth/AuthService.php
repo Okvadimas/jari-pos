@@ -200,4 +200,30 @@ class AuthService
             'message' => 'Kata sandi baru telah dikirim ke email Anda.',
         ];
     }
+
+    /**
+     * Handle password change
+     *
+     * @param array $data
+     * @return array ['status' => bool, 'message' => string]
+     */
+    public static function changePassword(array $data): array
+    {
+        $user = Auth::user();
+
+        if (!Hash::check($data['current_password'], $user->password)) {
+            return [
+                'status'  => false,
+                'message' => 'Kata sandi saat ini tidak cocok.',
+            ];
+        }
+
+        $user->password = Hash::make($data['new_password']);
+        $user->save();
+
+        return [
+            'status'  => true,
+            'message' => 'Kata sandi berhasil diubah.',
+        ];
+    }
 }

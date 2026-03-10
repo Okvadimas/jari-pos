@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Install system dependencies
 RUN apk add --no-cache \
@@ -17,6 +17,10 @@ WORKDIR /var/www
 
 # Salin source code untuk instalasi dependensi saat build
 COPY . /var/www
+
+# Buat direktori cache Laravel dan .env sementara untuk build
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache \
+    && cp .env.example .env
 
 # Instalasi dependensi PHP & Node saat build
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader \
