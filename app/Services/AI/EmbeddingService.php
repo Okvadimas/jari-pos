@@ -20,7 +20,8 @@ class EmbeddingService
         try {
              // Convert string to array as Embeddings::for requires array
              $inputs = is_string($text) ? [$text] : $text;
-             return Embeddings::for($inputs)->generate();
+             $embeddingModel = config('ai.chatbot.embedding_model');
+             return Embeddings::for($inputs)->generate(model: $embeddingModel);
         } catch (\Exception $e) {
             Log::error('EmbeddingService Error (Embeddings): ' . $e->getMessage());
             throw $e;

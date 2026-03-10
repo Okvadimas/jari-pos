@@ -16,7 +16,7 @@
                     <div class="dropzone-area" id="dropzone-area">
                         <em class="icon ni ni-upload dropzone-icon"></em>
                         <span class="dropzone-label" id="file-label">Klik atau drag file ke sini</span>
-                        <span class="dropzone-hint">PDF, TXT — Maks {{ config('chatbot.dropzone.max_file_size', 10) }}MB</span>
+                        <span class="dropzone-hint">PDF, TXT — Maks 5MB</span>
                     </div>
                     <input type="file" id="file-input" accept=".pdf,.txt" hidden>
 
@@ -32,7 +32,12 @@
 
                 {{-- Document List Section --}}
                 <div class="cb-card mt-3 flex-grow-1 d-flex flex-column" style="min-height: 250px;">
-                    <h5 class="cb-card-title"><em class="icon ni ni-folder me-2 text-primary"></em>Dokumen Tersimpan</h5>
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <h5 class="cb-card-title mb-0"><em class="icon ni ni-folder me-2 text-primary"></em>Dokumen Tersimpan</h5>
+                        <button class="btn btn-sm btn-outline-light border text-muted" id="btn-refresh-docs" title="Refresh status dokumen" style="padding: 4px 10px; font-size: 12px; border-radius: 6px;">
+                            <em class="icon ni ni-reload" id="refresh-icon"></em>
+                        </button>
+                    </div>
                     <div class="doc-list-container flex-grow-1" id="doc-list">
                         @forelse ($documents as $doc)
                             <div class="doc-item-card" data-id="{{ $doc->id }}">
@@ -209,8 +214,8 @@
         csrfToken: "{{ csrf_token() }}",
         hasIndexedDocs: {{ $hasIndexedDocs ? 'true' : 'false' }},
         dropzone: {
-            maxFileSize: {{ config('chatbot.dropzone.max_file_size', 10) }},
-            maxFiles: {{ config('chatbot.dropzone.max_files', 1) }},
+            maxFileSize: 5,
+            maxFiles: 1,
             acceptedTypes: ['application/pdf', 'text/plain'],
             acceptedExtensions: '.pdf,.txt'
         }

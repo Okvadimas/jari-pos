@@ -5,7 +5,7 @@ namespace App\Services\AI;
 use App\Models\KnowledgeBaseDocument;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Spatie\PdfToText\Pdf;
+use Smalot\PdfParser\Parser as PdfParser;
 use Probots\Pinecone\Client as PineconeClient;
 
 class DocumentChunkerService
@@ -131,7 +131,9 @@ class DocumentChunkerService
         $path = Storage::disk('local')->path($document->file_path);
         
         if ($document->type === 'pdf') {
-            return Pdf::getText($path);
+            $parser = new PdfParser();
+            $pdf = $parser->parseFile($path);
+            return $pdf->getText();
         } else if ($document->type === 'txt') {
             return file_get_contents($path);
         }

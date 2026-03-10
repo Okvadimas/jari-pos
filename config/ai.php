@@ -126,4 +126,24 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Chatbot Model Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configure which models to use for the chatbot features.
+    | Override via .env: AI_CHAT_MODEL, AI_EMBEDDING_MODEL
+    |
+    | Mistral models:
+    |   Chat:      mistral-large-latest, mistral-medium-latest, mistral-small-latest
+    |   Embedding: mistral-embed
+    |
+    */
+
+    'chatbot' => [
+        'chat_provider' => env('AI_CHAT_PROVIDER', null),     // null = use 'default' provider. Options: mistral, deepseek, openai
+        'chat_model' => env('AI_CHAT_MODEL', null),           // null = provider default
+        'embedding_model' => env('AI_EMBEDDING_MODEL', null), // null = provider default
+    ],
+
 ];

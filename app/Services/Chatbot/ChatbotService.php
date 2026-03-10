@@ -37,7 +37,7 @@ class ChatbotService
             // 2. Query Pinecone for similar context
             $pineconeResponse = $this->pinecone->data()->vectors()->query(
                 vector: $vectorFloat,
-                topK: 5,
+                topK: 3,
                 includeMetadata: true,
                 filter: [
                     'company_id' => $companyId
@@ -59,11 +59,13 @@ class ChatbotService
             $userPrompt = "Context Information:\n" . $contextText . "\n\n" . "User Question: " . $question;
 
             $agent = \App\AI\Agents\ChatbotAgent::make();
-            return (string) $agent->prompt($userPrompt);
+            $chatProvider = config('ai.chatbot.chat_provider');
+            $chatModel = config('ai.chatbot.chat_model');
+            return (string) $agent->prompt($userPrompt, provider: $chatProvider, model: $chatModel);
 
         } catch (\Exception $e) {
             Log::error('ChatbotService RAG Error: ' . $e->getMessage());
-            return "Terjadi kesalahan pada sistem AI kami: " . $e->getMessage();
+            return "Terjadi kesalahan pada sistem AI kami, Mohon coba lagi beberapa saat lagi 🙏";
         }
     }
 }
