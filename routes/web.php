@@ -70,6 +70,10 @@ Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
     Route::get('/dashboard',        [DashboardController::class, 'index'])->name('dashboard');
     // End Dashboard
 
+    // Change Password
+    Route::get('/change-password',  [AuthController::class, 'changePassword'])->name('change-password');
+    Route::post('/change-password', [AuthController::class, 'processChangePassword'])->name('change-password.process');
+
     // POS Routes
     Route::group(['prefix' => 'pos', 'middleware' => ['web', 'auth']], function () {
         Route::get('/', [POSController::class, 'index'])->name('pos.index');
