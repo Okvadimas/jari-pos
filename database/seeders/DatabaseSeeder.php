@@ -38,6 +38,9 @@ class DatabaseSeeder extends Seeder
             StockDailyBalanceSeeder::class,
             RecommendationStockSeeder::class,
             RecommendationStockDetailSeeder::class,
+
+            // Knowledge Base
+            KnowledgeBaseDocumentSeeder::class,
         ]);
     }
 }

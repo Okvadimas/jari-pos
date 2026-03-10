@@ -2,13 +2,14 @@
  * JARI POS — Chatbot Page
  * Chat interaction, KB document upload/delete, UI state
  */
+import { marked } from 'marked';
 
 // ---- Config ----
 const CONFIG   = window.ChatbotConfig || {};
 const ROUTES   = CONFIG.routes || {};
 const CSRF     = CONFIG.csrfToken || '';
 const DROPZONE = CONFIG.dropzone || {
-    maxFileSize: 10,
+    maxFileSize: 5,
     maxFiles: 1,
     acceptedTypes: ['application/pdf', 'text/plain'],
     acceptedExtensions: '.pdf,.txt'
@@ -200,33 +201,24 @@ const renderMessage = (role, text) => {
 };
 
 /**
- * Format bot message: basic markdown → HTML
+ * Format bot message: markdown → HTML using marked.js
  */
 const formatBotMessage = (text) => {
-    let html = escapeHtml(text);
 
-    // Strip markdown headings (###, ##, #) — replace with bold text instead
-    html = html.replace(/^#{1,6}\s+(.+)/gm, '<strong>$1</strong>');
-    // Code blocks ```...```
-    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-    // Inline code
-    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-    // Bold **text**
-    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    // Italic *text*
-    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-    // Unordered list
-    html = html.replace(/^[-•]\s+(.+)/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
-    // Ordered list
-    html = html.replace(/^\d+\.\s+(.+)/gm, '<li>$1</li>');
-    // Newlines → <br>
-    html = html.replace(/\n/g, '<br>');
-    // Clean up
-    html = html.replace(/<br>\s*<(ul|ol|pre|li)/g, '<$1');
-    html = html.replace(/<\/(ul|ol|pre|li)>\s*<br>/g, '</$1>');
+    marked.setOptions({
+        breaks: true,
+        gfm: true,
+        highlight: function(code, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(code, { language: lang }).value;
+                } catch (e) {}
+            }
+            return hljs.highlightAuto(code).value;
+        }
+    });
 
-    return html;
+    return marked.parse(text);
 };
 
 /**
@@ -563,7 +555,12 @@ const deleteDocumentById = (id) => {
 /**
  * Refresh document list via AJAX
  */
-const refreshDocumentList = () => {
+const refreshDocumentList = (showSpinner = false) => {
+    if (showSpinner) {
+        $('#refresh-icon').addClass('spin-animation');
+        $('#btn-refresh-docs').prop('disabled', true);
+    }
+
     $.ajax({
         url: ROUTES.documents,
         type: 'GET',
@@ -574,6 +571,14 @@ const refreshDocumentList = () => {
         },
         error: function (xhr) {
             console.error('Refresh docs error:', xhr);
+        },
+        complete: function () {
+            if (showSpinner) {
+                setTimeout(() => {
+                    $('#refresh-icon').removeClass('spin-animation');
+                    $('#btn-refresh-docs').prop('disabled', false);
+                }, 400);
+            }
         }
     });
 };
@@ -585,9 +590,20 @@ const renderDocumentList = (documents) => {
     const $list = $('#doc-list');
     $list.empty();
 
+    // Track previous state to detect first-indexed transition
+    const hadIndexedBefore = hasIndexedDocs;
+
     // Recompute indexed docs state so button stays accurate without page reload
     hasIndexedDocs = documents.some(d => d.status === 'ready' || d.status === 'completed');
     updateCharCount(); // re-evaluate button disabled state
+
+    // If first transition from no-indexed -> has-indexed, update the welcome message
+    if (!hadIndexedBefore && hasIndexedDocs) {
+        const $firstBotBubble = $('#chat-messages .cb-msg-bot:first-child .cb-msg-bubble');
+        if ($firstBotBubble.length) {
+            $firstBotBubble.html('Halo! Saya asisten AI Anda. Ada yang bisa saya bantu terkait dokumen yang telah diunggah?');
+        }
+    }
 
     if (documents.length === 0) {
         $list.html(`
@@ -702,6 +718,11 @@ $('#chat-input').on('paste', function(e) {
 // Upload button (delegated since it can move to modal)
 $(document).on('click', '#btn-submit-upload', function() {
     uploadDocument();
+});
+
+// Refresh document status button
+$(document).on('click', '#btn-refresh-docs', function() {
+    refreshDocumentList(true);
 });
 
 // Desktop Search input
