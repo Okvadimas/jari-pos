@@ -126,7 +126,11 @@ class AuthController extends Controller
 
     public function lockScreen()
     {
-        return view('auth.lock-screen');
+        $title = 'Layar Terkunci | Jari POS';
+        $css   = 'resources/css/pages/auth/lock-screen.css';
+        $js    = 'resources/js/pages/auth/lock-screen.js';
+
+        return view('auth.lock-screen', compact('title', 'css', 'js'));
     }
 
     public function unlockScreen(Request $request)
@@ -138,5 +142,23 @@ class AuthController extends Controller
         }
 
         return $this->errorResponse('Kata sandi salah', 422);
+    }
+
+    public function changePassword()
+    {
+        $title = 'Ubah Kata Sandi | Jari POS';
+        $css   = 'resources/css/pages/auth/change-password.css';
+        $js    = 'resources/js/pages/auth/change-password.js';
+
+        return view('auth.change-password', compact('title', 'css', 'js'));
+    }
+
+    public function processChangePassword(\App\Http\Requests\Auth\ChangePasswordRequest $request)
+    {
+        $result = AuthService::changePassword($request->validated());
+
+        return $result['status']
+            ? $this->successResponse($result['message'])
+            : $this->errorResponse($result['message'], 422);
     }
 }

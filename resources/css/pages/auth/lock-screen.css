@@ -1,0 +1,179 @@
+/* Lock Screen Styles */
+
+body.pg-auth {
+    min-height: 100vh;
+}
+
+.lock-screen-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Lock Icon */
+.lock-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lock-icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--app-primary) 0%, #034589 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(34, 99, 179, 0.3);
+    z-index: 2;
+    position: relative;
+}
+
+.lock-icon {
+    font-size: 32px;
+    color: #fff;
+}
+
+.lock-pulse {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--app-primary);
+    animation: pulse 2s ease-out infinite;
+    z-index: 1;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* User Info */
+.lock-user-info .user-avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+    line-height: 64px;
+    border: 3px solid var(--app-primary-border);
+    box-shadow: 0 4px 16px rgba(34, 99, 179, 0.15);
+}
+
+/* Lock Form */
+.lock-form-wrapper {
+    width: 100%;
+    max-width: 380px;
+}
+
+.lock-form-wrapper .card {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.lock-form-wrapper .card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+.lock-form-wrapper .form-control:focus {
+    border-color: var(--app-primary);
+    box-shadow: 0 0 0 3px var(--app-primary-dim);
+}
+
+.lock-form-wrapper .btn-primary {
+    border-radius: 10px;
+    padding: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.lock-form-wrapper .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(34, 99, 179, 0.3);
+}
+
+/* Clock */
+.lock-clock {
+    opacity: 0.8;
+}
+
+.lock-time {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--app-primary);
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
+
+.lock-date {
+    font-size: 0.95rem;
+    margin-top: 4px;
+    text-transform: capitalize;
+}
+
+/* Shake animation for wrong password */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+    20%, 40%, 60%, 80% { transform: translateX(6px); }
+}
+
+.shake {
+    animation: shake 0.6s ease;
+}
+
+/* Success animation */
+@keyframes unlockBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.unlock-success .lock-icon-circle {
+    background: linear-gradient(135deg, #1ee0ac 0%, #09c48c 100%);
+    animation: unlockBounce 0.5s ease;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .lock-time {
+        font-size: 2rem;
+    }
+
+    .lock-icon-circle {
+        width: 64px;
+        height: 64px;
+    }
+
+    .lock-pulse {
+        width: 64px;
+        height: 64px;
+    }
+
+    .lock-icon {
+        font-size: 26px;
+    }
+}

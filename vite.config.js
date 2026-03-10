@@ -43,7 +43,7 @@ export default defineConfig({
                 'resources/js/editors.js',
                 'resources/js/listbox.js',
                 'resources/js/map.js',
-                'resources/js/sweetalert.js',
+                'resources/js/sweetalert.js', 
                 'resources/js/toastr.js',
                 'resources/js/tree.js',
 
@@ -75,6 +75,9 @@ export default defineConfig({
                 'resources/css/pages/auth/login.css',
                 'resources/css/pages/auth/register.css',
                 'resources/css/pages/auth/verify-email.css',
+                'resources/js/pages/auth/lock-screen.js',
+                'resources/css/pages/auth/lock-screen.css',
+                'resources/js/pages/auth/change-password.js',
 
                 // ================================
                 // Dashboard

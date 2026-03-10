@@ -72,7 +72,8 @@
                                             </div>
                                             <div class="dropdown-inner">
                                                 <ul class="link-list">
-                                                    <li><a href="/change-password"><em class="icon ni ni-lock"></em><span>Change Password</span></a></li>
+                                                    <li><a href="{{ route('change-password') }}"><em class="icon ni ni-lock"></em><span>Change Password</span></a></li>
+                                                    <li><a href="{{ route('lock-screen') }}"><em class="icon ni ni-lock-alt"></em><span>Lock Screen</span></a></li>
                                                     <li hidden><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Dark Mode</span></a></li>
                                                 </ul>
                                             </div>
