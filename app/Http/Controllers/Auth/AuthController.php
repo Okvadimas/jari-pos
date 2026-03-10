@@ -17,7 +17,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 // Load Model
 use App\Models\Campaign;
 
-class IndexController extends Controller
+class AuthController extends Controller
 {
     public function login()
     {

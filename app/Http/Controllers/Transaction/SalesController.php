@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 use App\Services\Transaction\SalesService;
 use App\Models\SalesOrder;
-use App\Http\Requests\Transaction\StoreSalesRequest;
+use App\Http\Requests\Transaction\Sales\StoreSalesRequest;
 
 class SalesController extends Controller
 {
