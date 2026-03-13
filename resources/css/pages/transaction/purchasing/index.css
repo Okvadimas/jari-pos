@@ -1,0 +1,41 @@
+/* ============================================
+ * Transaction Purchasing - Page Styles
+ * ============================================ */
+
+.letter-spacing {
+    letter-spacing: 0.05em;
+}
+
+.icon-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.moving-card {
+    transition: all 0.25s ease;
+    border-left: 3px solid transparent !important;
+}
+
+.moving-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.moving-card > .card-inner {
+    padding: 1rem;
+}
+
+.moving-card .amount {
+    font-size: 1.35rem;
+}
+
+.moving-card.border-primary { border-left-color: #6576ff !important; }
+.moving-card.border-danger { border-left-color: #e85347 !important; }
+.moving-card.border-success { border-left-color: #1ee0ac !important; }
+.moving-card.border-warning { border-left-color: #f4bd0e !important; }
+.moving-card.border-info { border-left-color: #09c2de !important; }

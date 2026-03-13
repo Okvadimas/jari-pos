@@ -23,6 +23,7 @@ class SalesController extends Controller
             'startDate' => $startDate,
             'endDate'   => $endDate,
             'title'     => $this->pageTitle,
+            'css'       => 'resources/css/pages/transaction/sales/index.css',
             'js'        => 'resources/js/pages/transaction/sales/index.js',
         ];
 
