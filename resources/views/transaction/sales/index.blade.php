@@ -49,69 +49,73 @@
                 <div class="nk-block">
                     <div class="row g-gs">
                         <div class="col-sm-6 col-lg-3">
-                            <div class="card card-bordered">
+                            <div class="card card-bordered moving-card border-primary">
                                 <div class="card-inner">
-                                    <div class="card-title-group align-start mb-0">
-                                        <div class="card-title">
-                                            <h6 class="subtitle">Total Transaksi</h6>
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div>
+                                            <span class="fs-11px text-uppercase fw-bold text-muted letter-spacing">Total Transaksi</span>
+                                            <h4 class="amount mt-1 mb-0" id="summary-total-transaksi">0</h4>
                                         </div>
-                                        <div class="card-tools">
-                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Jumlah transaksi penjualan"></em>
+                                        <div class="icon-circle bg-primary-dim">
+                                            <em class="icon ni ni-file-text text-primary" style="font-size: 1.5rem;"></em>
                                         </div>
                                     </div>
-                                    <div class="card-amount">
-                                        <span class="amount" id="summary-total-transaksi">0</span>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <span class="fs-12px text-muted" data-bs-toggle="tooltip" title="Jumlah transaksi penjualan">Jumlah transaksi penjualan</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-lg-3">
-                            <div class="card card-bordered">
+                            <div class="card card-bordered moving-card border-success">
                                 <div class="card-inner">
-                                    <div class="card-title-group align-start mb-0">
-                                        <div class="card-title">
-                                            <h6 class="subtitle">Total Penjualan</h6>
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div>
+                                            <span class="fs-11px text-uppercase fw-bold text-muted letter-spacing">Total Penjualan</span>
+                                            <h4 class="amount mt-1 mb-0" id="summary-total-penjualan">Rp 0</h4>
                                         </div>
-                                        <div class="card-tools">
-                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total nilai penjualan sebelum diskon"></em>
+                                        <div class="icon-circle bg-success-dim">
+                                            <em class="icon ni ni-cart text-success" style="font-size: 1.5rem;"></em>
                                         </div>
                                     </div>
-                                    <div class="card-amount">
-                                        <span class="amount" id="summary-total-penjualan">Rp 0</span>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <span class="fs-12px text-muted" data-bs-toggle="tooltip" title="Total nilai penjualan sebelum diskon">Total nilai penjualan</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-lg-3">
-                            <div class="card card-bordered">
+                            <div class="card card-bordered moving-card border-warning">
                                 <div class="card-inner">
-                                    <div class="card-title-group align-start mb-0">
-                                        <div class="card-title">
-                                            <h6 class="subtitle">Total Diskon</h6>
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div>
+                                            <span class="fs-11px text-uppercase fw-bold text-muted letter-spacing">Total Diskon</span>
+                                            <h4 class="amount mt-1 mb-0" id="summary-total-diskon">Rp 0</h4>
                                         </div>
-                                        <div class="card-tools">
-                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total diskon dari promo"></em>
+                                        <div class="icon-circle bg-warning-dim">
+                                            <em class="icon ni ni-tags text-warning" style="font-size: 1.5rem;"></em>
                                         </div>
                                     </div>
-                                    <div class="card-amount">
-                                        <span class="amount text-danger" id="summary-total-diskon">Rp 0</span>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <span class="fs-12px text-muted" data-bs-toggle="tooltip" title="Total diskon dari promo">Total diskon promosi</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-lg-3">
-                            <div class="card card-bordered">
+                            <div class="card card-bordered moving-card border-info">
                                 <div class="card-inner">
-                                    <div class="card-title-group align-start mb-0">
-                                        <div class="card-title">
-                                            <h6 class="subtitle">Total Pendapatan</h6>
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div>
+                                            <span class="fs-11px text-uppercase fw-bold text-muted letter-spacing">Total Pendapatan</span>
+                                            <h4 class="amount mt-1 mb-0" id="summary-total-pendapatan">Rp 0</h4>
                                         </div>
-                                        <div class="card-tools">
-                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total pendapatan bersih"></em>
+                                        <div class="icon-circle bg-info-dim">
+                                            <em class="icon ni ni-wallet-in text-info" style="font-size: 1.5rem;"></em>
                                         </div>
                                     </div>
-                                    <div class="card-amount">
-                                        <span class="amount text-success" id="summary-total-pendapatan">Rp 0</span>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <span class="fs-12px text-muted" data-bs-toggle="tooltip" title="Total pendapatan bersih">Total pendapatan bersih</span>
                                     </div>
                                 </div>
                             </div>

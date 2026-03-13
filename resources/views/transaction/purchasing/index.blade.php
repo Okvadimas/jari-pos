@@ -51,36 +51,38 @@
                 <!-- Summary Cards -->
                 <div class="nk-block">
                     <div class="row g-gs">
-                        <div class="col-sm-6 col-lg-4">
-                            <div class="card card-bordered">
+                        <div class="col-sm-6 col-lg-6">
+                            <div class="card card-bordered moving-card border-primary">
                                 <div class="card-inner">
-                                    <div class="card-title-group align-start mb-0">
-                                        <div class="card-title">
-                                            <h6 class="subtitle">Total Transaksi</h6>
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div>
+                                            <span class="fs-11px text-uppercase fw-bold text-muted letter-spacing">Total Transaksi</span>
+                                            <h4 class="amount mt-1 mb-0" id="summary-total-transaksi">0</h4>
                                         </div>
-                                        <div class="card-tools">
-                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Jumlah transaksi pembelian"></em>
+                                        <div class="icon-circle bg-primary-dim">
+                                            <em class="icon ni ni-file-text text-primary" style="font-size: 1.5rem;"></em>
                                         </div>
                                     </div>
-                                    <div class="card-amount">
-                                        <span class="amount" id="summary-total-transaksi">0</span>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <span class="fs-12px text-muted" data-bs-toggle="tooltip" title="Jumlah transaksi pembelian">Jumlah transaksi pembelian</span>
                                     </div>
                                 </div>
                             </div><!-- .card -->
                         </div><!-- .col -->
-                        <div class="col-sm-6 col-lg-4">
-                            <div class="card card-bordered">
+                        <div class="col-sm-6 col-lg-6">
+                            <div class="card card-bordered moving-card border-danger">
                                 <div class="card-inner">
-                                    <div class="card-title-group align-start mb-0">
-                                        <div class="card-title">
-                                            <h6 class="subtitle">Total Pembelian</h6>
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div>
+                                            <span class="fs-11px text-uppercase fw-bold text-muted letter-spacing">Total Pembelian</span>
+                                            <h4 class="amount mt-1 mb-0" id="summary-total-pembelian">Rp 0</h4>
                                         </div>
-                                        <div class="card-tools">
-                                            <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total nilai pembelian"></em>
+                                        <div class="icon-circle bg-danger-dim">
+                                            <em class="icon ni ni-wallet-out text-danger" style="font-size: 1.5rem;"></em>
                                         </div>
                                     </div>
-                                    <div class="card-amount">
-                                        <span class="amount" id="summary-total-pembelian">Rp 0</span>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <span class="fs-12px text-muted" data-bs-toggle="tooltip" title="Total nilai pembelian">Total nilai pembelian</span>
                                     </div>
                                 </div>
                             </div><!-- .card -->

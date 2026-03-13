@@ -2,6 +2,8 @@
 
 @section('content')
 
+
+
     <div class="nk-content ">
         <div class="container-fluid">
             <div class="nk-content-inner">
@@ -58,31 +60,31 @@
 
                                     <div class="row g-3">
                                         <div class="col-12">
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
                                                 <h6 class="mb-0">Item Pembelian</h6>
-                                                <button type="button" id="btn-add-item" class="btn btn-sm btn-outline-primary">
-                                                    <em class="icon ni ni-plus"></em> Tambah Item
+                                                <button type="button" id="btn-add-item" class="btn btn-outline-primary">
+                                                    <em class="icon ni ni-plus me-1"></em> Tambah Item
                                                 </button>
                                             </div>
                                             <div class="table-responsive">
-                                                <table class="table table-bordered" id="table-items">
-                                                    <thead class="table-light">
+                                                <table class="table" id="table-items">
+                                                    <thead>
                                                         <tr>
                                                             <th style="width: 40%;">Produk <span class="text-danger">*</span></th>
                                                             <th style="width: 15%;" class="text-end">Jumlah <span class="text-danger">*</span></th>
                                                             <th style="width: 20%;" class="text-end">Harga Modal <span class="text-danger">*</span></th>
                                                             <th style="width: 20%;" class="text-end">Subtotal</th>
-                                                            <th style="width: 5%;"></th>
+                                                            <th style="width: 5%;" class="text-center">Aksi</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="item-rows">
                                                         <!-- Items will be added here dynamically -->
                                                     </tbody>
                                                     <tfoot>
-                                                        <tr class="table-light">
-                                                            <td colspan="3" class="text-end fw-bold">Total</td>
-                                                            <td class="text-end fw-bold" id="grand-total">Rp 0</td>
-                                                            <td></td>
+                                                        <tr>
+                                                            <td colspan="3" class="text-end text-uppercase fw-bold pt-3 pb-2">Grand Total</td>
+                                                         <td class="text-end fw-bold text-primary pt-3 pb-2" style="font-size: 1.25rem;" id="grand-total">Rp 0</td>
+                                                            <td class="pt-3 pb-2"></td>
                                                         </tr>
                                                     </tfoot>
                                                 </table>

@@ -4,6 +4,17 @@ $(document).ready(function() {
     let productVariants = [];
     let rowIndex = 0;
 
+    // Initialize DataTable
+    NioApp.DataTable('#table-items', {
+        responsive: false,
+        scrollX: true,
+        ordering: false,
+        paging: false,
+        info: false,
+        searching: false
+    });
+    let itemTable = $('#table-items').DataTable();
+
     // Load product variants for dropdown (will add rows after loading)
     loadVariants();
 
@@ -23,7 +34,7 @@ $(document).ready(function() {
 
     // Remove item button handler
     $(document).on('click', '.btn-remove-item', function() {
-        $(this).closest('tr').remove();
+        itemTable.row($(this).closest('tr')).remove().draw(false);
         calculateTotal();
     });
 
@@ -39,7 +50,7 @@ $(document).ready(function() {
         e.preventDefault();
 
         // Validate at least one item
-        let itemRows = $('#item-rows tr');
+        let itemRows = itemTable.rows().nodes().to$();
         if (itemRows.length === 0) {
             NioApp.Toast('Minimal harus ada 1 item pembelian', 'warning', { position: 'top-right' });
             return;
@@ -137,29 +148,32 @@ $(document).ready(function() {
         rowIndex++;
         let html = `
             <tr data-row="${rowIndex}">
-                <td>
+                <td class="align-middle">
                     <select class="form-select item-product" name="details[${rowIndex}][product_variant_id]" data-search="on">
                         <option value="">Pilih Produk</option>
                     </select>
                 </td>
-                <td>
+                <td class="align-middle">
                     <input type="number" class="form-control text-end item-quantity" name="details[${rowIndex}][quantity]" min="1" value="${data ? data.quantity : ''}" placeholder="0">
                 </td>
-                <td>
-                    <input type="text" class="form-control text-end item-cost" name="details[${rowIndex}][cost_price_per_item]" value="${data ? formatNumber(data.cost_price_per_item) : ''}" placeholder="0">
+                <td class="align-middle">
+                    <div class="form-control-wrap">
+                        <div class="form-icon form-icon-left text-muted">Rp</div>
+                        <input type="text" class="form-control text-end item-cost ps-4" name="details[${rowIndex}][cost_price_per_item]" value="${data ? formatNumber(data.cost_price_per_item) : ''}" placeholder="0">
+                    </div>
                 </td>
-                <td class="text-end item-subtotal">Rp 0</td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-icon btn-outline-danger btn-remove-item">
+                <td class="text-end fw-bold text-dark item-subtotal align-middle">Rp 0</td>
+                <td class="text-center align-middle">
+                    <button type="button" class="btn btn-icon btn-sm btn-danger btn-remove-item" data-bs-toggle="tooltip" title="Hapus Item">
                         <em class="icon ni ni-trash"></em>
                     </button>
                 </td>
             </tr>
         `;
-        $('#item-rows').append(html);
+        let rowNode = itemTable.row.add($(html)[0]).draw(false).node();
 
         // Initialize Select2 for the new row
-        let $select = $(`tr[data-row="${rowIndex}"] .item-product`);
+        let $select = $(rowNode).find('.item-product');
         $select.select2({
             placeholder: 'Pilih Produk',
             allowClear: true,
@@ -175,7 +189,7 @@ $(document).ready(function() {
 
         // Calculate subtotal if data exists
         if (data) {
-            calculateRowSubtotal($(`tr[data-row="${rowIndex}"]`));
+            calculateRowSubtotal($(rowNode));
             calculateTotal();
         }
     }
@@ -203,7 +217,7 @@ $(document).ready(function() {
 
     function calculateTotal() {
         let total = 0;
-        $('#item-rows tr').each(function() {
+        itemTable.rows().nodes().to$().each(function() {
             let quantity = parseInt($(this).find('.item-quantity').val()) || 0;
             let cost = parseFloat($(this).find('.item-cost').val().replace(/\./g, '').replace(',', '.')) || 0;
             total += quantity * cost;

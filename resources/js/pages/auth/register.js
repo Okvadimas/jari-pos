@@ -22,7 +22,7 @@ $(document).ready(function() {
             data: $(this).serialize(),
             complete: function() {
                 $btn.attr('disabled', false);
-                $btn.html('Daftar');
+                $btn.html('Daftar Sekarang');
             },
             success: function(response) {
                 if (response.status) {
