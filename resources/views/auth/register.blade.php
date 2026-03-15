@@ -14,168 +14,238 @@
                 <!-- content @s -->
                 <div class="nk-content p-0">
                     <div class="nk-block nk-block-middle p-0 m-0">
-                        <!-- Centered Form Wizard Layout Start -->
-                        <div class="nk-block nk-block-middle px-3 px-md-4 pt-4 pt-md-5">
-                            <div class="brand-logo pb-4 text-center">
-                                <a href="/" class="logo-link">
-                                    <img class="logo-light logo-img logo-img-lg" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo">
-                                    <img class="logo-dark logo-img logo-img-lg" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo-dark">
-                                </a>
-                            </div>
-                            
-                            <div class="row justify-content-center">
-                                <div class="col-md-11 col-lg-9 col-xl-8">
-                                    <div class="card card-bordered rounded-4">
-                                        <div class="card-inner card-inner-lg">
-                                            <div class="nk-block-head">
-                                        <div class="nk-block-head-content text-center">
-                                            <h4 class="nk-block-title">Daftar Akun Baru</h4>
-                                            <div class="nk-block-des">
-                                                <p>Buat akun Jari POS dan siapkan data bisnis Anda.</p>
+                        <!-- Carousel / Split Layout Start -->
+                        <div class="card border-0 rounded-0 min-vh-100 overflow-hidden">
+                            <div class="card-inner card-inner-lg p-0 min-vh-100">
+                                <div class="row g-0 min-vh-100">
+                                    <div class="col-lg-7 order-2 order-lg-1 p-3 ps-lg-3 rounded-3 d-none d-lg-block">
+                                        @if($sliders && $sliders->isNotEmpty())
+                                        <div id="auth-carousel" class="carousel slide h-100 rounded-4 overflow-hidden" data-bs-ride="carousel" style="min-height: 300px;">
+                                            <div class="carousel-indicators">
+                                                @foreach($sliders as $key => $slider)
+                                                <button type="button" data-bs-target="#auth-carousel" data-bs-slide-to="{{ $key }}" class="{{ $key === 0 ? 'active' : '' }}" aria-current="{{ $key === 0 ? 'true' : 'false' }}" aria-label="Slide {{ $key + 1 }}"></button>
+                                                @endforeach
+                                            </div>
+                                            <div class="carousel-inner h-100">
+                                                @foreach($sliders as $key => $slider)
+                                                <div class="carousel-item h-100 {{ $key === 0 ? 'active' : '' }}">
+                                                    <div class="h-100 w-100 position-relative" style="background-image: url('{{ asset($slider->image) }}'); background-size: cover; background-position: center;">
+                                                        <div class="slider-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%); position: absolute; top:0; left:0; right:0; bottom:0;">
+                                                            @if($slider->title)
+                                                            <div class="slider-caption container position-absolute w-100 text-center" style="bottom: 10%; left: 0;">
+                                                                <h2 class="display-5 fw-bold mb-3 text-white">{{ $slider->title }}</h2>
+                                                                <p class="lead text-white-75 mb-0 px-4">{{ $slider->description }}</p>
+                                                            </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        @else
+                                        <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100 p-5 text-center position-relative overflow-hidden rounded-4" style="background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-sidebar-bg) 100%);">
+                                            <div class="position-absolute top-0 start-0 w-100 h-100 bg-overlay-pattern" style="opacity: 0.1;"></div>
+                                            
+                                            <div class="position-relative z-index-1">
+                                                <img src="{{ asset('images/brand-full-logo-side.png') }}" alt="Jari POS" class="mb-5 logo-filter-white" style="height: 60px; filter: brightness(0) invert(1);">
+                                                <h1 class="text-white fw-bolder responsive-heading mb-4">Selamat Datang di Jari POS</h1>
+                                                <p class="text-white-80 lead responsive-text mx-auto" style="max-width: 600px;">
+                                                    Kelola bisnis Anda secara efisien dengan sistem POS canggih kami. Lacak pesanan, kelola inventaris, dan kembangkan bisnis Anda.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="col-lg-5 order-1 order-lg-2 bg-white">
+                                        <div class="d-flex align-items-center justify-content-center h-100 p-4 p-xl-5">
+                                            <div class="w-100 mx-auto" style="max-width: 600px;">
+                                                
+                                                <!-- Logo for Mobile Only -->
+                                                <div class="brand-logo mb-4 text-center d-lg-none">
+                                                    <a href="/" class="logo-link">
+                                                        <img class="logo-light logo-img logo-img-lg" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo">
+                                                        <img class="logo-dark logo-img logo-img-lg" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo-dark">
+                                                    </a>
+                                                </div>
+
+                                                <div class="nk-block-head text-center mb-4">
+                                                    <div class="nk-block-head-content">
+                                                        <h3 class="nk-block-title fw-bold text-primary mb-2" style="font-size: 28px;">Daftar Akun Baru</h3>
+                                                        <div class="nk-block-des text-soft">
+                                                            <p class="fs-15px">Buat akun <strong class="text-dark fw-bold">Jari POS</strong> dan siapkan data bisnis Anda.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="card card-bordered rounded-4 border-light shadow-sm">
+                                                    <div class="card-inner p-4 p-md-5">
+                                                        <form id="form-data">
+                                                            <!-- Custom Steps Indicator -->
+                                                            <ul class="nav nav-tabs nav-tabs-s1 justify-content-center mb-4 pb-3" role="tablist" style="border-bottom: 1px solid #e5e9f2;">
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link fw-bold active fs-15px text-primary" data-bs-toggle="tab" href="#step-1" role="tab" style="padding-bottom: 12px; border-bottom: 2px solid var(--app-primary);">
+                                                                        <em class="icon ni ni-user me-1 text-primary"></em> Data Pribadi
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item ms-4">
+                                                                    <a class="nav-link fw-bold disabled fs-15px text-secondary" data-bs-toggle="tab" href="#step-2" role="tab" id="tab-step-2" style="padding-bottom: 12px; border-bottom: 2px solid transparent;">
+                                                                        <em class="icon ni ni-building me-1 text-secondary"></em> Data Perusahaan
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                            
+                                                            <style>
+                                                                /* Custom inner tab styling to match image */
+                                                                .nav-tabs-s1 .nav-link { background: transparent !important; }
+                                                                .nav-tabs-s1 .nav-link.active { color: var(--app-primary) !important; border-bottom-color: var(--app-primary) !important; }
+                                                                .nav-tabs-s1 .nav-link:not(.active) { color: #6e82a5 !important; }
+                                                                .nav-tabs-s1 .nav-link:not(.active) .icon { color: #8094ae !important; }
+                                                                
+                                                                /* Form controls */
+                                                                .custom-form-control { background-color: #f5f6fa !important; border-color: transparent !important; color: #526484; font-size: 14px; }
+                                                                .custom-form-control:focus { background-color: #f5f6fa !important; border-color: transparent !important; box-shadow: 0 0 0 2px rgba(34, 99, 179, 0.2) !important; }
+                                                                .form-label { font-size: 13px; font-weight: 600; color: #364a63; margin-bottom: 8px; }
+                                                                .form-icon { color: #8094ae; }
+                                                            </style>
+
+                                                            <div class="tab-content pt-1">
+                                                                <!-- Step 1: Data Pribadi -->
+                                                                <div class="tab-pane active" id="step-1" role="tabpanel">
+                                                                    <div class="row g-4 pb-4">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="name">Nama Lengkap <span class="text-danger">*</span></label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <div class="form-icon form-icon-right"><em class="icon ni ni-user"></em></div>
+                                                                                    <input type="text" class="form-control form-control-lg custom-form-control rounded-3" id="name" name="name" placeholder="Nama lengkap Anda" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="username">Username <span class="text-danger">*</span></label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <div class="form-icon form-icon-right"><em class="icon ni ni-at"></em></div>
+                                                                                    <input type="text" class="form-control form-control-lg custom-form-control rounded-3" id="username" name="username" placeholder="admin" required pattern="^[a-z0-9]+$" title="Username hanya boleh huruf kecil dan angka, tanpa spasi" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '')">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <div class="form-icon form-icon-right"><em class="icon ni ni-mail"></em></div>
+                                                                                    <input type="email" class="form-control form-control-lg custom-form-control rounded-3" id="email" name="email" placeholder="Alamat email aktif" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="password">Kata Sandi <span class="text-danger">*</span></label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <a href="#" class="form-icon form-icon-right passcode-switch lg" data-target="password">
+                                                                                        <em class="passcode-icon icon-show icon ni ni-eye"></em>
+                                                                                        <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
+                                                                                    </a>
+                                                                                    <input type="password" class="form-control form-control-lg custom-form-control rounded-3" name="password" id="password" placeholder="•••••" required minlength="8" pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$" title="Minimal 8 karakter, harus ada huruf besar dan angka">
+                                                                                </div>
+                                                                                <div class="form-note mt-2 text-soft fs-12px fst-italic"><em class="icon ni ni-info-fill text-primary"></em> Min. 8 karakter (huruf besar & angka)</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="row align-items-center pt-4 mt-2" style="border-top: 1px solid #e5e9f2;">
+                                                                        <div class="col-12 col-sm-7 text-center text-sm-start order-2 order-sm-1">
+                                                                            <p class="fs-14px mb-0 text-soft">Sudah punya akun? <a href="{{ route('login') }}" class="link link-primary fw-bold d-inline-block mt-2 mt-sm-0">Masuk disini</a></p>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-5 order-1 order-sm-2 mb-3 mb-sm-0">
+                                                                            <div class="d-flex flex-column flex-sm-row justify-content-sm-end">
+                                                                                <button type="button" class="btn btn-lg btn-primary mb-0 d-flex justify-content-center px-4 rounded-pill shadow-sm w-100" id="btn-next-step">
+                                                                                    <span class="fw-bold fs-15px">Selanjutnya</span> <em class="icon ni ni-arrow-right ms-2 fw-bold"></em>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Step 2: Data Perusahaan -->
+                                                                <div class="tab-pane" id="step-2" role="tabpanel">
+                                                                    <div class="row g-4 pb-4">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="company_name">Nama Perusahaan <span class="text-danger">*</span></label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <div class="form-icon form-icon-right"><em class="icon ni ni-building"></em></div>
+                                                                                    <input type="text" class="form-control form-control-lg custom-form-control rounded-3" id="company_name" name="company_name" placeholder="Nama bisnis/toko">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="business_category">Kategori Usaha <span class="text-danger">*</span></label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <select class="form-select form-control form-control-lg custom-form-control rounded-3" id="business_category" name="business_category">
+                                                                                        <option value="" disabled selected>Pilih Kategori</option>
+                                                                                        <option value="retail">Retail</option>
+                                                                                        <option value="restoran">Restoran</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="company_email">Email Bisnis <span class="text-danger">*</span></label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <div class="form-icon form-icon-right"><em class="icon ni ni-mail"></em></div>
+                                                                                    <input type="email" class="form-control form-control-lg custom-form-control rounded-3" id="company_email" name="company_email" placeholder="Email untuk notifikasi">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="company_phone">Nomor Telepon</label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <div class="form-icon form-icon-right"><em class="icon ni ni-call"></em></div>
+                                                                                    <input type="text" class="form-control form-control-lg custom-form-control rounded-3" id="company_phone" name="company_phone" placeholder="Kontak bisnis aktif">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-12">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label" for="company_address">Alamat Lengkap</label>
+                                                                                <div class="form-control-wrap">
+                                                                                    <textarea class="form-control form-control-lg custom-form-control rounded-3" id="company_address" name="company_address" placeholder="Detail alamat lokasi usaha" rows="2"></textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="row align-items-center pt-4 mt-2" style="border-top: 1px solid #e5e9f2;">
+                                                                        <div class="col-12 col-sm-5 order-2 order-sm-1 mt-3 mt-sm-0">
+                                                                            <div class="d-flex flex-column flex-sm-row justify-content-sm-start">
+                                                                                <button type="button" class="btn btn-lg btn-light mb-0 d-flex justify-content-center px-4 rounded-pill w-100" id="btn-prev-step" style="background:#f5f6fa; border:none; color:#526484;">
+                                                                                    <em class="icon ni ni-arrow-left me-2"></em> <span class="fw-bold fs-15px">Kembali</span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-7 order-1 order-sm-2">
+                                                                            <div class="d-flex flex-column flex-sm-row justify-content-sm-end">
+                                                                                <button type="submit" class="btn btn-lg btn-primary mb-0 d-flex justify-content-center px-4 rounded-pill shadow-sm w-100" id="btn-submit">
+                                                                                    <em class="icon ni ni-check-circle me-2 fw-bold"></em> <span class="fw-bold fs-15px">Selesai & Daftar</span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <form id="form-data">
-                                        <!-- Custom Steps Indicator -->
-                                        <ul class="nav nav-tabs nav-tabs-s1 justify-content-center mb-4" role="tablist">
-                                            <li class="nav-item">
-                                                <a class="nav-link active" data-bs-toggle="tab" href="#step-1" role="tab">
-                                                    <em class="icon ni ni-user me-1"></em> Data Pribadi
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link disabled" data-bs-toggle="tab" href="#step-2" role="tab" id="tab-step-2">
-                                                    <em class="icon ni ni-building me-1"></em> Data Perusahaan
-                                                </a>
-                                            </li>
-                                        </ul>
-                                        
-                                        <div class="tab-content pt-2">
-                                            <!-- Step 1: Data Pribadi -->
-                                            <div class="tab-pane active" id="step-1" role="tabpanel">
-                                                <div class="row g-4 pb-5">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="name">Nama Lengkap <span class="text-danger">*</span></label>
-                                                            <div class="form-control-wrap">
-                                                                <div class="form-icon form-icon-right"><em class="icon ni ni-user"></em></div>
-                                                                <input type="text" class="form-control form-control-lg" id="name" name="name" placeholder="Nama lengkap" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="username">Username <span class="text-danger">*</span></label>
-                                                            <div class="form-control-wrap">
-                                                                <div class="form-icon form-icon-right"><em class="icon ni ni-at"></em></div>
-                                                                <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Username" required pattern="^[a-z0-9]+$" title="Username hanya boleh huruf kecil dan angka, tanpa spasi" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '')">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
-                                                            <div class="form-control-wrap">
-                                                                <div class="form-icon form-icon-right"><em class="icon ni ni-mail"></em></div>
-                                                                <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="Email" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="password">Kata Sandi <span class="text-danger">*</span></label>
-                                                            <div class="form-control-wrap">
-                                                                <a href="#" class="form-icon form-icon-right passcode-switch lg" data-target="password">
-                                                                    <em class="passcode-icon icon-show icon ni ni-eye"></em>
-                                                                    <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
-                                                                </a>
-                                                                <input type="password" class="form-control form-control-lg" name="password" id="password" placeholder="Kata sandi" required minlength="8" pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$" title="Minimal 8 karakter, harus ada huruf besar dan angka">
-                                                            </div>
-                                                            <div class="form-note mt-1 text-soft fs-12px"><em class="icon ni ni-info"></em> Min. 8 karakter (huruf besar & angka)</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row align-items-center pt-md-5 pt-4 border-top">
-                                                    <div class="col-12 col-sm-6 text-center text-sm-start order-2 order-sm-1">
-                                                        <p>Sudah punya akun? <a href="{{ route('login') }}" class="link link-primary d-inline-block mt-1 mt-sm-0">Masuk</a></p>
-                                                    </div>
-                                                    <div class="col-12 col-sm-6 order-1 order-sm-2 mb-1">
-                                                        <div class="d-flex flex-column flex-sm-row justify-content-sm-end">
-                                                            <button type="button" class="btn btn-lg btn-primary mb-0 d-flex justify-content-center" id="btn-next-step">Selanjutnya <em class="icon ni ni-arrow-right ms-2"></em></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Step 2: Data Perusahaan -->
-                                            <div class="tab-pane" id="step-2" role="tabpanel">
-                                                <div class="row g-4">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="company_name">Nama Perusahaan <span class="text-danger">*</span></label>
-                                                            <div class="form-control-wrap">
-                                                                <div class="form-icon form-icon-right"><em class="icon ni ni-building"></em></div>
-                                                                <input type="text" class="form-control form-control-lg" id="company_name" name="company_name" placeholder="Nama perusahaan">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="business_category">Kategori Usaha <span class="text-danger">*</span></label>
-                                                            <div class="form-control-wrap">
-                                                                <select class="form-control form-control-lg" id="business_category" name="business_category">
-                                                                    <option value="" disabled selected>Pilih Kategori</option>
-                                                                    <option value="retail">Retail</option>
-                                                                    <option value="restoran">Restoran</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="company_email">Email Perusahaan <span class="text-danger">*</span></label>
-                                                            <div class="form-control-wrap">
-                                                                <div class="form-icon form-icon-right"><em class="icon ni ni-mail"></em></div>
-                                                                <input type="email" class="form-control form-control-lg" id="company_email" name="company_email" placeholder="Email perusahaan">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="company_phone">Telepon Perusahaan</label>
-                                                            <div class="form-control-wrap">
-                                                                <div class="form-icon form-icon-right"><em class="icon ni ni-call"></em></div>
-                                                                <input type="text" class="form-control form-control-lg" id="company_phone" name="company_phone" placeholder="Nomor telepon">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <div class="form-group">
-                                                            <label class="form-label" for="company_address">Alamat Perusahaan</label>
-                                                            <div class="form-control-wrap">
-                                                                <textarea class="form-control form-control-lg" id="company_address" name="company_address" placeholder="Alamat lengkap perusahaan" rows="2"></textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row align-items-center mt-5 pt-4 border-top gy-3">
-                                                    <div class="col-12 col-sm-6 order-2 order-sm-1">
-                                                        <div class="d-flex flex-column flex-sm-row justify-content-sm-start">
-                                                            <button type="button" class="btn btn-lg btn-outline-light mb-0 d-flex justify-content-center" id="btn-prev-step"><em class="icon ni ni-arrow-left me-2"></em> Kembali</button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-sm-6 order-1 order-sm-2">
-                                                        <div class="d-flex flex-column flex-sm-row justify-content-sm-end">
-                                                            <button type="submit" class="btn btn-lg btn-primary mb-0 d-flex justify-content-center" id="btn-submit">Daftar Sekarang</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -188,6 +258,31 @@
                                 const tabStep2 = document.getElementById('tab-step-2');
                                 const tabStep1 = document.querySelector('a[href="#step-1"]');
                                 
+                                // Tab style updating
+                                function updateTabStyles(activeTab) {
+                                    document.querySelectorAll('.nav-tabs-s1 .nav-link').forEach(el => {
+                                        el.classList.remove('active', 'text-primary');
+                                        el.classList.add('text-secondary');
+                                        el.style.borderBottomColor = 'transparent';
+                                        
+                                        const icon = el.querySelector('.icon');
+                                        if(icon) {
+                                            icon.classList.remove('text-primary');
+                                            icon.classList.add('text-secondary');
+                                        }
+                                    });
+                                    
+                                    activeTab.classList.add('active', 'text-primary');
+                                    activeTab.classList.remove('text-secondary', 'disabled');
+                                    activeTab.style.borderBottomColor = 'var(--app-primary)';
+                                    
+                                    const activeIcon = activeTab.querySelector('.icon');
+                                    if(activeIcon) {
+                                        activeIcon.classList.add('text-primary');
+                                        activeIcon.classList.remove('text-secondary');
+                                    }
+                                }
+
                                 // Form inputs to validate before next step
                                 const step1Inputs = ['name', 'username', 'email', 'password'];
                                 
@@ -202,20 +297,20 @@
                                     });
                                     
                                     if(isValid) {
-                                        // Enable step 2 tab and switch
-                                        tabStep2.classList.remove('disabled');
                                         let tab = new bootstrap.Tab(tabStep2);
                                         tab.show();
+                                        updateTabStyles(tabStep2);
                                     }
                                 });
                                 
                                 btnPrev.addEventListener('click', function() {
                                     let tab = new bootstrap.Tab(tabStep1);
                                     tab.show();
+                                    updateTabStyles(tabStep1);
                                 });
                             });
                         </script>
-                        <!-- Centered Form Wizard Layout End -->
+                        <!-- Carousel / Split Layout End -->
                     </div>
                 </div>
                 <!-- wrap @e -->
