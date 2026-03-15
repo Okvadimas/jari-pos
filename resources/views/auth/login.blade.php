@@ -19,7 +19,7 @@
                         <div class="card border-0 rounded-0 min-vh-100 overflow-hidden">
                             <div class="card-inner card-inner-lg p-0 min-vh-100">
                                 <div class="row g-0 min-vh-100">
-                                    <div class="col-lg-8 order-2 order-lg-1 p-3 ps-lg-3 rounded-3">
+                                    <div class="col-xl-8 order-2 order-xl-1 p-3 ps-lg-3 rounded-3">
                                         @if($sliders->isNotEmpty())
                                         <div id="auth-carousel" class="carousel slide h-100 rounded-4 overflow-hidden" data-bs-ride="carousel" style="min-height: 300px;">
                                             <div class="carousel-indicators">
@@ -34,7 +34,7 @@
                                                         <div class="slider-overlay">
                                                             @if($slider->title)
                                                             <div class="slider-caption container">
-                                                                <h2 class="display-4 fw-bold mb-3">{{ $slider->title }}</h2>
+                                                                <h2 class="display-xl-4 display-6 fw-bold mb-3">{{ $slider->title }}</h2>
                                                                 <p class="lead text-white-75 mb-0">{{ $slider->description }}</p>
                                                             </div>
                                                             @endif
@@ -49,6 +49,12 @@
                                         <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100 p-5 text-center empty-state-bg position-relative overflow-hidden rounded-5">
                                             <div class="position-absolute top-0 start-0 w-100 h-100 bg-overlay-pattern"></div>
                                             
+                                            <style>
+                                                @media (max-width: 576px) {
+                                                    .responsive-heading { font-size: 1.75rem !important; }
+                                                    .responsive-text { font-size: 1rem !important; }
+                                                }
+                                            </style>
                                             <div class="position-relative z-index-1">
                                                 <img src="{{ asset('images/brand-full-logo-side.png') }}" alt="Jari POS" class="mb-5 logo-filter-white" style="height: 60px;">
                                                 <h1 class="text-white fw-bolder responsive-heading mb-4">Selamat Datang di Jari POS</h1>
@@ -62,50 +68,67 @@
                                         </div>
                                         @endif
                                     </div>
-                                    <div class="col-lg-4 order-1 order-lg-2">
+                                    <div class="col-xl-4 order-1 order-xl-2 bg-white">
                                         <div class="d-flex align-items-center justify-content-center h-100 p-4 p-xl-5">
                                            <div class="w-100 max-w-400px mx-auto">
+                                                
+                                                <div class="brand-logo mb-4 text-center d-lg-none">
+                                                    <a href="/" class="logo-link">
+                                                        <img class="logo-light logo-img logo-img-login" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo">
+                                                        <img class="logo-dark logo-img logo-img-login" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo-dark">
+                                                    </a>
+                                                </div>
+
                                                 <div class="nk-block-head text-center mb-4">
                                                     <div class="nk-block-head-content">
-                                                        <div class="brand-logo mb-5">
+                                                        <div class="brand-logo mb-4 d-none d-lg-block">
                                                             <a href="/" class="logo-link">
                                                                 <img class="logo-light logo-img logo-img-login" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo">
                                                                 <img class="logo-dark logo-img logo-img-login" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo-dark">
                                                             </a>
                                                         </div>
-                                                        <h3 class="nk-block-title fw-bold">Masuk Dashboard</h3>
+                                                        <h3 class="nk-block-title fw-bold text-primary mb-2" style="font-size: 28px;">Masuk Dashboard</h3>
                                                         <div class="nk-block-des text-soft">
-                                                            <p>Akses Panel Admin Jari POS menggunakan email dan kata sandi Anda.</p>
+                                                            <p>Akses Panel Admin <strong class="text-dark fw-bold">Jari POS</strong> menggunakan email dan kata sandi Anda.</p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <form class="form-validate is-alter" id="form-data">
-                                                    <div class="form-group">
-                                                        <div class="form-label-group">
-                                                            <label class="form-label" for="username">Username/Email</label>
-                                                        </div>
-                                                        <div class="form-control-wrap">
-                                                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Masukkan username Anda" required>
+
+                                                <div class="card card-bordered rounded-4 border-light shadow-sm">
+                                                    <div class="card-inner p-4 p-md-5">
+                                                        <form class="form-validate is-alter" id="form-data">
+                                                            <div class="form-group">
+                                                                <div class="form-label-group">
+                                                                    <label class="form-label" for="username">Username/Email</label>
+                                                                </div>
+                                                                <div class="form-control-wrap">
+                                                                    <input type="text" class="form-control form-control-lg bg-lighter rounded-3" id="username" name="username" placeholder="Masukkan username Anda" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="form-label-group">
+                                                                    <label class="form-label" for="password">Kata Sandi</label>
+                                                                </div>
+                                                                <div class="form-control-wrap">
+                                                                    <a href="#" class="form-icon form-icon-right passcode-switch lg" data-target="password">
+                                                                        <em class="passcode-icon icon-show icon ni ni-eye"></em>
+                                                                        <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
+                                                                    </a>
+                                                                    <input type="password" class="form-control form-control-lg bg-lighter rounded-3" name="password" id="password" placeholder="Masukkan kata sandi Anda" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mt-5">
+                                                                <button type="submit" class="btn btn-lg btn-primary btn-block rounded-pill shadow-sm d-flex justify-content-center align-items-center" id="btn-submit">
+                                                                    <span class="fw-bold">Masuk</span>
+                                                                    <em class="icon ni ni-arrow-right"></em>
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                        
+                                                        <div class="form-note-s2 text-center pt-4 mt-2" style="border-top: 1px solid #e5e9f2;">
+                                                            Belum punya akun? <a href="{{ route('register') }}" class="link link-primary fw-bold">Daftar disini</a>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <div class="form-label-group">
-                                                            <label class="form-label" for="password">Kata Sandi</label>
-                                                        </div>
-                                                        <div class="form-control-wrap">
-                                                            <a href="#" class="form-icon form-icon-right passcode-switch lg" data-target="password">
-                                                                <em class="passcode-icon icon-show icon ni ni-eye"></em>
-                                                                <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
-                                                            </a>
-                                                            <input type="password" class="form-control form-control-lg" name="password" id="password" placeholder="Masukkan kata sandi Anda" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group mt-5">
-                                                        <button type="submit" class="btn btn-lg btn-primary btn-block" id="btn-submit">Masuk</button>
-                                                    </div>
-                                                </form>
-                                                <div class="form-note-s2 text-center pt-4">
-                                                    Belum punya akun? <a href="{{ route('register') }}"><strong>Daftar disini</strong></a>
                                                 </div>
                                             </div>
                                         </div>
