@@ -18,7 +18,7 @@
                         <div class="card border-0 rounded-0 min-vh-100 overflow-hidden">
                             <div class="card-inner card-inner-lg p-0 min-vh-100">
                                 <div class="row g-0 min-vh-100">
-                                    <div class="col-lg-7 order-2 order-lg-1 p-3 ps-lg-3 rounded-3 d-none d-lg-block">
+                                    <div class="col-lg-8 order-2 order-lg-1 p-3 ps-lg-3 rounded-3 d-none d-xl-block">
                                         @if($sliders && $sliders->isNotEmpty())
                                         <div id="auth-carousel" class="carousel slide h-100 rounded-4 overflow-hidden" data-bs-ride="carousel" style="min-height: 300px;">
                                             <div class="carousel-indicators">
@@ -30,11 +30,11 @@
                                                 @foreach($sliders as $key => $slider)
                                                 <div class="carousel-item h-100 {{ $key === 0 ? 'active' : '' }}">
                                                     <div class="h-100 w-100 position-relative" style="background-image: url('{{ asset($slider->image) }}'); background-size: cover; background-position: center;">
-                                                        <div class="slider-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%); position: absolute; top:0; left:0; right:0; bottom:0;">
+                                                        <div class="slider-overlay">
                                                             @if($slider->title)
-                                                            <div class="slider-caption container position-absolute w-100 text-center" style="bottom: 10%; left: 0;">
-                                                                <h2 class="display-5 fw-bold mb-3 text-white">{{ $slider->title }}</h2>
-                                                                <p class="lead text-white-75 mb-0 px-4">{{ $slider->description }}</p>
+                                                            <div class="slider-caption container">
+                                                                <h2 class="display-4 fw-bold mb-3">{{ $slider->title }}</h2>
+                                                                <p class="lead text-white-75 mb-0">{{ $slider->description }}</p>
                                                             </div>
                                                             @endif
                                                         </div>
@@ -44,37 +44,52 @@
                                             </div>
                                         </div>
                                         @else
-                                        <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100 p-5 text-center position-relative overflow-hidden rounded-4" style="background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-sidebar-bg) 100%);">
-                                            <div class="position-absolute top-0 start-0 w-100 h-100 bg-overlay-pattern" style="opacity: 0.1;"></div>
+                                        <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100 p-5 text-center empty-state-bg position-relative overflow-hidden rounded-5">
+                                            <div class="position-absolute top-0 start-0 w-100 h-100 bg-overlay-pattern"></div>
                                             
+                                            <style>
+                                                @media (max-width: 576px) {
+                                                    .responsive-heading { font-size: 1.75rem !important; }
+                                                    .responsive-text { font-size: 1rem !important; }
+                                                }
+                                            </style>
                                             <div class="position-relative z-index-1">
-                                                <img src="{{ asset('images/brand-full-logo-side.png') }}" alt="Jari POS" class="mb-5 logo-filter-white" style="height: 60px; filter: brightness(0) invert(1);">
+                                                <img src="{{ asset('images/brand-full-logo-side.png') }}" alt="Jari POS" class="mb-5 logo-filter-white" style="height: 60px;">
                                                 <h1 class="text-white fw-bolder responsive-heading mb-4">Selamat Datang di Jari POS</h1>
                                                 <p class="text-white-80 lead responsive-text mx-auto" style="max-width: 600px;">
                                                     Kelola bisnis Anda secara efisien dengan sistem POS canggih kami. Lacak pesanan, kelola inventaris, dan kembangkan bisnis Anda.
                                                 </p>
+                                                <div class="mt-5">
+                                                    <span class="badge badge-soft-white rounded-pill px-4 py-2 fw-bold text-uppercase">Sistem v1.0</span>
+                                                </div>
                                             </div>
                                         </div>
                                         @endif
                                     </div>
                                     
-                                    <div class="col-lg-5 order-1 order-lg-2 bg-white">
+                                    <div class="col-xl-4 order-1 order-lg-2 bg-white">
                                         <div class="d-flex align-items-center justify-content-center h-100 p-4 p-xl-5">
                                             <div class="w-100 mx-auto" style="max-width: 600px;">
                                                 
                                                 <!-- Logo for Mobile Only -->
                                                 <div class="brand-logo mb-4 text-center d-lg-none">
                                                     <a href="/" class="logo-link">
-                                                        <img class="logo-light logo-img logo-img-lg" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo">
-                                                        <img class="logo-dark logo-img logo-img-lg" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo-dark">
+                                                        <img class="logo-light logo-img" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo">
+                                                        <img class="logo-dark logo-img" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo-dark">
                                                     </a>
                                                 </div>
 
                                                 <div class="nk-block-head text-center mb-4">
                                                     <div class="nk-block-head-content">
+                                                        <div class="brand-logo mb-4 d-none d-lg-block">
+                                                            <a href="/" class="logo-link">
+                                                                <img class="logo-light logo-img logo-img-login" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo">
+                                                                <img class="logo-dark logo-img logo-img-login" src="{{ asset('images/brand-full-logo-side.png') }}" srcset="{{ asset('images/brand-full-logo-side.png') }}" alt="logo-dark">
+                                                            </a>
+                                                        </div>
                                                         <h3 class="nk-block-title fw-bold text-primary mb-2" style="font-size: 28px;">Daftar Akun Baru</h3>
                                                         <div class="nk-block-des text-soft">
-                                                            <p class="fs-15px">Buat akun <strong class="text-dark fw-bold">Jari POS</strong> dan siapkan data bisnis Anda.</p>
+                                                            <p>Buat akun <strong class="text-dark fw-bold">Jari POS</strong> dan siapkan data bisnis Anda.</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -83,15 +98,15 @@
                                                     <div class="card-inner p-4 p-md-5">
                                                         <form id="form-data">
                                                             <!-- Custom Steps Indicator -->
-                                                            <ul class="nav nav-tabs nav-tabs-s1 justify-content-center mb-4 pb-3" role="tablist" style="border-bottom: 1px solid #e5e9f2;">
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link fw-bold active fs-15px text-primary" data-bs-toggle="tab" href="#step-1" role="tab" style="padding-bottom: 12px; border-bottom: 2px solid var(--app-primary);">
-                                                                        <em class="icon ni ni-user me-1 text-primary"></em> Data Pribadi
+                                                            <ul class="nav nav-tabs nav-tabs-s1 justify-content-between flex-nowrap mb-4 pb-3 w-100 mx-0" role="tablist" style="border-bottom: 1px solid #e5e9f2; gap: 0.25rem;">
+                                                                <li class="nav-item flex-grow-1" style="width: 50%;">
+                                                                    <a class="nav-link fw-bold active text-primary text-center px-1 w-100 d-flex justify-content-center align-items-center responsive-tab-text" data-bs-toggle="tab" href="#step-1" role="tab" style="padding-bottom: 12px; border-bottom: 2px solid var(--app-primary); white-space: nowrap;">
+                                                                        <em class="icon ni ni-user me-1 text-primary"></em> <span>Data Pribadi</span>
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item ms-4">
-                                                                    <a class="nav-link fw-bold disabled fs-15px text-secondary" data-bs-toggle="tab" href="#step-2" role="tab" id="tab-step-2" style="padding-bottom: 12px; border-bottom: 2px solid transparent;">
-                                                                        <em class="icon ni ni-building me-1 text-secondary"></em> Data Perusahaan
+                                                                <li class="nav-item flex-grow-1" style="width: 50%;">
+                                                                    <a class="nav-link fw-bold disabled text-secondary text-center px-1 w-100 d-flex justify-content-center align-items-center responsive-tab-text" data-bs-toggle="tab" href="#step-2" role="tab" id="tab-step-2" style="padding-bottom: 12px; border-bottom: 2px solid transparent; white-space: nowrap;">
+                                                                        <em class="icon ni ni-building me-1 text-secondary"></em> <span>Data Perusahaan</span>
                                                                     </a>
                                                                 </li>
                                                             </ul>
@@ -102,6 +117,14 @@
                                                                 .nav-tabs-s1 .nav-link.active { color: var(--app-primary) !important; border-bottom-color: var(--app-primary) !important; }
                                                                 .nav-tabs-s1 .nav-link:not(.active) { color: #6e82a5 !important; }
                                                                 .nav-tabs-s1 .nav-link:not(.active) .icon { color: #8094ae !important; }
+                                                                
+                                                                .responsive-tab-text { font-size: 15px; }
+                                                                @media (max-width: 420px) {
+                                                                    .responsive-tab-text { font-size: 12px; padding-left: 2px !important; padding-right: 2px !important; flex-direction: column; gap: 4px; }
+                                                                    .responsive-tab-text .icon { font-size: 14px; margin-right: 0 !important; }
+                                                                    .responsive-tab-text span { white-space: normal; line-height: 1.2; }
+                                                                    .nav-tabs-s1 { gap: 0 !important; }
+                                                                }
                                                                 
                                                                 /* Form controls */
                                                                 .custom-form-control { background-color: #f5f6fa !important; border-color: transparent !important; color: #526484; font-size: 14px; }
@@ -163,7 +186,7 @@
                                                                         <div class="col-12 col-sm-5 order-1 order-sm-2 mb-3 mb-sm-0">
                                                                             <div class="d-flex flex-column flex-sm-row justify-content-sm-end">
                                                                                 <button type="button" class="btn btn-lg btn-primary mb-0 d-flex justify-content-center px-4 rounded-pill shadow-sm w-100" id="btn-next-step">
-                                                                                    <span class="fw-bold fs-15px">Selanjutnya</span> <em class="icon ni ni-arrow-right ms-2 fw-bold"></em>
+                                                                                    <span class="fw-bold">Selanjutnya</span> <em class="icon ni ni-arrow-right fw-bold"></em>
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -186,7 +209,7 @@
                                                                             <div class="form-group">
                                                                                 <label class="form-label" for="business_category">Kategori Usaha <span class="text-danger">*</span></label>
                                                                                 <div class="form-control-wrap">
-                                                                                    <select class="form-select form-control form-control-lg custom-form-control rounded-3" id="business_category" name="business_category">
+                                                                                    <select class="form-control form-control-lg custom-form-control rounded-3" id="business_category" name="business_category">
                                                                                         <option value="" disabled selected>Pilih Kategori</option>
                                                                                         <option value="retail">Retail</option>
                                                                                         <option value="restoran">Restoran</option>
@@ -226,14 +249,14 @@
                                                                         <div class="col-12 col-sm-5 order-2 order-sm-1 mt-3 mt-sm-0">
                                                                             <div class="d-flex flex-column flex-sm-row justify-content-sm-start">
                                                                                 <button type="button" class="btn btn-lg btn-light mb-0 d-flex justify-content-center px-4 rounded-pill w-100" id="btn-prev-step" style="background:#f5f6fa; border:none; color:#526484;">
-                                                                                    <em class="icon ni ni-arrow-left me-2"></em> <span class="fw-bold fs-15px">Kembali</span>
+                                                                                    <em class="icon ni ni-arrow-left"></em> <span class="fw-bold">Kembali</span>
                                                                                 </button>
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-12 col-sm-7 order-1 order-sm-2">
                                                                             <div class="d-flex flex-column flex-sm-row justify-content-sm-end">
                                                                                 <button type="submit" class="btn btn-lg btn-primary mb-0 d-flex justify-content-center px-4 rounded-pill shadow-sm w-100" id="btn-submit">
-                                                                                    <em class="icon ni ni-check-circle me-2 fw-bold"></em> <span class="fw-bold fs-15px">Selesai & Daftar</span>
+                                                                                    <em class="icon ni ni-check-circle fw-bold"></em> <span class="fw-bold">Daftar Sekarang</span>
                                                                                 </button>
                                                                             </div>
                                                                         </div>
