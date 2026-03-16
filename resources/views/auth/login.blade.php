@@ -19,7 +19,7 @@
                         <div class="card border-0 rounded-0 min-vh-100 overflow-hidden">
                             <div class="card-inner card-inner-lg p-0 min-vh-100">
                                 <div class="row g-0 min-vh-100">
-                                    <div class="col-xl-8 order-2 order-xl-1 p-3 ps-lg-3 rounded-3">
+                                    <div class="col-xxl-8 col-xl-7 order-2 order-xl-1 p-3 ps-lg-3 rounded-3">
                                         @if($sliders->isNotEmpty())
                                         <div id="auth-carousel" class="carousel slide h-100 rounded-4 overflow-hidden" data-bs-ride="carousel" style="min-height: 300px;">
                                             <div class="carousel-indicators">
@@ -68,7 +68,7 @@
                                         </div>
                                         @endif
                                     </div>
-                                    <div class="col-xl-4 order-1 order-xl-2 bg-white">
+                                    <div class="col-xxl-4 col-xl-5 order-1 order-xl-2 bg-white">
                                         <div class="d-flex align-items-center justify-content-center h-100 p-4 p-xl-5">
                                            <div class="w-100 max-w-400px mx-auto">
                                                 
