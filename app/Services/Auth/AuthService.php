@@ -37,6 +37,15 @@ class AuthService
             $validated['password'] = Hash::make($validated['password']);
             $user = AuthRepository::createUser($validated, $company->id);
 
+            // Create Payment Method (True/False)
+            $paymentMethod = AuthRepository::createPaymentMethod($company->id);
+
+            // Create Unit (True/False)
+            $unit = AuthRepository::createUnit($company->id);
+
+            // Create Category (True/False)
+            $category = AuthRepository::createCategory($company->id);
+
             DB::commit();
 
             // Send verification email notification

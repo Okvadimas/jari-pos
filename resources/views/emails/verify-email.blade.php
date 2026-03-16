@@ -14,8 +14,8 @@
         .email-body p { color: #555; font-size: 15px; line-height: 1.7; margin: 0 0 16px; }
         .email-body .greeting { color: #333; font-size: 17px; font-weight: 600; }
         .btn-verify { display: inline-block; background: linear-gradient(135deg, #366daf 0%, #02274d 100%); color: #ffffff !important; text-decoration: none; padding: 14px 40px; border-radius: 8px; font-size: 15px; font-weight: 600; margin: 20px 0; }
-        .email-footer { padding: 24px 40px; text-align: center; border-top: 1px solid #eee; }
-        .email-footer p { color: #999; font-size: 13px; margin: 0; }
+        .email-footer { background: linear-gradient(135deg, #366daf 0%, #02274d 100%); padding: 24px 40px; text-align: center; border-top: 1px solid #eee; }
+        .email-footer p { color: #ffffff; font-size: 13px; margin: 0; }
         .link-fallback { word-break: break-all; font-size: 13px; color: #366daf; }
     </style>
 </head>

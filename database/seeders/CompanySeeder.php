@@ -25,11 +25,22 @@ class CompanySeeder extends Seeder
         ]);
 
         Company::create([
-            'code' => 'DC',
-            'name' => 'Demo Company',
-            'email' => 'demo@jaripos.com',
+            'code' => 'KC',
+            'name' => 'Kelingking Company',
+            'email' => 'kelingking@jaripos.com',
             'phone' => '08987654321',
-            'address' => 'Jl. Demo No. 456, Bandung',
+            'address' => 'Jl. Kelingking No. 456, Bandung',
+            'logo' => null,
+            'created_by' => null,
+            'updated_by' => null,
+        ]);
+
+        Company::create([
+            'code' => 'JC',
+            'name' => 'Jempol Company',
+            'email' => 'jempol@jaripos.com',
+            'phone' => '08987654321',
+            'address' => 'Jl. Jempol No. 456, Bandung',
             'logo' => null,
             'created_by' => null,
             'updated_by' => null,

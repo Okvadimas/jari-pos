@@ -26,12 +26,26 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'User',
-            'username' => 'user',
-            'email' => 'user@jaripos.com',
-            'password' => Hash::make('00000'),
-            'role_id' => 2, // Starter
-            'company_id' => 2, // Demo Company
+            'name' => 'Kelingking',
+            'username' => 'kelingking',
+            'email' => 'kelingking@jaripos.com',
+            'password' => Hash::make('55555'),
+            'role_id' => 2, // Kelingking
+            'company_id' => 2, // Kelingking Company
+            'start_date' => now(),
+            'end_date' => now()->addYears(5),
+            'email_verified_at' => now(),
+            'created_by' => 1,
+            'updated_by' => 1,
+        ]);
+
+        User::create([
+            'name' => 'Jempol',
+            'username' => 'jempol',
+            'email' => 'jempol@jaripos.com',
+            'password' => Hash::make('55555'),
+            'role_id' => 3, // Jempol
+            'company_id' => 3, // Jempol Company
             'start_date' => now(),
             'end_date' => now()->addYears(5),
             'email_verified_at' => now(),

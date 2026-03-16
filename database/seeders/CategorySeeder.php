@@ -41,5 +41,30 @@ class CategorySeeder extends Seeder
                 ]
             );
         }
+
+        // Default categories for company 2 & 3
+        $defaultCategories = [
+            ['code' => 'MKN', 'name' => 'Makanan'],
+            ['code' => 'MNM', 'name' => 'Minuman'],
+            ['code' => 'SNK', 'name' => 'Snack'],
+            ['code' => 'KUE', 'name' => 'Kue & Roti'],
+            ['code' => 'SYR', 'name' => 'Sayur & Buah'],
+            ['code' => 'FRZ', 'name' => 'Frozen Food'],
+            ['code' => 'LNY', 'name' => 'Lainnya'],
+        ];
+
+        foreach ([2, 3] as $companyId) {
+            foreach ($defaultCategories as $category) {
+                DB::table('categories')->insert([
+                    'company_id' => $companyId,
+                    'code'       => $category['code'],
+                    'name'       => $category['name'],
+                    'created_by' => 1,
+                    'updated_by' => 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
     }
 }

@@ -23,25 +23,25 @@ class PaymentMethodSeeder extends Seeder
             ],
             // Bank Transfer
             [
-                'name'       => 'Transfer BCA',
+                'name'       => 'Bank BCA',
                 'type'       => 'bank_transfer',
                 'created_by' => 1,
                 'updated_by' => 1,
             ],
             [
-                'name'       => 'Transfer BRI',
+                'name'       => 'Bank BRI',
                 'type'       => 'bank_transfer',
                 'created_by' => 1,
                 'updated_by' => 1,
             ],
             [
-                'name'       => 'Transfer Mandiri',
+                'name'       => 'Bank Mandiri',
                 'type'       => 'bank_transfer',
                 'created_by' => 1,
                 'updated_by' => 1,
             ],
             [
-                'name'       => 'Transfer BNI',
+                'name'       => 'Bank BNI',
                 'type'       => 'bank_transfer',
                 'created_by' => 1,
                 'updated_by' => 1,
@@ -71,36 +71,19 @@ class PaymentMethodSeeder extends Seeder
                 'created_by' => 1,
                 'updated_by' => 1,
             ],
-            [
-                'name'       => 'LinkAja',
-                'type'       => 'e-wallet',
-                'created_by' => 1,
-                'updated_by' => 1,
-            ],
             // QRIS
             [
                 'name'       => 'QRIS',
                 'type'       => 'other',
                 'created_by' => 1,
                 'updated_by' => 1,
-            ],
-            // Debit/Credit Card
-            [
-                'name'       => 'Kartu Debit',
-                'type'       => 'other',
-                'created_by' => 1,
-                'updated_by' => 1,
-            ],
-            [
-                'name'       => 'Kartu Kredit',
-                'type'       => 'other',
-                'created_by' => 1,
-                'updated_by' => 1,
-            ],
+            ]
         ];
 
-        foreach ($paymentMethods as $method) {
-            PaymentMethod::create(array_merge($method, ['company_id' => 1]));
+        foreach ([1, 2, 3] as $companyId) {
+            foreach ($paymentMethods as $method) {
+                PaymentMethod::create(array_merge($method, ['company_id' => $companyId]));
+            }
         }
     }
 }

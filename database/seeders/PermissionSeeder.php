@@ -15,16 +15,22 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        $menus = Menu::whereNotNull('url')->get();
+        $roleMenus = [
+            1 => Menu::whereNotNull('url')->pluck('id')->toArray(), // Super Admin
+            2 => [5, 7, 8, 9, 10, 11, 13, 14],                      // Kelingking
+            3 => [5, 7, 8, 9, 10, 11, 13, 14, 16, 18],              // Jempol
+        ];
 
-        foreach ($menus as $menu) {
-            Permission::updateOrCreate([
-                'role_id'   => 1,
-                'menu_id'   => $menu->id,
-            ], [
-                'created_by' => 1,
-                'updated_by' => 1,
-            ]);
+        foreach ($roleMenus as $roleId => $menuIds) {
+            foreach ($menuIds as $menuId) {
+                Permission::updateOrCreate([
+                    'role_id'   => $roleId,
+                    'menu_id'   => $menuId,
+                ], [
+                    'created_by' => 1,
+                    'updated_by' => 1,
+                ]);
+            }
         }
     }
 }
