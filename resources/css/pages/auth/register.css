@@ -98,3 +98,23 @@
         font-size: 1.25rem; /* ~20px for desktop (lead equivalent) */
     }
 }
+
+/* Custom inner tab styling to match image */
+.nav-tabs-s1 .nav-link { background: transparent !important; }
+.nav-tabs-s1 .nav-link.active { color: var(--app-primary) !important; border-bottom-color: var(--app-primary) !important; }
+.nav-tabs-s1 .nav-link:not(.active) { color: #6e82a5 !important; }
+.nav-tabs-s1 .nav-link:not(.active) .icon { color: #8094ae !important; }
+
+.responsive-tab-text { font-size: 15px; }
+@media (max-width: 420px) {
+    .responsive-tab-text { font-size: 12px; padding-left: 2px !important; padding-right: 2px !important; flex-direction: column; gap: 4px; }
+    .responsive-tab-text .icon { font-size: 14px; margin-right: 0 !important; }
+    .responsive-tab-text span { white-space: normal; line-height: 1.2; }
+    .nav-tabs-s1 { gap: 0 !important; }
+}
+
+/* Form controls */
+.custom-form-control { background-color: #f5f6fa !important; border-color: transparent !important; color: #526484; font-size: 14px; }
+.custom-form-control:focus { background-color: #f5f6fa !important; border-color: transparent !important; box-shadow: 0 0 0 2px rgba(34, 99, 179, 0.2) !important; }
+.form-label { font-size: 13px; font-weight: 600; color: #364a63; margin-bottom: 8px; }
+.form-icon { color: #8094ae; }

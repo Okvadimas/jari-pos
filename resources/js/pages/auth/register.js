@@ -45,4 +45,45 @@ $(document).ready(function() {
             }
         });        
     });
+
+    // Tab Navigation Logic
+    const $btnNext = $('#btn-next-step');
+    const $btnPrev = $('#btn-prev-step');
+    const $tabStep2 = $('#tab-step-2');
+    const $tabStep1 = $('a[href="#step-1"]');
+    
+    // Tab style updating
+    function updateTabStyles($activeTab) {
+        $('.nav-tabs-s1 .nav-link').removeClass('active text-primary').addClass('text-secondary').css('border-bottom-color', 'transparent');
+        $('.nav-tabs-s1 .nav-link .icon').removeClass('text-primary').addClass('text-secondary');
+        
+        $activeTab.addClass('active text-primary').removeClass('text-secondary disabled').css('border-bottom-color', 'var(--app-primary)');
+        $activeTab.find('.icon').addClass('text-primary').removeClass('text-secondary');
+    }
+
+    // Form inputs to validate before next step
+    const step1Inputs = ['name', 'username', 'email', 'password'];
+    
+    $btnNext.on('click', function() {
+        let isValid = true;
+        step1Inputs.forEach(id => {
+            const input = document.getElementById(id);
+            if(input && !input.checkValidity()) {
+                input.reportValidity();
+                isValid = false;
+            }
+        });
+        
+        if(isValid) {
+            let tab = new bootstrap.Tab($tabStep2[0]);
+            tab.show();
+            updateTabStyles($tabStep2);
+        }
+    });
+    
+    $btnPrev.on('click', function() {
+        let tab = new bootstrap.Tab($tabStep1[0]);
+        tab.show();
+        updateTabStyles($tabStep1);
+    });
 });

@@ -18,7 +18,7 @@
                         <div class="card border-0 rounded-0 min-vh-100 overflow-hidden">
                             <div class="card-inner card-inner-lg p-0 min-vh-100">
                                 <div class="row g-0 min-vh-100">
-                                    <div class="col-lg-8 order-2 order-lg-1 p-3 ps-lg-3 rounded-3 d-none d-xl-block">
+                                    <div class="col-xxl-8 col-xl-7 order-2 order-lg-1 p-3 ps-lg-3 rounded-3 d-none d-xl-block">
                                         @if($sliders && $sliders->isNotEmpty())
                                         <div id="auth-carousel" class="carousel slide h-100 rounded-4 overflow-hidden" data-bs-ride="carousel" style="min-height: 300px;">
                                             <div class="carousel-indicators">
@@ -47,12 +47,6 @@
                                         <div class="d-flex flex-column justify-content-center align-items-center h-100 w-100 p-5 text-center empty-state-bg position-relative overflow-hidden rounded-5">
                                             <div class="position-absolute top-0 start-0 w-100 h-100 bg-overlay-pattern"></div>
                                             
-                                            <style>
-                                                @media (max-width: 576px) {
-                                                    .responsive-heading { font-size: 1.75rem !important; }
-                                                    .responsive-text { font-size: 1rem !important; }
-                                                }
-                                            </style>
                                             <div class="position-relative z-index-1">
                                                 <img src="{{ asset('images/brand-full-logo-side.png') }}" alt="Jari POS" class="mb-5 logo-filter-white" style="height: 60px;">
                                                 <h1 class="text-white fw-bolder responsive-heading mb-4">Selamat Datang di Jari POS</h1>
@@ -67,7 +61,7 @@
                                         @endif
                                     </div>
                                     
-                                    <div class="col-xl-4 order-1 order-lg-2 bg-white">
+                                    <div class="col-xxl-4 col-xl-5 order-1 order-lg-2 bg-white">
                                         <div class="d-flex align-items-center justify-content-center h-100 p-4 p-xl-5">
                                             <div class="w-100 mx-auto" style="max-width: 600px;">
                                                 
@@ -111,27 +105,6 @@
                                                                 </li>
                                                             </ul>
                                                             
-                                                            <style>
-                                                                /* Custom inner tab styling to match image */
-                                                                .nav-tabs-s1 .nav-link { background: transparent !important; }
-                                                                .nav-tabs-s1 .nav-link.active { color: var(--app-primary) !important; border-bottom-color: var(--app-primary) !important; }
-                                                                .nav-tabs-s1 .nav-link:not(.active) { color: #6e82a5 !important; }
-                                                                .nav-tabs-s1 .nav-link:not(.active) .icon { color: #8094ae !important; }
-                                                                
-                                                                .responsive-tab-text { font-size: 15px; }
-                                                                @media (max-width: 420px) {
-                                                                    .responsive-tab-text { font-size: 12px; padding-left: 2px !important; padding-right: 2px !important; flex-direction: column; gap: 4px; }
-                                                                    .responsive-tab-text .icon { font-size: 14px; margin-right: 0 !important; }
-                                                                    .responsive-tab-text span { white-space: normal; line-height: 1.2; }
-                                                                    .nav-tabs-s1 { gap: 0 !important; }
-                                                                }
-                                                                
-                                                                /* Form controls */
-                                                                .custom-form-control { background-color: #f5f6fa !important; border-color: transparent !important; color: #526484; font-size: 14px; }
-                                                                .custom-form-control:focus { background-color: #f5f6fa !important; border-color: transparent !important; box-shadow: 0 0 0 2px rgba(34, 99, 179, 0.2) !important; }
-                                                                .form-label { font-size: 13px; font-weight: 600; color: #364a63; margin-bottom: 8px; }
-                                                                .form-icon { color: #8094ae; }
-                                                            </style>
 
                                                             <div class="tab-content pt-1">
                                                                 <!-- Step 1: Data Pribadi -->
@@ -179,17 +152,15 @@
                                                                         </div>
                                                                     </div>
                                                                     
-                                                                    <div class="row align-items-center pt-4 mt-2" style="border-top: 1px solid #e5e9f2;">
-                                                                        <div class="col-12 col-sm-7 text-center text-sm-start order-2 order-sm-1">
-                                                                            <p class="fs-14px mb-0 text-soft">Sudah punya akun? <a href="{{ route('login') }}" class="link link-primary fw-bold d-inline-block mt-2 mt-sm-0">Masuk disini</a></p>
-                                                                        </div>
-                                                                        <div class="col-12 col-sm-5 order-1 order-sm-2 mb-3 mb-sm-0">
-                                                                            <div class="d-flex flex-column flex-sm-row justify-content-sm-end">
-                                                                                <button type="button" class="btn btn-lg btn-primary mb-0 d-flex justify-content-center px-4 rounded-pill shadow-sm w-100" id="btn-next-step">
-                                                                                    <span class="fw-bold">Selanjutnya</span> <em class="icon ni ni-arrow-right fw-bold"></em>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
+                                                                    <div class="form-group mt-5">
+                                                                        <button type="button" class="btn btn-lg btn-primary btn-block rounded-pill shadow-sm d-flex justify-content-center align-items-center w-100" id="btn-next-step">
+                                                                            <span class="fw-bold">Selanjutnya</span>
+                                                                            <em class="icon ni ni-arrow-right"></em>
+                                                                        </button>
+                                                                    </div>
+                                                                    
+                                                                    <div class="form-note-s2 text-center pt-4 mt-2" style="border-top: 1px solid #e5e9f2;">
+                                                                        Sudah punya akun? <a href="{{ route('login') }}" class="link link-primary fw-bold">Masuk disini</a>
                                                                     </div>
                                                                 </div>
                                                                 
@@ -273,66 +244,6 @@
                             </div>
                         </div>
                         
-                        <!-- Simple Script for Tab Navigation -->
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const btnNext = document.getElementById('btn-next-step');
-                                const btnPrev = document.getElementById('btn-prev-step');
-                                const tabStep2 = document.getElementById('tab-step-2');
-                                const tabStep1 = document.querySelector('a[href="#step-1"]');
-                                
-                                // Tab style updating
-                                function updateTabStyles(activeTab) {
-                                    document.querySelectorAll('.nav-tabs-s1 .nav-link').forEach(el => {
-                                        el.classList.remove('active', 'text-primary');
-                                        el.classList.add('text-secondary');
-                                        el.style.borderBottomColor = 'transparent';
-                                        
-                                        const icon = el.querySelector('.icon');
-                                        if(icon) {
-                                            icon.classList.remove('text-primary');
-                                            icon.classList.add('text-secondary');
-                                        }
-                                    });
-                                    
-                                    activeTab.classList.add('active', 'text-primary');
-                                    activeTab.classList.remove('text-secondary', 'disabled');
-                                    activeTab.style.borderBottomColor = 'var(--app-primary)';
-                                    
-                                    const activeIcon = activeTab.querySelector('.icon');
-                                    if(activeIcon) {
-                                        activeIcon.classList.add('text-primary');
-                                        activeIcon.classList.remove('text-secondary');
-                                    }
-                                }
-
-                                // Form inputs to validate before next step
-                                const step1Inputs = ['name', 'username', 'email', 'password'];
-                                
-                                btnNext.addEventListener('click', function() {
-                                    let isValid = true;
-                                    step1Inputs.forEach(id => {
-                                        const input = document.getElementById(id);
-                                        if(!input.checkValidity()) {
-                                            input.reportValidity();
-                                            isValid = false;
-                                        }
-                                    });
-                                    
-                                    if(isValid) {
-                                        let tab = new bootstrap.Tab(tabStep2);
-                                        tab.show();
-                                        updateTabStyles(tabStep2);
-                                    }
-                                });
-                                
-                                btnPrev.addEventListener('click', function() {
-                                    let tab = new bootstrap.Tab(tabStep1);
-                                    tab.show();
-                                    updateTabStyles(tabStep1);
-                                });
-                            });
-                        </script>
                         <!-- Carousel / Split Layout End -->
                     </div>
                 </div>
