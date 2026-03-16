@@ -3,6 +3,7 @@
 namespace App\Repositories\Inventory;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 
 class ProductVariantRepository {
@@ -17,6 +18,7 @@ class ProductVariantRepository {
                     ->whereNull('c.deleted_at')
                     ->whereNull('pv.deleted_at')
                     ->whereNull('price.deleted_at')
+                    ->where('p.company_id', Auth::user()->company_id)
                     ->select('pv.id', 'p.name as nama_produk', 'c.name as nama_kategori', 'pv.name as nama_varian', 'pv.sku as sku', DB::raw('COALESCE(u.name, \'-\') as nama_satuan'), DB::raw('COALESCE(price.purchase_price, 0) as harga_beli'), DB::raw('COALESCE(price.sell_price, 0) as harga_jual'))
                     ->orderBy('p.name', 'asc');
         

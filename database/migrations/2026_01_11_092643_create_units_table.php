@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
-            $table->string('code', 10)->unique();
+            $table->string('code', 10);
             $table->string('name', 50);
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();

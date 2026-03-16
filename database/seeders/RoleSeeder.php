@@ -20,21 +20,13 @@ class RoleSeeder extends Seeder
                 'slug'      => 'super-admin',
             ],
             [
-                'name'      => 'Starter',
-                'slug'      => 'starter',
+                'name'      => 'Kelingking',
+                'slug'      => 'kelingking',
             ],
             [
-                'name'      => 'Basic',
-                'slug'      => 'basic',
-            ],
-            [
-                'name'      => 'Pro',
-                'slug'      => 'pro',
-            ],
-            [
-                'name'      => 'Custom Pro', // Custom Paket
-                'slug'      => 'custom-pro',
-            ],
+                'name'      => 'Jempol',
+                'slug'      => 'jempol',
+            ]
         ];
 
         foreach ($roles as $role) {
