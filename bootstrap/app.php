@@ -12,11 +12,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(append: [
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
+        ]);
+
         $middleware->alias([
             'ajax-request' => \App\Http\Middleware\AjaxRequest::class,
             'redirect-if-authenticated' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'menu-access' => \App\Http\Middleware\CheckMenuAccess::class,
             'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+            'screen.unlocked' => \App\Http\Middleware\EnsureScreenIsNotLocked::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

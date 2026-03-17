@@ -126,6 +126,8 @@ class AuthController extends Controller
 
     public function lockScreen()
     {
+        session(['locked' => true]);
+
         $title = 'Layar Terkunci | Jari POS';
         $css   = 'resources/css/pages/auth/lock-screen.css';
         $js    = 'resources/js/pages/auth/lock-screen.js';
@@ -138,6 +140,7 @@ class AuthController extends Controller
         $request->validate(['password' => 'required']);
 
         if (Hash::check($request->password, Auth::user()->password)) {
+            session()->forget('locked');
             return $this->successResponse('Berhasil membuka kunci layar');
         }
 
