@@ -64,7 +64,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 });
 
 // Auth + Verified routes (email verification required)
-Route::group(['middleware' => ['web', 'auth', 'verified']], function () {
+Route::group(['middleware' => ['web', 'auth', 'verified', 'screen.unlocked']], function () {
 
     // Dashboard
     Route::get('/dashboard',        [DashboardController::class, 'index'])->name('dashboard');

@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordMail;
 
 // Load Repository
 use App\Repositories\Auth\AuthRepository;
@@ -96,6 +99,9 @@ class AuthService
                 'message' => 'Email belum diverifikasi. Silakan cek email Anda untuk verifikasi.',
             ];
         }
+
+        // Invalidate other sessions
+        Auth::logoutOtherDevices($password);
 
         // Setup session
         $request->session()->regenerate();
@@ -197,12 +203,12 @@ class AuthService
             ];
         }
 
-        $password = \Illuminate\Support\Str::random(8);
+        $password = Str::random(8);
         $user->password = Hash::make($password);
         $user->save();
 
-        \Illuminate\Support\Facades\Mail::to($user->email)
-            ->send(new \App\Mail\ResetPasswordMail($user, $password));
+        Mail::to($user->email)
+            ->send(new ResetPasswordMail($user, $password));
 
         return [
             'status'  => true,

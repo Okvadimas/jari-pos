@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 // Load Repository
 use App\Repositories\Management\UserRepository;
@@ -56,7 +57,7 @@ class UserService {
             $user->delete();
             return true;
         } catch (\Throwable $th) {
-            \Illuminate\Support\Facades\Log::error($th->getMessage());
+            Log::error($th->getMessage());
             return false;
         }
     }
