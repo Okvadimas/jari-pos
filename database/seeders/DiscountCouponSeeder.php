@@ -14,7 +14,6 @@ class DiscountCouponSeeder extends Seeder
     {
         $coupons = [
             [
-                'company_id' => 1,
                 'code' => 'PROMO100K',
                 'name' => 'Promo Diskon 100RB',
                 'type' => 'fixed',
@@ -26,7 +25,6 @@ class DiscountCouponSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'company_id' => null, // Global coupon
                 'code' => 'DISC20',
                 'name' => 'Diskon 20 Persen',
                 'type' => 'percentage',
