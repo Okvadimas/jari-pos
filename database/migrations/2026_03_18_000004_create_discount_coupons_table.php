@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('discount_coupons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->nullable()->constrained('companies')->cascadeOnDelete();
             $table->string('code')->unique();
             $table->string('name');
             $table->string('type')->comment('percentage, fixed');
@@ -29,7 +28,6 @@ return new class extends Migration
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             $table->softDeletesWithUser();
 
-            $table->index('company_id');
             $table->index('code');
             $table->index('is_active');
         });

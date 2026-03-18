@@ -81,7 +81,6 @@ class DiscountCouponService
                     ]);
                 } else {
                     $coupon = DiscountCoupon::create([
-                        'company_id' => $user->company_id,
                         'code' => $data['code'],
                         'name' => $data['name'],
                         'type' => $data['type'],

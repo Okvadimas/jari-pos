@@ -66,7 +66,7 @@ class PosController extends Controller
     {
         $data = PosService::getOrderWithDetails($id);
 
-        if (!$order) {
+        if (!$data) {
             return $this->errorResponse('Order not found', 404);
         }
 
@@ -104,7 +104,7 @@ class PosController extends Controller
     {
         $data = PosService::getOrderWithDetails($id);
 
-        if (!$order) {
+        if (!$data) {
             return $this->errorResponse('Order not found', 404);
         }
 

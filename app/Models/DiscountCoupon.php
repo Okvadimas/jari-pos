@@ -10,7 +10,6 @@ class DiscountCoupon extends Model
     use SoftDeletesWithUser;
     protected $table = 'discount_coupons';
     protected $fillable = [
-        'company_id',
         'code',
         'name',
         'type',
@@ -30,10 +29,7 @@ class DiscountCoupon extends Model
         'valid_until' => 'date',
     ];
 
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
-    }
+
 
     /**
      * Check if coupon is valid for use
