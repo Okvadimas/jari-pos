@@ -39,6 +39,12 @@ use App\Http\Controllers\Report\RecommendationController   as RecommendationCont
 // Chatbot
 use App\Http\Controllers\Chatbot\ChatbotController         as ChatbotController;
 
+// Finance
+use App\Http\Controllers\Finance\BusinessExpenseController;
+use App\Http\Controllers\Finance\AppSaleController;
+use App\Http\Controllers\Finance\AffiliateCommissionController;
+use App\Http\Controllers\Finance\DiscountCouponController;
+
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
 // PWA Offline Page
@@ -236,6 +242,55 @@ Route::group(['middleware' => ['web', 'auth', 'verified', 'screen.unlocked']], f
         Route::post('/upload', [ChatbotController::class, 'uploadDocument'])->name('chatbot.upload');
         Route::get('/documents', [ChatbotController::class, 'listDocuments'])->name('chatbot.documents');
         Route::delete('/document/{id}', [ChatbotController::class, 'deleteDocument'])->name('chatbot.delete-document');
+    });
+
+    // Finance / Keuangan
+    Route::group(['prefix' => 'finance'], function () {
+        // Pengeluaran Bisnis (Menu Code: KU-01)
+        Route::group(['middleware' => 'menu-access:KU-01'], function () {
+            Route::get('/business-expense', [BusinessExpenseController::class, 'index'])->name('finance.business-expense.index');
+            Route::post('/business-expense/datatable', [BusinessExpenseController::class, 'datatable'])->name('finance.business-expense.datatable');
+            Route::get('/business-expense/summary', [BusinessExpenseController::class, 'summary'])->name('finance.business-expense.summary');
+            Route::get('/business-expense/create', [BusinessExpenseController::class, 'create'])->name('finance.business-expense.create');
+            Route::get('/business-expense/edit/{id}', [BusinessExpenseController::class, 'edit'])->name('finance.business-expense.edit');
+            Route::get('/business-expense/show/{id}', [BusinessExpenseController::class, 'show'])->name('finance.business-expense.show');
+            Route::post('/business-expense/store', [BusinessExpenseController::class, 'store'])->name('finance.business-expense.store');
+            Route::post('/business-expense/destroy', [BusinessExpenseController::class, 'destroy'])->name('finance.business-expense.destroy');
+        });
+
+        // Penjualan Aplikasi (Menu Code: KU-02)
+        Route::group(['middleware' => 'menu-access:KU-02'], function () {
+            Route::get('/app-sale', [AppSaleController::class, 'index'])->name('finance.app-sale.index');
+            Route::post('/app-sale/datatable', [AppSaleController::class, 'datatable'])->name('finance.app-sale.datatable');
+            Route::get('/app-sale/summary', [AppSaleController::class, 'summary'])->name('finance.app-sale.summary');
+            Route::get('/app-sale/create', [AppSaleController::class, 'create'])->name('finance.app-sale.create');
+            Route::get('/app-sale/edit/{id}', [AppSaleController::class, 'edit'])->name('finance.app-sale.edit');
+            Route::get('/app-sale/show/{id}', [AppSaleController::class, 'show'])->name('finance.app-sale.show');
+            Route::post('/app-sale/store', [AppSaleController::class, 'store'])->name('finance.app-sale.store');
+            Route::post('/app-sale/confirm/{id}', [AppSaleController::class, 'confirm'])->name('finance.app-sale.confirm');
+            Route::post('/app-sale/destroy', [AppSaleController::class, 'destroy'])->name('finance.app-sale.destroy');
+        });
+
+        // Komisi Affiliate (Menu Code: KU-03)
+        Route::group(['middleware' => 'menu-access:KU-03'], function () {
+            Route::get('/affiliate-commission', [AffiliateCommissionController::class, 'index'])->name('finance.affiliate-commission.index');
+            Route::post('/affiliate-commission/datatable', [AffiliateCommissionController::class, 'datatable'])->name('finance.affiliate-commission.datatable');
+            Route::get('/affiliate-commission/summary', [AffiliateCommissionController::class, 'summary'])->name('finance.affiliate-commission.summary');
+            Route::get('/affiliate-commission/show/{id}', [AffiliateCommissionController::class, 'show'])->name('finance.affiliate-commission.show');
+            Route::post('/affiliate-commission/pay/{id}', [AffiliateCommissionController::class, 'markAsPaid'])->name('finance.affiliate-commission.pay');
+            Route::post('/affiliate-commission/cancel/{id}', [AffiliateCommissionController::class, 'cancel'])->name('finance.affiliate-commission.cancel');
+        });
+
+        // Kupon Diskon (Menu Code: KU-04)
+        Route::group(['middleware' => 'menu-access:KU-04'], function () {
+            Route::get('/discount-coupon', [DiscountCouponController::class, 'index'])->name('finance.discount-coupon.index');
+            Route::post('/discount-coupon/datatable', [DiscountCouponController::class, 'datatable'])->name('finance.discount-coupon.datatable');
+            Route::get('/discount-coupon/summary', [DiscountCouponController::class, 'summary'])->name('finance.discount-coupon.summary');
+            Route::get('/discount-coupon/create', [DiscountCouponController::class, 'create'])->name('finance.discount-coupon.create');
+            Route::get('/discount-coupon/edit/{id}', [DiscountCouponController::class, 'edit'])->name('finance.discount-coupon.edit');
+            Route::post('/discount-coupon/store', [DiscountCouponController::class, 'store'])->name('finance.discount-coupon.store');
+            Route::post('/discount-coupon/destroy', [DiscountCouponController::class, 'destroy'])->name('finance.discount-coupon.destroy');
+        });
     });
 
     // Utility Routes
