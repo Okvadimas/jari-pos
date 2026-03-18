@@ -178,6 +178,11 @@ export default defineConfig({
                 // ================================
                 'resources/js/pages/finance/discount-coupon/index.js',
                 'resources/js/pages/finance/discount-coupon/form.js',
+
+                // ================================
+                // Finance - Affiliate Dashboard
+                // ================================
+                'resources/js/pages/finance/affiliate-dashboard/index.js',
             ],
             refresh: true,
         }),
