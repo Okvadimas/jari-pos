@@ -44,6 +44,7 @@ use App\Http\Controllers\Finance\BusinessExpenseController;
 use App\Http\Controllers\Finance\AppSaleController;
 use App\Http\Controllers\Finance\AffiliateCommissionController;
 use App\Http\Controllers\Finance\DiscountCouponController;
+use App\Http\Controllers\Finance\AffiliateDashboardController;
 
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
@@ -290,6 +291,14 @@ Route::group(['middleware' => ['web', 'auth', 'verified', 'screen.unlocked']], f
             Route::get('/discount-coupon/edit/{id}', [DiscountCouponController::class, 'edit'])->name('finance.discount-coupon.edit');
             Route::post('/discount-coupon/store', [DiscountCouponController::class, 'store'])->name('finance.discount-coupon.store');
             Route::post('/discount-coupon/destroy', [DiscountCouponController::class, 'destroy'])->name('finance.discount-coupon.destroy');
+        });
+
+        // Dashboard Affiliate (Menu Code: KU-05)
+        Route::group(['middleware' => 'menu-access:KU-05'], function () {
+            Route::get('/affiliate-dashboard', [AffiliateDashboardController::class, 'index'])->name('finance.affiliate-dashboard.index');
+            Route::post('/affiliate-dashboard/datatable', [AffiliateDashboardController::class, 'datatable'])->name('finance.affiliate-dashboard.datatable');
+            Route::get('/affiliate-dashboard/summary', [AffiliateDashboardController::class, 'summary'])->name('finance.affiliate-dashboard.summary');
+            Route::post('/affiliate-dashboard/detail/{code}', [AffiliateDashboardController::class, 'detail'])->name('finance.affiliate-dashboard.detail');
         });
     });
 

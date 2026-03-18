@@ -199,6 +199,13 @@ class MenuSeeder extends Seeder
                 'icon'      => 'ni ni-ticket-fill',
                 'url'       => '/finance/discount-coupon',
             ],
+            [
+                'code'      => 'KU-05',
+                'parent'    => 'KU',
+                'name'      => 'Dashboard Affiliate',
+                'icon'      => 'ni ni-growth',
+                'url'       => '/finance/affiliate-dashboard',
+            ],
         ];
 
         foreach ($menus as $menu) {
