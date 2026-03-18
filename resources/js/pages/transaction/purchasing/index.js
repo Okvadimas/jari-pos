@@ -47,8 +47,10 @@ const loadSummary = () => {
             end_date: $('#end_date').val()
         },
         success: function(response) {
-            $('#summary-total-transaksi').text(response.total_transaksi);
-            $('#summary-total-pembelian').text(response.total_pembelian);
+            if(response.status && response.data) {
+                $('#summary-total-transaksi').text(response.data.total_transaksi);
+                $('#summary-total-pembelian').text(response.data.total_pembelian);
+            }
         },
         error: function(xhr) {
             handleAjaxError(xhr);

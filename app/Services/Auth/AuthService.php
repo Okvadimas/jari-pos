@@ -105,6 +105,7 @@ class AuthService
 
         // Setup session
         $request->session()->regenerate();
+        $request->session()->forget('locked');
         $request->session()->put('role_slug', Auth::user()->role->slug);
         $request->session()->put('company_id', Auth::user()->company_id);
         $request->session()->put('company_code', Auth::user()->company->code);

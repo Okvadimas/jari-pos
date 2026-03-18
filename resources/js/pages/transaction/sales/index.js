@@ -47,11 +47,12 @@ const loadSummary = () => {
             end_date: $('#end_date').val()
         },
         success: function(response) {
-            const data = response.data || response;
-            $('#summary-total-transaksi').text(data.total_transaksi);
-            $('#summary-total-penjualan').text(data.total_penjualan);
-            $('#summary-total-diskon').text(data.total_diskon);
-            $('#summary-total-pendapatan').text(data.total_pendapatan);
+            if(response.status && response.data) {
+                $('#summary-total-transaksi').text(response.data.total_transaksi);
+                $('#summary-total-penjualan').text(response.data.total_penjualan);
+                $('#summary-total-diskon').text(response.data.total_diskon);
+                $('#summary-total-pendapatan').text(response.data.total_pendapatan);
+            }
         },
         error: function(xhr) {
             handleAjaxError(xhr);
