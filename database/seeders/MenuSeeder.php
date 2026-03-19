@@ -160,6 +160,52 @@ class MenuSeeder extends Seeder
                 'icon'      => 'ni ni-cc-alt2-fill',
                 'url'       => '/report/stock-recommendation',
             ],
+
+            // Keuangan
+            [
+                'code'      => 'KU',
+                'parent'    => '0',
+                'name'      => 'KEUANGAN',
+                'icon'      => 'ni ni-coin-alt',
+                'url'       => null,
+            ],
+
+            // Child Keuangan
+            [
+                'code'      => 'KU-01',
+                'parent'    => 'KU',
+                'name'      => 'Pengeluaran',
+                'icon'      => 'ni ni-signout',
+                'url'       => '/finance/business-expense',
+            ],
+            [
+                'code'      => 'KU-02',
+                'parent'    => 'KU',
+                'name'      => 'Penjualan Aplikasi',
+                'icon'      => 'ni ni-signin',
+                'url'       => '/finance/app-sale',
+            ],
+            [
+                'code'      => 'KU-03',
+                'parent'    => 'KU',
+                'name'      => 'Komisi Affiliate',
+                'icon'      => 'ni ni-users-fill',
+                'url'       => '/finance/affiliate-commission',
+            ],
+            [
+                'code'      => 'KU-04',
+                'parent'    => 'KU',
+                'name'      => 'Kupon Diskon',
+                'icon'      => 'ni ni-ticket-fill',
+                'url'       => '/finance/discount-coupon',
+            ],
+            [
+                'code'      => 'KU-05',
+                'parent'    => 'KU',
+                'name'      => 'Dashboard Affiliate',
+                'icon'      => 'ni ni-growth',
+                'url'       => '/finance/affiliate-dashboard',
+            ],
         ];
 
         foreach ($menus as $menu) {

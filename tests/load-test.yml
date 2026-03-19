@@ -1,0 +1,25 @@
+config:
+  target: "http://nginx"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 50
+      name: "Skenario Peningkatan Beban (Spike Testing)"
+  
+  # Anda dapat menyesuaikan header yang dibutuhkan untuk otentikasi jika simulasi login
+  environments:
+    production:
+      target: "https://jaripos.com"
+
+scenarios:
+  - name: "Akses Halaman Login dan Landing"
+    flow:
+      # Skenario 1: User mengakses landing page
+      - get:
+          url: "/"
+      
+      - think: 2 # pause 2 detik pura-pura user membaca halaman
+
+      # Skenario 2: User mencoba mengakses halaman login
+      - get:
+          url: "/login"

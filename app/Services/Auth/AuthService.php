@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordMail;
 
 // Load Repository
 use App\Repositories\Auth\AuthRepository;
@@ -97,8 +100,12 @@ class AuthService
             ];
         }
 
+        // Invalidate other sessions
+        Auth::logoutOtherDevices($password);
+
         // Setup session
         $request->session()->regenerate();
+        $request->session()->forget('locked');
         $request->session()->put('role_slug', Auth::user()->role->slug);
         $request->session()->put('company_id', Auth::user()->company_id);
         $request->session()->put('company_code', Auth::user()->company->code);
@@ -197,12 +204,12 @@ class AuthService
             ];
         }
 
-        $password = \Illuminate\Support\Str::random(8);
+        $password = Str::random(8);
         $user->password = Hash::make($password);
         $user->save();
 
-        \Illuminate\Support\Facades\Mail::to($user->email)
-            ->send(new \App\Mail\ResetPasswordMail($user, $password));
+        Mail::to($user->email)
+            ->send(new ResetPasswordMail($user, $password));
 
         return [
             'status'  => true,

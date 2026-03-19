@@ -23,6 +23,21 @@ class TransactionNumberService
     const PREFIX_STOCK_OPNAME = 'SO';
 
     /**
+     * Prefix for business expense
+     */
+    const PREFIX_BUSINESS_EXPENSE = 'BE';
+
+    /**
+     * Prefix for app sale
+     */
+    const PREFIX_APP_SALE = 'AS';
+
+    /**
+     * Prefix for affiliate commission
+     */
+    const PREFIX_AFFILIATE_COMMISSION = 'AC';
+
+    /**
      * Generate invoice number for sales
      * Format: INV/2026/02/0001
      *
@@ -81,4 +96,53 @@ class TransactionNumberService
             $date->month
         );
     }
+
+    /**
+     * Generate expense number for business expense
+     * Format: BE/2026/03/0001
+     */
+    public static function generateBusinessExpense(int $companyId, ?Carbon $date = null): string
+    {
+        $date = $date ?? Carbon::now();
+        
+        return Counter::getNextTransactionNumber(
+            self::PREFIX_BUSINESS_EXPENSE,
+            $companyId,
+            $date->year,
+            $date->month
+        );
+    }
+
+    /**
+     * Generate sale number for app sale
+     * Format: AS/2026/03/0001
+     */
+    public static function generateAppSale(int $companyId, ?Carbon $date = null): string
+    {
+        $date = $date ?? Carbon::now();
+        
+        return Counter::getNextTransactionNumber(
+            self::PREFIX_APP_SALE,
+            $companyId,
+            $date->year,
+            $date->month
+        );
+    }
+
+    /**
+     * Generate commission number for affiliate commission
+     * Format: AC/2026/03/0001
+     */
+    public static function generateAffiliateCommission(int $companyId, ?Carbon $date = null): string
+    {
+        $date = $date ?? Carbon::now();
+        
+        return Counter::getNextTransactionNumber(
+            self::PREFIX_AFFILIATE_COMMISSION,
+            $companyId,
+            $date->year,
+            $date->month
+        );
+    }
+
 }

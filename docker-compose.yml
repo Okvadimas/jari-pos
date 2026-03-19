@@ -62,6 +62,21 @@ services:
     networks:
       - laravel-network
 
+  # Load Tester (Artillery)
+  load-test:
+    image: node:20-alpine
+    container_name: jaripos-load-test
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: npx artillery run tests/load-test.yml
+    networks:
+      - laravel-network
+    depends_on:
+      - nginx
+    profiles:
+      - testing
+
 networks:
   laravel-network:
     driver: bridge

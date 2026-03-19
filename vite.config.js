@@ -155,6 +155,34 @@ export default defineConfig({
                 // ================================
                 'resources/js/pages/chatbot/index.js',
                 'resources/css/pages/chatbot/index.css',
+
+                // ================================
+                // Finance - Business Expense
+                // ================================
+                'resources/js/pages/finance/business-expense/index.js',
+                'resources/js/pages/finance/business-expense/form.js',
+
+                // ================================
+                // Finance - App Sale
+                // ================================
+                'resources/js/pages/finance/app-sale/index.js',
+                'resources/js/pages/finance/app-sale/form.js',
+
+                // ================================
+                // Finance - Affiliate Commission
+                // ================================
+                'resources/js/pages/finance/affiliate-commission/index.js',
+
+                // ================================
+                // Finance - Discount Coupon
+                // ================================
+                'resources/js/pages/finance/discount-coupon/index.js',
+                'resources/js/pages/finance/discount-coupon/form.js',
+
+                // ================================
+                // Finance - Affiliate Dashboard
+                // ================================
+                'resources/js/pages/finance/affiliate-dashboard/index.js',
             ],
             refresh: true,
         }),
