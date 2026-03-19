@@ -82,3 +82,15 @@ if (!function_exists('formatTanggal')) {
         return $result;
     }
 }
+
+// Format Tanggal Database from d/m/Y to Y-m-d
+if (!function_exists('formatTanggalDatabase')) {
+    function formatTanggalDatabase($date)
+    {
+        if (empty($date)) {
+            return null;
+        }
+
+        return \Carbon\Carbon::createFromFormat('d/m/Y', $date)->format('Y-m-d');
+    }
+}   

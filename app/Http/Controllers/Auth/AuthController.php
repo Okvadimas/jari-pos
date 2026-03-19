@@ -16,6 +16,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 
 // Load Model
 use App\Models\Campaign;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -122,6 +123,87 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('login');
+    }
+
+    public function myProfile()
+    {
+        $title = 'Profil Saya | Jari POS';
+        $css   = 'resources/css/pages/auth/my-profile.css';
+        $js    = 'resources/js/pages/auth/my-profile.js';
+        $user  = Auth::user();
+
+        return view('auth.my-profile', compact('title', 'css', 'js', 'user'));
+    }
+    public function getProfileData()
+    {
+        $user = User::where('users.id', Auth::user()->id)
+                    ->join('roles', 'users.role_id', '=', 'roles.id')
+                    ->join('companies', 'users.company_id', '=', 'companies.id')
+                    ->select('users.name', 'users.username', 'users.email', 'users.phone', 'users.birth_date', 'users.address', 'users.profile_picture', 'users.last_login', 'users.start_date', 'users.end_date', 'roles.name as role', 'companies.name as company')->first();
+
+        return response()->json([
+            'status' => true,
+            'data'   => $user,
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'phone'      => 'nullable|string|max:20',
+            'address'    => 'nullable|string',
+        ]);
+
+        $user->update([
+            'name'       => $request->name,
+            'phone'      => $request->phone,
+            'birth_date' => $request->birth_date ? formatTanggalDatabase($request->birth_date) : null,
+            'address'    => $request->address,
+        ]);
+
+        return $this->successResponse('Profil berhasil diperbarui');
+    }
+
+    public function updateProfilePicture(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+        $imageParts = explode(";base64,", $request->image);
+        
+        if (count($imageParts) >= 2) {
+            $imageTypeAux = explode("image/", $imageParts[0]);
+            $imageType = $imageTypeAux[1];
+            $imageBase64 = base64_decode($imageParts[1]);
+            
+            $fileName = 'profile_' . $user->id . '_' . time() . '.' . $imageType;
+            $dirPath = public_path('uploads/profiles');
+            $fullPath = $dirPath . '/' . $fileName;
+            
+            if (!file_exists($dirPath)) {
+                mkdir($dirPath, 0777, true);
+            }
+            
+            file_put_contents($fullPath, $imageBase64);
+            
+            // Delete old picture if exists and not default
+            if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
+                unlink(public_path($user->profile_picture));
+            }
+            
+            $user->update([
+                'profile_picture' => 'uploads/profiles/' . $fileName
+            ]);
+            
+            return $this->successResponse('Foto profil berhasil diperbarui', ['url' => asset('uploads/profiles/' . $fileName)]);
+        }
+
+        return $this->errorResponse('Format gambar tidak valid', 400);
     }
 
     public function lockScreen()

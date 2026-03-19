@@ -22,6 +22,20 @@ class ChatbotService
      */
     public function ask(int $companyId, string $question): string
     {
+        $response = $this->processAsk($companyId, $question, false);
+        return is_string($response) ? $response : (string) $response;
+    }
+
+    /**
+     * Ask a question using Retrieval-Augmented Generation (RAG) and return as a stream.
+     */
+    public function askStream(int $companyId, string $question)
+    {
+        return $this->processAsk($companyId, $question, true);
+    }
+
+    private function processAsk(int $companyId, string $question, bool $stream = false)
+    {
         try {
             // 1. Generate embedding for the user's question
             $questionEmbeddingResp = $this->embeddingService->generateEmbeddings($question);
@@ -46,6 +60,10 @@ class ChatbotService
 
             $matches = $pineconeResponse->json('matches') ?? [];
 
+            if (empty($matches)) {
+                return "Maaf, saya tidak memiliki informasi mengenai pertanyaan Anda di dalam basis pengetahuan Jari AI 🙏";
+            }
+
             // 3. Build Context String
             $contextText = "";
             if (!empty($matches)) {
@@ -61,6 +79,11 @@ class ChatbotService
             $agent = \App\AI\Agents\ChatbotAgent::make();
             $chatProvider = config('ai.chatbot.chat_provider');
             $chatModel = config('ai.chatbot.chat_model');
+
+            if ($stream) {
+                return $agent->stream($userPrompt, provider: $chatProvider, model: $chatModel);
+            }
+
             return (string) $agent->prompt($userPrompt, provider: $chatProvider, model: $chatModel);
 
         } catch (\Exception $e) {
