@@ -9,3 +9,33 @@
 .rank-1 { color: #FFD700; }
 .rank-2 { color: #C0C0C0; }
 .rank-3 { color: #CD7F32; }
+
+/* Dashboard Cards (Revenue, Profit, etc) */
+.dashboard-card {
+    transition: all 0.25s ease;
+    border-left: 4px solid transparent !important;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-card.card-revenue-today { border-left-color: #1ee0ac !important; }
+.dashboard-card.card-revenue-month { border-left-color: #f4bd0e !important; }
+.dashboard-card.card-profit { border-left-color: #fd7e14 !important; }
+.dashboard-card.card-expenses { border-left-color: #e85347 !important; }
+.dashboard-card.card-aov { border-left-color: #9d8cff !important; }
+.dashboard-card.card-promo { border-left-color: #ffd748 !important; }
+.dashboard-card.card-low-stock { border-left-color: #e85347 !important; }
+.dashboard-card.card-inventory { border-left-color: #4ecfe5 !important; }
+
+/* Dashboard Tables */
+.dashboard-table-primary {
+    background-color: var(--app-primary) !important;
+}
+
+.dashboard-table-primary th {
+    color: #ffffff !important;
+    border-bottom: none !important;
+}

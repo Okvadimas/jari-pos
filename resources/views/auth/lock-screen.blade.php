@@ -97,4 +97,6 @@
     @if ($js)
         @vite($js)
     @endif
+    
+</body>
 </html>

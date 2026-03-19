@@ -62,11 +62,19 @@ class ChatbotController extends Controller
     public function ask(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:1000'
+            'message' => 'required|string|max:1000',
+            'stream' => 'nullable|boolean'
         ]);
 
         try {
             $companyId = Auth::user()->company_id;
+            
+            $isStream = true; // Jika true maka akan ada efek mengetik nya jika false maka menunggu selesai baru ditampilkan hasilnya
+
+            if ($isStream) {
+                return $this->chatbotService->askStream($companyId, $request->message);
+            }
+
             $reply = $this->chatbotService->ask($companyId, $request->message);
 
             return $this->successResponse('Success', [

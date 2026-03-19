@@ -143,31 +143,148 @@ const sendMessage = () => {
     // Show typing indicator
     showTypingIndicator();
 
-    $.ajax({
-        url: ROUTES.ask,
-        type: 'POST',
-        contentType: 'application/json',
-        headers: { 'X-CSRF-TOKEN': CSRF },
-        data: JSON.stringify({ message: message }),
-        success: function (data) {
+    fetch(ROUTES.ask, {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF,
+            'Accept': 'text/event-stream'
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(async response => {
+        if (!response.ok) {
             removeTypingIndicator();
+            const errData = await response.json().catch(() => ({}));
+            renderMessage('bot', errData.message || 'Maaf, terjadi kesalahan.');
+            isSending = false;
+            updateCharCount();
+            return;
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            removeTypingIndicator();
+            const data = await response.json();
             if (data.status && data.data && data.data.reply) {
                 renderMessage('bot', data.data.reply);
             } else {
-                renderMessage('bot', data.message || 'Maaf, terjadi kesalahan. Silakan coba lagi.');
+                renderMessage('bot', data.message || 'Maaf, terjadi kesalahan.');
             }
-        },
-        error: function (xhr) {
-            console.error('Chat error:', xhr);
-            removeTypingIndicator();
-            renderMessage('bot', 'Maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
-        },
-        complete: function () {
             isSending = false;
-            updateCharCount(); // re-evaluates button state
-            scrollToBottom();
+            updateCharCount();
             $input.focus();
+            return;
         }
+
+        // Handle Stream
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        
+        let botReplyRaw = '';
+        let buffer = '';
+        let isFirstChunk = true;
+        let $bubble = null;
+
+        const processStream = async () => {
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                
+                // Keep the last partial line in the buffer
+                buffer = lines.pop();
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                        const dataStr = line.substring(6).trim();
+                        if (!dataStr) continue;
+
+                        try {
+                            const dataObj = JSON.parse(dataStr);
+                            if (dataObj.type === 'text_delta' && dataObj.delta) {
+                                if (isFirstChunk) {
+                                    removeTypingIndicator();
+                                    const msgId = 'bot-msg-' + Date.now();
+                                    const html = `
+                                        <div class="cb-msg cb-msg-bot">
+                                            <div class="cb-msg-body">
+                                                <div class="cb-msg-bubble cb-msg-streaming" id="${msgId}"></div>
+                                            </div>
+                                        </div>
+                                    `;
+                                    $('#chat-messages').append(html);
+                                    $bubble = $(`#${msgId}`);
+                                    isFirstChunk = false;
+                                }
+
+                                botReplyRaw += dataObj.delta;
+                                // We use formatBotMessage which renders markdown
+                                $bubble.html(formatBotMessage(botReplyRaw));
+                                scrollToBottom();
+                            }
+                        } catch (e) {
+                            console.error('JSON parse error from stream line:', dataStr, e);
+                        }
+                    }
+                }
+            }
+            // Parse remaining buffer
+            if (buffer.startsWith('data: ') && buffer !== 'data: [DONE]') {
+                const dataStr = buffer.substring(6).trim();
+                if (dataStr) {
+                    try {
+                        const dataObj = JSON.parse(dataStr);
+                        if (dataObj.type === 'text_delta' && dataObj.delta) {
+                            if (isFirstChunk) {
+                                removeTypingIndicator();
+                                const msgId = 'bot-msg-' + Date.now();
+                                const html = `
+                                    <div class="cb-msg cb-msg-bot">
+                                        <div class="cb-msg-body">
+                                            <div class="cb-msg-bubble cb-msg-streaming" id="${msgId}"></div>
+                                        </div>
+                                    </div>
+                                `;
+                                $('#chat-messages').append(html);
+                                $bubble = $(`#${msgId}`);
+                                isFirstChunk = false;
+                            }
+                            botReplyRaw += dataObj.delta;
+                            $bubble.html(formatBotMessage(botReplyRaw));
+                            scrollToBottom();
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            if (isFirstChunk) {
+                removeTypingIndicator();
+                renderMessage('bot', 'Maaf, tidak ada balasan dari AI.');
+            } else {
+                $bubble.removeClass('cb-msg-streaming');
+            }
+
+            isSending = false;
+            updateCharCount();
+            $input.focus();
+        };
+
+        processStream().catch(err => {
+            console.error('Stream processing error:', err);
+            if (isFirstChunk) removeTypingIndicator();
+            isSending = false;
+            updateCharCount();
+        });
+    })
+    .catch(err => {
+        console.error('Chat error:', err);
+        removeTypingIndicator();
+        renderMessage('bot', 'Maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
+        isSending = false;
+        updateCharCount();
     });
 };
 

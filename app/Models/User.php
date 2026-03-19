@@ -27,6 +27,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'company_id',
         'start_date',
         'end_date',
+        'phone',
+        'birth_date',
+        'address',
+        'profile_picture',
+        'last_login',
         'created_by',
         'updated_by'
     ];
@@ -75,5 +80,30 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         $this->notify(new \App\Notifications\VerifyEmailNotification);
+    }
+
+    /**
+     * Get the profile completeness percentage.
+     */
+    public function getProfileCompletenessAttribute()
+    {
+        $fields = [
+            'name',
+            'username',
+            'email',
+            'phone',
+            'birth_date',
+            'address',
+            'profile_picture'
+        ];
+
+        $filled = 0;
+        foreach ($fields as $field) {
+            if (!empty($this->{$field})) {
+                $filled++;
+            }
+        }
+
+        return round(($filled / count($fields)) * 100);
     }
 }

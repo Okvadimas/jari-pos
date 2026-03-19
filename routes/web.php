@@ -66,6 +66,10 @@ Route::post('/reset-password',  [AuthController::class, 'processResetPassword'])
 // Auth routes (no email verification required)
 Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/logout',           [AuthController::class, 'logout'])->name('logout');
+    Route::get('/profile',          [AuthController::class, 'myProfile'])->name('profile');
+    Route::get('/profile/data',     [AuthController::class, 'getProfileData'])->name('profile.data');
+    Route::post('/profile/update',  [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/update-picture', [AuthController::class, 'updateProfilePicture'])->name('profile.update-picture');
     Route::get('/lock-screen',      [AuthController::class, 'lockScreen'])->name('lock-screen');
     Route::post('/unlock-screen',   [AuthController::class, 'unlockScreen'])->name('unlock-screen');
 });

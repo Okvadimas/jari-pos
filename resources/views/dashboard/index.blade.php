@@ -6,9 +6,12 @@
             <div class="nk-content-inner">
                 <div class="nk-content-body">
                     <div class="nk-block-head nk-block-head-sm">
-                        <div class="nk-block-between">
-                            <div class="nk-block-head-content">
-                                <span class="sub-text text-muted mb-3 d-block d-md-none">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                        <div class="nk-block-between justify-content-center justify-content-md-between">
+                            <div class="nk-block-head-content text-center text-md-start">
+                                <div class="d-inline-flex d-md-none align-items-center text-primary bg-primary-dim rounded-pill px-3 py-1 mb-3 mt-1">
+                                    <em class="icon ni ni-calendar-alt me-2 fs-6"></em>
+                                    <span class="fw-bold fs-12px">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                                </div>
                                 <h3 class="nk-block-title page-title mb-0">Dashboard</h3>
                                 <div class="nk-block-des text-soft">
                                     <p>Selamat datang, {{ ucwords(Auth::user()->name) }}!</p>
@@ -16,7 +19,12 @@
                             </div>
                             <div class="nk-block-head-content">
                                 <div class="toggle-wrap nk-block-tools-toggle">
-                                    <span class="sub-text text-muted mb-3 d-none d-md-block">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                                    <div class="d-none d-md-flex align-items-center text-primary bg-primary-dim rounded-pill px-3 py-1 mb-3 mt-1">
+                                        <div class="bg-primary-dim text-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">
+                                            <em class="icon ni ni-calendar-alt"></em>
+                                        </div>
+                                        <span class="fw-bold text-primary fs-13px" style="letter-spacing: 0.2px;">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -27,7 +35,7 @@
                         <div class="row g-gs">
                             <!-- Pendapatan Hari Ini -->
                             <div class="col-xxl-3 col-sm-6">
-                                <div class="card">
+                                <div class="card dashboard-card card-revenue-today">
                                     <div class="nk-ecwg nk-ecwg6">
                                         <div class="card-inner">
                                             <div class="card-title-group">
@@ -53,7 +61,7 @@
                             
                             <!-- Pendapatan Bulan Ini -->
                             <div class="col-xxl-3 col-sm-6">
-                                <div class="card">
+                                <div class="card dashboard-card card-revenue-month">
                                     <div class="nk-ecwg nk-ecwg6">
                                         <div class="card-inner">
                                             <div class="card-title-group">
@@ -79,7 +87,7 @@
 
                             <!-- Estimasi Profit -->
                             <div class="col-xxl-3 col-sm-6">
-                                <div class="card">
+                                <div class="card dashboard-card card-profit">
                                     <div class="nk-ecwg nk-ecwg6">
                                         <div class="card-inner">
                                             <div class="card-title-group">
@@ -107,7 +115,7 @@
 
                             <!-- Pengeluaran Pembelian -->
                             <div class="col-xxl-3 col-sm-6">
-                                <div class="card">
+                                <div class="card dashboard-card card-expenses">
                                     <div class="nk-ecwg nk-ecwg6">
                                         <div class="card-inner">
                                             <div class="card-title-group">
@@ -136,7 +144,7 @@
                         <div class="row g-gs mt-1">
                             <!-- Rata-rata Order -->
                             <div class="col-xxl-3 col-sm-6">
-                                <div class="card">
+                                <div class="card dashboard-card card-aov">
                                     <div class="nk-ecwg nk-ecwg6">
                                         <div class="card-inner">
                                             <div class="card-title-group">
@@ -162,7 +170,7 @@
 
                             <!-- Promo Aktif -->
                             <div class="col-xxl-3 col-sm-6">
-                                <div class="card">
+                                <div class="card dashboard-card card-promo">
                                     <div class="nk-ecwg nk-ecwg6">
                                         <div class="card-inner">
                                             <div class="card-title-group">
@@ -188,7 +196,7 @@
 
                             <!-- Stok Rendah -->
                             <div class="col-xxl-3 col-sm-6">
-                                <div class="card">
+                                <div class="card dashboard-card card-low-stock">
                                     <div class="nk-ecwg nk-ecwg6">
                                         <div class="card-inner">
                                             <div class="card-title-group">
@@ -214,7 +222,7 @@
 
                             <!-- Total Produk -->
                             <div class="col-xxl-3 col-sm-6">
-                                <div class="card">
+                                <div class="card dashboard-card card-inventory">
                                     <div class="nk-ecwg nk-ecwg6">
                                         <div class="card-inner">
                                             <div class="card-title-group">
@@ -354,7 +362,7 @@
                                         </div>
                                         <div class="table-responsive">
                                             <table class="table table-borderless table-hover align-middle mb-0">
-                                                <thead class="table-light text-muted small text-uppercase fw-bold">
+                                                <thead class="dashboard-table-primary small text-uppercase fw-bold">
                                                     <tr>
                                                         <th scope="col" style="width: 40px;">No</th>
                                                         <th scope="col">Produk</th>
@@ -430,7 +438,7 @@
                                         </div>
                                         <div class="table-responsive">
                                             <table class="table table-borderless table-hover align-middle mb-0">
-                                                <thead class="table-light text-muted small text-uppercase fw-bold">
+                                                <thead class="dashboard-table-primary small text-uppercase fw-bold">
                                                     <tr>
                                                         <th scope="col">Pelanggan</th>
                                                         <th scope="col" class="text-end">Total</th>
@@ -478,7 +486,7 @@
                                         </div>
                                         <div class="table-responsive">
                                             <table class="table table-borderless table-hover align-middle mb-0">
-                                                <thead class="table-light text-muted small text-uppercase fw-bold">
+                                                <thead class="dashboard-table-primary small text-uppercase fw-bold">
                                                     <tr>
                                                         <th scope="col">Produk</th>
                                                         <th scope="col" class="text-end">Stok</th>

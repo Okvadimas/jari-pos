@@ -39,7 +39,7 @@
                         </button>
                     </div>
                     <div class="doc-list-container flex-grow-1" id="doc-list">
-                        @forelse ($documents as $doc)
+                        @foreach($documents as $doc)
                             <div class="doc-item-card" data-id="{{ $doc->id }}">
                                 <div class="doc-item-info">
                                     <span class="doc-item-name" title="{{ $doc->filename }}">{{ $doc->filename }}</span>
@@ -79,7 +79,7 @@
                                 <em class="icon ni ni-inbox doc-empty-icon text-muted"></em>
                                 <span class="text-muted">Belum ada dokumen.<br>Unggah file untuk memulai.</span>
                             </div>
-                        @endforelse
+                        @endforeach
                     </div>
                 </div>
             </div>
