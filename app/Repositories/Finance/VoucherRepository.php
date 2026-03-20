@@ -4,11 +4,11 @@ namespace App\Repositories\Finance;
 
 use Illuminate\Support\Facades\DB;
 
-class DiscountCouponRepository
+class VoucherRepository
 {
     public static function datatable()
     {
-        return DB::table('discount_coupons')
+        return DB::table('vouchers')
             ->whereNull('deleted_at')
             ->select(
                 'id',
@@ -26,7 +26,7 @@ class DiscountCouponRepository
 
     public static function getSummary()
     {
-        return DB::table('discount_coupons')
+        return DB::table('vouchers')
             ->whereNull('deleted_at')
             ->selectRaw('
                 COUNT(*) as total_kupon,

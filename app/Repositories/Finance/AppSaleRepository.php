@@ -29,7 +29,7 @@ class AppSaleRepository
                 's.affiliate_discount_amount',
                 's.final_amount',
                 's.affiliate_coupon_code',
-                's.discount_coupon_code',
+                's.voucher_code',
                 's.status',
                 's.sale_date',
                 's.reference_note',

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Finance;
+namespace App\Services\Affiliator;
 
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
-use App\Repositories\Finance\AffiliateDashboardRepository;
+use App\Repositories\Affiliator\AffiliateDashboardRepository;
 
 class AffiliateDashboardService
 {

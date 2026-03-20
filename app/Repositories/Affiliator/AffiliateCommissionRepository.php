@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Finance;
+namespace App\Repositories\Affiliator;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;

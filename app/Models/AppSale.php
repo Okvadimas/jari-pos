@@ -22,7 +22,7 @@ class AppSale extends Model
         'affiliate_discount_amount',
         'final_amount',
         'affiliate_coupon_code',
-        'discount_coupon_code',
+        'voucher_code',
         'status',
         'confirmed_by',
         'confirmed_at',

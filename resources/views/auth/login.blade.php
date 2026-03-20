@@ -128,6 +128,9 @@
                                                         <div class="form-note-s2 text-center pt-4 mt-2" style="border-top: 1px solid #e5e9f2;">
                                                             Belum punya akun? <a href="{{ route('register') }}" class="link link-primary fw-bold">Daftar disini</a>
                                                         </div>
+                                                        <div class="form-note-s2 text-center mt-2">
+                                                            Ingin bergabung sebagai mitra? <a href="{{ route('affiliate.login') }}" class="link link-primary fw-bold">Masuk sebagai Affiliator</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

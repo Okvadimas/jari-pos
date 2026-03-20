@@ -11,7 +11,7 @@
                             <h3 class="nk-block-title page-title">{{ $title }}</h3>
                         </div>
                         <div class="nk-block-head-content">
-                            <a href="{{ route('finance.discount-coupon.create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Kupon</span></a>
+                            <a href="{{ route('finance.voucher.create') }}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Tambah Kupon</span></a>
                         </div>
                     </div>
                 </div>

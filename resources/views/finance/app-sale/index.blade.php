@@ -171,7 +171,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="form-label text-muted">Kupon Diskon</label>
-                                        <span class="fs-5 d-block" id="detail-discount-coupon">-</span>
+                                        <span class="fs-5 d-block" id="detail-voucher">-</span>
                                     </div>
                                 </div>
                             </div>

@@ -3,16 +3,16 @@
 namespace Tests\Unit\Finance;
 
 use Tests\TestCase;
-use App\Models\DiscountCoupon;
+use App\Models\Voucher;
 
-class DiscountCouponTest extends TestCase
+class VoucherTest extends TestCase
 {
     /**
      * Test percentage discount calculation
      */
     public function test_percentage_discount_calculation(): void
     {
-        $coupon = new DiscountCoupon([
+        $coupon = new Voucher([
             'type' => 'percentage',
             'value' => 20,
             'is_active' => true,
@@ -30,7 +30,7 @@ class DiscountCouponTest extends TestCase
      */
     public function test_fixed_discount_calculation(): void
     {
-        $coupon = new DiscountCoupon([
+        $coupon = new Voucher([
             'type' => 'fixed',
             'value' => 10000,
             'is_active' => true,
@@ -48,7 +48,7 @@ class DiscountCouponTest extends TestCase
      */
     public function test_active_coupon_is_valid(): void
     {
-        $coupon = new DiscountCoupon([
+        $coupon = new Voucher([
             'is_active' => true,
             'max_uses' => 100,
             'used_count' => 10,
@@ -64,7 +64,7 @@ class DiscountCouponTest extends TestCase
      */
     public function test_inactive_coupon_is_invalid(): void
     {
-        $coupon = new DiscountCoupon([
+        $coupon = new Voucher([
             'is_active' => false,
             'max_uses' => 100,
             'used_count' => 10,
@@ -78,7 +78,7 @@ class DiscountCouponTest extends TestCase
      */
     public function test_max_uses_reached_is_invalid(): void
     {
-        $coupon = new DiscountCoupon([
+        $coupon = new Voucher([
             'is_active' => true,
             'max_uses' => 10,
             'used_count' => 10,
@@ -92,7 +92,7 @@ class DiscountCouponTest extends TestCase
      */
     public function test_expired_coupon_is_invalid(): void
     {
-        $coupon = new DiscountCoupon([
+        $coupon = new Voucher([
             'is_active' => true,
             'valid_from' => now()->subDays(10),
             'valid_until' => now()->subDays(1),
@@ -106,7 +106,7 @@ class DiscountCouponTest extends TestCase
      */
     public function test_not_yet_valid_coupon_is_invalid(): void
     {
-        $coupon = new DiscountCoupon([
+        $coupon = new Voucher([
             'is_active' => true,
             'valid_from' => now()->addDays(5),
             'valid_until' => now()->addDays(10),
@@ -120,7 +120,7 @@ class DiscountCouponTest extends TestCase
      */
     public function test_unlimited_uses_coupon_is_valid(): void
     {
-        $coupon = new DiscountCoupon([
+        $coupon = new Voucher([
             'is_active' => true,
             'max_uses' => null,
             'used_count' => 999,

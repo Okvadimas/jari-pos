@@ -22,7 +22,7 @@ class StoreAppSaleRequest extends FormRequest
             'is_renewal' => 'nullable|boolean',
             'original_amount' => 'required|numeric|min:0',
             'affiliate_coupon_code' => 'nullable|string|max:50',
-            'discount_coupon_code' => 'nullable|string|max:50',
+            'voucher_code' => 'nullable|string|max:50',
             'sale_date' => 'required|string',
             'reference_note' => 'nullable|string|max:1000',
         ];

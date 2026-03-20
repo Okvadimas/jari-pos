@@ -131,8 +131,11 @@ class AuthController extends Controller
         $css   = 'resources/css/pages/auth/my-profile.css';
         $js    = 'resources/js/pages/auth/my-profile.js';
         $user  = Auth::user();
+        $jempolPackage = \App\Models\Package::with(['prices' => function($q) {
+            $q->orderBy('duration_months', 'asc');
+        }])->where('name', 'Jempol')->first();
 
-        return view('auth.my-profile', compact('title', 'css', 'js', 'user'));
+        return view('auth.my-profile', compact('title', 'css', 'js', 'user', 'jempolPackage'));
     }
     public function getProfileData()
     {

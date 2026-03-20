@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\SoftDeletesWithUser;
 
-class DiscountCoupon extends Model
+class Voucher extends Model
 {
     use SoftDeletesWithUser;
-    protected $table = 'discount_coupons';
+    protected $table = 'vouchers';
     protected $fillable = [
         'code',
         'name',

@@ -10,7 +10,7 @@ const datatable = () => {
         responsive: false,
         scrollX: true,
         ajax: {
-            url: '/finance/discount-coupon/datatable',
+            url: '/finance/voucher/datatable',
             type: 'POST',
             data: function (d) {
                 d._token = token;
@@ -34,7 +34,7 @@ const datatable = () => {
 
 const loadSummary = () => {
     $.ajax({
-        url: '/finance/discount-coupon/summary',
+        url: '/finance/voucher/summary',
         type: 'GET',
         success: function(response) {
             if (response.status && response.data) {
@@ -58,7 +58,7 @@ function hapus(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/finance/discount-coupon/destroy',
+                url: '/finance/voucher/destroy',
                 type: 'POST',
                 data: { id: id },
                 success: function(response) {

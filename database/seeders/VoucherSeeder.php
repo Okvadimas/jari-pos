@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 
-class DiscountCouponSeeder extends Seeder
+class VoucherSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -38,7 +38,7 @@ class DiscountCouponSeeder extends Seeder
         ];
 
         foreach ($coupons as $coupon) {
-            \App\Models\DiscountCoupon::create($coupon);
+            \App\Models\Voucher::create($coupon);
         }
     }
 }

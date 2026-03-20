@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
-use App\Repositories\Finance\DiscountCouponRepository;
-use App\Models\DiscountCoupon;
+use App\Repositories\Finance\VoucherRepository;
+use App\Models\Voucher;
 
-class DiscountCouponService
+class VoucherService
 {
     public static function datatable()
     {
-        $data = DiscountCouponRepository::datatable();
+        $data = VoucherRepository::datatable();
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -46,7 +46,7 @@ class DiscountCouponService
                     : '<span class="badge bg-danger">Nonaktif</span>';
             })
             ->addColumn('action', function ($row) {
-                return '<a href="' . url('finance/discount-coupon/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
+                return '<a href="' . url('finance/voucher/edit', $row->id) . '" class="btn btn-dim btn-sm btn-outline-primary"><em class="icon ni ni-edit d-none d-sm-inline me-1"></em> Edit</a>
                         <button class="btn btn-dim btn-sm btn-outline-danger" onclick="hapus(' . $row->id . ')"><em class="icon ni ni-trash d-none d-sm-inline me-1"></em> Hapus</button>';
             })
             ->rawColumns(['action', 'type', 'is_active'])
@@ -55,7 +55,7 @@ class DiscountCouponService
 
     public static function getSummary()
     {
-        return DiscountCouponRepository::getSummary();
+        return VoucherRepository::getSummary();
     }
 
     public static function store($data)
@@ -65,7 +65,7 @@ class DiscountCouponService
                 $user = Auth::user();
 
                 if (!empty($data['id'])) {
-                    $coupon = DiscountCoupon::lockForUpdate()->find($data['id']);
+                    $coupon = Voucher::lockForUpdate()->find($data['id']);
                     if (!$coupon) throw new \Exception('Kupon tidak ditemukan');
 
                     $coupon->update([
@@ -80,7 +80,7 @@ class DiscountCouponService
                         'updated_by' => $user->id,
                     ]);
                 } else {
-                    $coupon = DiscountCoupon::create([
+                    $coupon = Voucher::create([
                         'code' => $data['code'],
                         'name' => $data['name'],
                         'type' => $data['type'],
@@ -96,7 +96,7 @@ class DiscountCouponService
                 return $coupon;
             });
         } catch (\Throwable $th) {
-            Log::error('DiscountCouponService::store - ' . $th->getMessage());
+            Log::error('VoucherService::store - ' . $th->getMessage());
             return false;
         }
     }
@@ -105,13 +105,13 @@ class DiscountCouponService
     {
         try {
             return DB::transaction(function () use ($id) {
-                $coupon = DiscountCoupon::find($id);
+                $coupon = Voucher::find($id);
                 if (!$coupon) return false;
                 $coupon->delete();
                 return true;
             });
         } catch (\Throwable $th) {
-            Log::error('DiscountCouponService::destroy - ' . $th->getMessage());
+            Log::error('VoucherService::destroy - ' . $th->getMessage());
             return false;
         }
     }

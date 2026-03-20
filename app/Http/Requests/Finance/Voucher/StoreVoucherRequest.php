@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Finance\DiscountCoupon;
+namespace App\Http\Requests\Finance\Voucher;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreDiscountCouponRequest extends FormRequest
+class StoreVoucherRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,8 +16,8 @@ class StoreDiscountCouponRequest extends FormRequest
         $couponId = $this->input('id');
 
         return [
-            'id' => 'nullable|integer|exists:discount_coupons,id',
-            'code' => 'required|string|max:50|unique:discount_coupons,code,' . $couponId,
+            'id' => 'nullable|integer|exists:vouchers,id',
+            'code' => 'required|string|max:50|unique:vouchers,code,' . $couponId,
             'name' => 'required|string|max:255',
             'type' => 'required|string|in:percentage,fixed',
             'value' => 'required|numeric|min:0',
