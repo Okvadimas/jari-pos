@@ -220,8 +220,8 @@
     <!-- content @e -->
 
     <!-- Modal Upgrade Package -->
-    <div class="modal fade" tabindex="-1" id="upgradeModal">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade" tabindex="-1" id="upgradeModal" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <em class="icon ni ni-cross"></em>
@@ -230,59 +230,163 @@
                     <h5 class="modal-title">Upgrade ke Paket Jempol</h5>
                 </div>
                 <div class="modal-body">
-                    <p>Silakan lakukan pembayaran melalui salah satu metode di bawah ini untuk mengupgrade ke Paket Jempol.</p>
                     
-                    <h6 class="title mb-2 mt-4">Pilih Metode Pembayaran</h6>
-                    <ul class="nav nav-tabs mt-n2 mb-3" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#tab-bca" role="tab" aria-controls="tab-bca" aria-selected="true"><em class="icon ni ni-building me-1"></em> Transfer BCA</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#tab-qris" role="tab" aria-controls="tab-qris" aria-selected="false"><em class="icon ni ni-qr me-1"></em> QRIS</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content border rounded bg-light p-3 mt-3">
-                        <div class="tab-pane active" id="tab-bca">
-                            <div class="d-flex flex-column justify-content-center align-items-center text-center py-5">
-                                <div class="mb-3">
-                                    <em class="icon ni ni-building text-primary" style="font-size: 3.5rem;"></em>
+                    <!-- Step 1: Pilih Durasi & Invoice -->
+                    <div id="step-1-duration">
+                        <p class="text-soft">Pilih durasi berlangganan yang sesuai dengan kebutuhan bisnis Anda.</p>
+                        
+                        <div class="row g-4 mt-1">
+                            <!-- Kiri: Pilihan Durasi -->
+                            <div class="col-md-7">
+                                <h6 class="title mb-3">Pilih Durasi</h6>
+                                <div class="row g-3">
+                                    @if($jempolPackage && $jempolPackage->prices)
+                                        @foreach($jempolPackage->prices as $index => $price)
+                                        <div class="col-sm-6">
+                                            <div class="custom-control custom-control-sm custom-radio custom-control-pro form-control-wrap border rounded px-3 py-2 w-100">
+                                                <input type="radio" class="custom-control-input package-duration-radio" 
+                                                       name="duration_months" 
+                                                       id="duration-{{ $price->duration_months }}" 
+                                                       value="{{ $price->duration_months }}" 
+                                                       data-price="{{ $price->price }}"
+                                                       {{ $index === 0 ? 'checked' : '' }}>
+                                                <label class="custom-control-label fw-bold d-block w-100" for="duration-{{ $price->duration_months }}">
+                                                    {{ $price->duration_months }} Bulan
+                                                    <span class="d-block fw-normal text-muted mt-1">Rp {{ number_format($price->price, 0, ',', '.') }}</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    @endif
                                 </div>
-                                <h5 class="text-primary mb-2">Bank BCA</h5>
-                                <h2 class="fw-bold mb-2 user-select-all">123 456 7890</h2>
-                                <span class="sub-text fs-15px">a/n Jari POS Dummy</span>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="tab-qris">
-                            <div class="row align-items-center justify-content-center py-2 text-center text-sm-start">
-                                <div class="col-sm-auto mb-4 mb-sm-0">
-                                    <img src="{{ asset('QRIS-ONLY.jpg') }}" alt="QRIS" class="img-fluid shadow-sm border rounded bg-white p-2 flex-shrink-0" style="width: 240px; height: 240px; object-fit: contain;">
-                                </div>
-                                <div class="col-sm px-sm-4 text-center text-sm-start mt-2">
-                                    <div class="text-soft fs-13px mb-4 text-center">
-                                        Pastikan pembayaran hanya ke <strong class="text-dark">Jari POS Official</strong>. Transaksi di luar pihak resmi bukan tanggung jawab kami.
+                                <input type="hidden" id="selected_package_id" value="{{ $jempolPackage->id ?? '' }}">
+
+                                <h6 class="title mb-2 mt-4">Kode Promo / Voucher</h6>
+                                <p class="text-soft fs-13px mb-2">Anda bisa memasukkan maksimal 2 kode diskon secara berurutan (Kupon & Afiliasi).</p>
+                                <div class="form-group mb-1">
+                                    <div class="form-control-wrap position-relative">
+                                        <input type="text" class="form-control text-uppercase" id="voucher_code" placeholder="Cth: DISKON20">
+                                        <button type="button" class="btn btn-sm btn-primary position-absolute top-0 end-0 h-100" id="btn-apply-voucher" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">Apply</button>
                                     </div>
-                                    <a href="{{ asset('QRIS.jpg') }}" download="QRIS_Jari_POS.jpg" class="btn btn-outline-primary d-block w-100">
-                                        <em class="icon ni ni-download"></em><span>Download QRIS Image</span>
-                                    </a>
+                                    <div id="voucher-message" class="fs-12px mt-1"></div>
+                                </div>
+                                
+                                <!-- Placeholder untuk menampilkan kode yang aktif -->
+                                <div id="active-vouchers-container" class="mt-2" style="display:none;">
+                                    <span class="badge badge-dim bg-success" id="badge-voucher" style="display:none;"></span>
+                                    <span class="badge badge-dim bg-info" id="badge-affiliate" style="display:none;"></span>
+                                </div>
+                            </div>
+
+                            <!-- Kanan: Rincian Kalkulasi -->
+                            <div class="col-md-5">
+                                <div class="card h-100">
+                                    <div class="card-inner d-flex flex-column justify-content-between h-100 pb-1 pt-1 px-1 px-md-3">
+
+                                        <!-- ATAS -->
+                                        <div>
+                                            <h6 class="title mb-3">Rincian Pembayaran</h6>
+
+                                            <div class="d-flex justify-content-between text-soft mb-2">
+                                                <span>Subtotal</span>
+                                                <span id="label-subtotal" class="fw-medium text-dark">Rp 0</span>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between text-soft mb-2" id="row-discount" style="display: none;">
+                                                <span>Diskon Voucher</span>
+                                                <span id="label-discount" class="text-danger">-Rp 0</span>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between text-soft mb-3" id="row-affiliate" style="display: none;">
+                                                <span>Diskon Afiliasi</span>
+                                                <span id="label-affiliate" class="text-danger">-Rp 0</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- BAWAH -->
+                                        <div>
+                                            <div class="border-top border-light mb-3"></div>
+
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="fw-bold">Total Bayar</span>
+                                                <span id="label-grandtotal" class="fs-4 fw-bold text-primary">Rp 0</span>
+                                            </div>
+
+                                            <button type="button" class="btn btn-primary w-100 mt-4 d-flex justify-content-center" id="btn-next-step">
+                                                Lanjutkan Pembayaran <em class="icon ni ni-arrow-right ms-1"></em>
+                                            </button>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-4">
-                        <div class="alert alert-warning alert-icon">
-                            <em class="icon ni ni-alert-circle"></em> Setelah pembayaran, harap konfirmasi via WhatsApp agar tim kami dapat segera memprosesnya.
+
+                    <!-- Step 2: Pembayaran -->
+                    <div id="step-2-payment" style="display: none;">                        
+                        <div class="alert alert-pro alert-primary border-primary d-flex justify-content-between">
+                            <div class="alert-text">
+                                <h6 class="text-dark mb-2">Segera Selesaikan Pembayaran Anda</h6>
+                                <div class="d-flex align-items-center mb-1">
+                                    <span class="text-soft me-1">Transfer tepat</span>
+                                    <span class="fs-5 fw-bold text-dark copy-grandtotal me-2">Rp 0</span>
+                                </div>
+                                <div class="text-soft fs-13px">sesuai nominal di atas untuk memudahkan pengecekan otomatis.</div>
+                            </div>
+                            <button type="button" class="btn btn-icon btn-xl px-2 btn-outline-primary border-0" id="btn-copy-nominal" title="Copy Nominal"><em class="icon ni ni-copy fs-18px"></em></button>
+                        </div>
+
+                        <ul class="nav nav-tabs mt-3 mb-3 justify-content-center" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#tab-bca" role="tab" aria-controls="tab-bca" aria-selected="true"><em class="icon ni ni-building me-1"></em> Transfer BCA</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#tab-qris" role="tab" aria-controls="tab-qris" aria-selected="false"><em class="icon ni ni-qr me-1"></em> QRIS</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content border rounded p-3 mb-4">
+                            <div class="tab-pane active" id="tab-bca">
+                                <div class="d-flex flex-column justify-content-center align-items-center text-center py-4">
+                                    <div class="mb-3">
+                                        <img src="{{ asset('public/assets/images/bca-logo.png') }}" alt="BCA" style="height: 40px;" onerror="this.style.display='none'">
+                                        <em class="icon ni ni-building text-primary bca-icon-fallback" style="font-size: 3.5rem;"></em>
+                                    </div>
+                                    <h5 class="text-primary mb-2">Bank BCA</h5>
+                                    <div class="d-flex align-items-center justify-content-center mb-1">
+                                        <h2 class="fw-bold mb-0 me-2" id="rek-bca">123 456 7890</h2>
+                                        <button class="btn btn-icon btn-sm btn-outline-light" onclick="navigator.clipboard.writeText('1234567890')"><em class="icon ni ni-copy"></em></button>
+                                    </div>
+                                    <span class="sub-text fs-15px">a/n Jari POS Dummy</span>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab-qris">
+                                <div class="row align-items-center justify-content-center py-2">
+                                    <div class="col-sm-auto text-center mb-3 mb-sm-0">
+                                        <img src="{{ asset('QRIS-ONLY.jpg') }}" alt="QRIS" class="img-fluid border rounded shadow-sm p-2" style="width: 220px; height: 220px; object-fit: contain;">
+                                    </div>
+                                    <div class="col-sm px-sm-4 mt-2">
+                                        <div class="text-soft fs-13px mb-3 text-center text-sm-start">
+                                            Scan QR diatas melalui aplikasi m-banking atau e-wallet (GoPay, OVO, Dana, LinkAja, ShopeePay).<br>
+                                            Pastikan pembayaran ke <strong class="text-dark">Jari POS Official</strong>.
+                                        </div>
+                                        <a href="{{ asset('QRIS.jpg') }}" download="QRIS_Jari_POS.jpg" class="btn btn-sm btn-outline-primary w-100 justify-content-center">
+                                            <em class="icon ni ni-download"></em><span>Download QR Image</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="button" class="btn btn-success btn-lg" id="btn-checkout" style="min-width: 250px;">
+                                <em class="icon ni ni-whatsapp" style="font-size: 1.25rem;"></em><span>Konfirmasi via WhatsApp</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-lg mt-2 mt-md-0" id="btn-prev-step"><em class="icon ni ni-arrow-left"></em> Kembali</button>
+                            <div class="mt-2 text-soft fs-12px">Klik tombol "Konfirmasi" di atas setelah Anda melakukan transfer.</div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer bg-light px-4 py-3">
-                    @php
-                        $userWaName = auth()->user()->name ?? 'Pengguna';
-                        $waText = urlencode("Halo Admin Jari POS, saya {$userWaName} telah melakukan pembayaran untuk upgrade ke Paket Jempol. Mohon segera diproses. Terima kasih.");
-                    @endphp
-                    <a href="https://wa.me/6281649000020?text={{ $waText }}" target="_blank" class="btn btn-success w-100 d-flex justify-content-center align-items-center">
-                        <em class="icon ni ni-whatsapp pe-2" style="font-size: 1.25rem;"></em><span>Konfirmasi Pembayaran</span>
-                    </a>
+
                 </div>
             </div>
         </div>

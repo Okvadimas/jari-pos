@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('affiliate_discount_amount', 15, 0)->default(0)->comment('Potongan affiliate');
             $table->decimal('final_amount', 15, 0)->comment('Harga final yang dibayar');
             $table->string('affiliate_coupon_code')->nullable();
-            $table->string('discount_coupon_code')->nullable();
+            $table->string('voucher_code')->nullable();
             $table->string('status')->default('pending')->comment('pending, confirmed, cancelled');
             $table->foreignId('confirmed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('confirmed_at')->nullable();

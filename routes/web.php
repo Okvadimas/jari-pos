@@ -42,9 +42,13 @@ use App\Http\Controllers\Chatbot\ChatbotController         as ChatbotController;
 // Finance
 use App\Http\Controllers\Finance\BusinessExpenseController;
 use App\Http\Controllers\Finance\AppSaleController;
-use App\Http\Controllers\Finance\AffiliateCommissionController;
-use App\Http\Controllers\Finance\DiscountCouponController;
-use App\Http\Controllers\Finance\AffiliateDashboardController;
+use App\Http\Controllers\Finance\VoucherController;
+
+// Affiliator
+use App\Http\Controllers\Affiliator\Auth\AffiliateAuthController;
+use App\Http\Controllers\Affiliator\AffiliateCommissionController;
+use App\Http\Controllers\Affiliator\AffiliateDashboardController;
+use App\Http\Controllers\Affiliator\AffiliatorPortalController;
 
 Route::get('/', [LandingController::class, 'index'])->name('root');
 
@@ -63,6 +67,21 @@ Route::post('/email/verification-resend', [AuthController::class, 'resendVerific
 Route::get('/reset-password',   [AuthController::class, 'resetPassword'])->name('reset-password');
 Route::post('/reset-password',  [AuthController::class, 'processResetPassword'])->middleware('throttle:5,1');
 
+// Affiliator Auth
+Route::group(['prefix' => 'affiliate'], function () {
+    Route::get('/login',        [AffiliateAuthController::class, 'showLoginForm'])->name('affiliate.login');
+    Route::post('/login',       [AffiliateAuthController::class, 'login']);
+    Route::get('/register',     [AffiliateAuthController::class, 'showRegisterForm'])->name('affiliate.register');
+    Route::post('/register',    [AffiliateAuthController::class, 'register']);
+    Route::post('/logout',      [AffiliateAuthController::class, 'logout'])->name('affiliate.logout');
+    
+    Route::group(['middleware' => ['auth:affiliator']], function () {
+        Route::get('/dashboard',            [AffiliatorPortalController::class, 'index'])->name('affiliate.dashboard');
+        Route::post('/portal/datatable',    [AffiliatorPortalController::class, 'datatable'])->name('affiliate.portal.datatable');
+        Route::get('/portal/summary',       [AffiliatorPortalController::class, 'summary'])->name('affiliate.portal.summary');
+    });
+});
+
 // Auth routes (no email verification required)
 Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/logout',           [AuthController::class, 'logout'])->name('logout');
@@ -70,6 +89,8 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/profile/data',     [AuthController::class, 'getProfileData'])->name('profile.data');
     Route::post('/profile/update',  [AuthController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/update-picture', [AuthController::class, 'updateProfilePicture'])->name('profile.update-picture');
+    Route::post('/profile/subscription/check-vouchers', [App\Http\Controllers\SubscriptionController::class, 'checkVouchers'])->name('profile.subscription.check-vouchers');
+    Route::post('/profile/subscription/checkout', [App\Http\Controllers\SubscriptionController::class, 'checkout'])->name('profile.subscription.checkout');
     Route::get('/lock-screen',      [AuthController::class, 'lockScreen'])->name('lock-screen');
     Route::post('/unlock-screen',   [AuthController::class, 'unlockScreen'])->name('unlock-screen');
 });
@@ -288,13 +309,13 @@ Route::group(['middleware' => ['web', 'auth', 'verified', 'screen.unlocked']], f
 
         // Kupon Diskon (Menu Code: KU-04)
         Route::group(['middleware' => 'menu-access:KU-04'], function () {
-            Route::get('/discount-coupon', [DiscountCouponController::class, 'index'])->name('finance.discount-coupon.index');
-            Route::post('/discount-coupon/datatable', [DiscountCouponController::class, 'datatable'])->name('finance.discount-coupon.datatable');
-            Route::get('/discount-coupon/summary', [DiscountCouponController::class, 'summary'])->name('finance.discount-coupon.summary');
-            Route::get('/discount-coupon/create', [DiscountCouponController::class, 'create'])->name('finance.discount-coupon.create');
-            Route::get('/discount-coupon/edit/{id}', [DiscountCouponController::class, 'edit'])->name('finance.discount-coupon.edit');
-            Route::post('/discount-coupon/store', [DiscountCouponController::class, 'store'])->name('finance.discount-coupon.store');
-            Route::post('/discount-coupon/destroy', [DiscountCouponController::class, 'destroy'])->name('finance.discount-coupon.destroy');
+            Route::get('/voucher', [VoucherController::class, 'index'])->name('finance.voucher.index');
+            Route::post('/voucher/datatable', [VoucherController::class, 'datatable'])->name('finance.voucher.datatable');
+            Route::get('/voucher/summary', [VoucherController::class, 'summary'])->name('finance.voucher.summary');
+            Route::get('/voucher/create', [VoucherController::class, 'create'])->name('finance.voucher.create');
+            Route::get('/voucher/edit/{id}', [VoucherController::class, 'edit'])->name('finance.voucher.edit');
+            Route::post('/voucher/store', [VoucherController::class, 'store'])->name('finance.voucher.store');
+            Route::post('/voucher/destroy', [VoucherController::class, 'destroy'])->name('finance.voucher.destroy');
         });
 
         // Dashboard Affiliate (Menu Code: KU-05)

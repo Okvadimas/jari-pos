@@ -76,7 +76,7 @@ function detail(id) {
                 $('#detail-discount').text('- ' + fmt(Number(s.discount_amount) + Number(s.affiliate_discount_amount)));
                 $('#detail-final').text(fmt(s.final_amount));
                 $('#detail-affiliate-coupon').text(s.affiliate_coupon_code || '-');
-                $('#detail-discount-coupon').text(s.discount_coupon_code || '-');
+                $('#detail-voucher').text(s.voucher_code || '-');
                 $('#modal-detail').modal('show');
             }
         },

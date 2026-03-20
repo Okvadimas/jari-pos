@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Models\BusinessExpense;
 use App\Models\AppSale;
 use App\Models\AffiliateCommission;
-use App\Models\DiscountCoupon;
+use App\Models\Voucher;
 
 class FinanceModelTest extends TestCase
 {
@@ -62,11 +62,11 @@ class FinanceModelTest extends TestCase
     }
 
     /**
-     * Test DiscountCoupon model fillable and casts
+     * Test Voucher model fillable and casts
      */
-    public function test_discount_coupon_fillable_and_casts(): void
+    public function test_voucher_fillable_and_casts(): void
     {
-        $coupon = new DiscountCoupon();
+        $coupon = new Voucher();
         $this->assertContains('code', $coupon->getFillable());
         $this->assertContains('type', $coupon->getFillable());
         $this->assertContains('value', $coupon->getFillable());

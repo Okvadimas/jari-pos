@@ -10,7 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\Finance\AppSaleRepository;
 use App\Models\AppSale;
 use App\Models\AffiliateCommission;
-use App\Models\DiscountCoupon;
+use App\Models\Voucher;
 use App\Services\Utilities\TransactionNumberService;
 
 class AppSaleService
@@ -68,17 +68,20 @@ class AppSaleService
                 $affiliateDiscountAmount = 0;
 
                 // Calculate discount coupon
-                if (!empty($data['discount_coupon_code'])) {
-                    $coupon = DiscountCoupon::where('code', $data['discount_coupon_code'])->first();
+                if (!empty($data['voucher_code'])) {
+                    $coupon = Voucher::where('code', $data['voucher_code'])->first();
                     if ($coupon && $coupon->isValid()) {
                         $discountAmount = $coupon->calculateDiscount($originalAmount);
                     }
                 }
 
-                // Calculate affiliate discount (20% of price after discount)
+                // Calculate affiliate discount
                 $afterDiscount = $originalAmount - $discountAmount;
                 if (!empty($data['affiliate_coupon_code'])) {
-                    $affiliateDiscountAmount = round($afterDiscount * 0.20);
+                    $affiliator = \App\Models\Affiliator::where('code', $data['affiliate_coupon_code'])->where('is_active', true)->first();
+                    if ($affiliator) {
+                        $affiliateDiscountAmount = round($afterDiscount * ($affiliator->discount_rate / 100));
+                    }
                 }
 
                 $finalAmount = $originalAmount - $discountAmount - $affiliateDiscountAmount;
@@ -98,7 +101,7 @@ class AppSaleService
                         'affiliate_discount_amount' => $affiliateDiscountAmount,
                         'final_amount' => $finalAmount,
                         'affiliate_coupon_code' => $data['affiliate_coupon_code'] ?? null,
-                        'discount_coupon_code' => $data['discount_coupon_code'] ?? null,
+                        'voucher_code' => $data['voucher_code'] ?? null,
                         'sale_date' => $saleDate,
                         'reference_note' => $data['reference_note'] ?? null,
                         'updated_by' => $user->id,
@@ -119,7 +122,7 @@ class AppSaleService
                         'affiliate_discount_amount' => $affiliateDiscountAmount,
                         'final_amount' => $finalAmount,
                         'affiliate_coupon_code' => $data['affiliate_coupon_code'] ?? null,
-                        'discount_coupon_code' => $data['discount_coupon_code'] ?? null,
+                        'voucher_code' => $data['voucher_code'] ?? null,
                         'status' => 'pending',
                         'sale_date' => $saleDate,
                         'reference_note' => $data['reference_note'] ?? null,
@@ -155,7 +158,9 @@ class AppSaleService
 
                 // Auto-create affiliate commission if affiliate coupon is used
                 if (!empty($sale->affiliate_coupon_code)) {
-                    $commissionRate = $sale->is_renewal ? 10 : 20;
+                    $affiliator = \App\Models\Affiliator::where('code', $sale->affiliate_coupon_code)->first();
+                    $commissionRate = $affiliator ? $affiliator->commission_rate : ($sale->is_renewal ? 10 : 20);
+                    
                     $saleAmount = $sale->final_amount;
                     $commissionAmount = round($saleAmount * ($commissionRate / 100));
 
@@ -176,8 +181,8 @@ class AppSaleService
                 }
 
                 // Increment discount coupon usage
-                if (!empty($sale->discount_coupon_code)) {
-                    DiscountCoupon::where('code', $sale->discount_coupon_code)->increment('used_count');
+                if (!empty($sale->voucher_code)) {
+                    Voucher::where('code', $sale->voucher_code)->increment('used_count');
                 }
 
                 return $sale;

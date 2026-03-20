@@ -43,10 +43,16 @@ class DatabaseSeeder extends Seeder
             KnowledgeBaseDocumentSeeder::class,
 
             // Finance
-            DiscountCouponSeeder::class,
+            VoucherSeeder::class,
             AppSaleSeeder::class,
             AffiliateCommissionSeeder::class,
             BusinessExpenseSeeder::class,
+
+            // Package
+            PackageSeeder::class,
+
+            // Affiliator
+            AffiliatorSeeder::class,
         ]);
     }
 }

@@ -66,8 +66,8 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label class="form-label" for="discount_coupon_code">Kupon Diskon</label>
-                                            <input type="text" class="form-control" id="discount_coupon_code" name="discount_coupon_code" value="{{ isset($sale) ? $sale->discount_coupon_code : '' }}" placeholder="Kode kupon diskon">
+                                            <label class="form-label" for="voucher_code">Kupon Diskon</label>
+                                            <input type="text" class="form-control" id="voucher_code" name="voucher_code" value="{{ isset($sale) ? $sale->voucher_code : '' }}" placeholder="Kode kupon diskon">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Finance;
+namespace App\Http\Controllers\Affiliator;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Services\Finance\AffiliateCommissionService;
+use App\Services\Affiliator\AffiliateCommissionService;
 use App\Models\AffiliateCommission;
 
 class AffiliateCommissionController extends Controller
@@ -18,11 +18,11 @@ class AffiliateCommissionController extends Controller
             'startDate' => Carbon::now()->startOfMonth()->format('d/m/Y'),
             'endDate' => Carbon::now()->endOfMonth()->format('d/m/Y'),
             'title' => $this->pageTitle,
-            'css' => 'resources/css/pages/finance/affiliate-commission/index.css',
-            'js' => 'resources/js/pages/finance/affiliate-commission/index.js',
+            'css' => 'resources/css/pages/affiliator/commission/index.css',
+            'js' => 'resources/js/pages/affiliator/commission/index.js',
         ];
 
-        return view('finance.affiliate-commission.index', $data);
+        return view('affiliate.commission.index', $data);
     }
 
     public function datatable(Request $request)

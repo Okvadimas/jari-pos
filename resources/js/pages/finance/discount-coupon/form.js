@@ -16,7 +16,7 @@ const simpan = () => {
     $('#btn-save').attr('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...');
 
     $.ajax({
-        url: '/finance/discount-coupon/store',
+        url: '/finance/voucher/store',
         type: 'POST',
         data: formData,
         processData: false,
@@ -24,7 +24,7 @@ const simpan = () => {
         success: function(response) {
             if (response.status) {
                 NioApp.Toast(response.message, 'success', { position: 'top-right' });
-                setTimeout(() => { window.location.href = '/finance/discount-coupon'; }, 1000);
+                setTimeout(() => { window.location.href = '/finance/voucher'; }, 1000);
             } else {
                 NioApp.Toast(response.message, 'warning', { position: 'top-right' });
             }

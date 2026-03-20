@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Finance;
+namespace App\Http\Controllers\Affiliator;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Services\Finance\AffiliateDashboardService;
+use App\Services\Affiliator\AffiliateDashboardService;
 
 class AffiliateDashboardController extends Controller
 {
@@ -17,10 +17,10 @@ class AffiliateDashboardController extends Controller
             'startDate' => Carbon::now()->startOfMonth()->format('d/m/Y'),
             'endDate' => Carbon::now()->endOfMonth()->format('d/m/Y'),
             'title' => $this->pageTitle,
-            'js' => 'resources/js/pages/finance/affiliate-dashboard/index.js',
+            'js' => 'resources/js/pages/affiliator/dashboard/index.js',
         ];
 
-        return view('finance.affiliate-dashboard.index', $data);
+        return view('affiliate.dashboard.index', $data);
     }
 
     public function datatable(Request $request)

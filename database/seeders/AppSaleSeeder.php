@@ -26,7 +26,7 @@ class AppSaleSeeder extends Seeder
                 'affiliate_discount_amount' => 0,
                 'final_amount' => 1100000,
                 'affiliate_coupon_code' => null,
-                'discount_coupon_code' => 'PROMO100K',
+                'voucher_code' => 'PROMO100K',
                 'status' => 'confirmed',
                 'confirmed_by' => 1,
                 'confirmed_at' => Carbon::now()->subDays(7),
@@ -46,7 +46,7 @@ class AppSaleSeeder extends Seeder
                 'affiliate_discount_amount' => 300000, // 10% affiliate discount
                 'final_amount' => 2700000,
                 'affiliate_coupon_code' => 'AFFJARI',
-                'discount_coupon_code' => null,
+                'voucher_code' => null,
                 'status' => 'pending',
                 'confirmed_by' => null,
                 'confirmed_at' => null,

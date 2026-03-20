@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Finance;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\Finance\DiscountCouponService;
-use App\Models\DiscountCoupon;
-use App\Http\Requests\Finance\DiscountCoupon\StoreDiscountCouponRequest;
+use App\Services\Finance\VoucherService;
+use App\Models\Voucher;
+use App\Http\Requests\Finance\Voucher\StoreVoucherRequest;
 
-class DiscountCouponController extends Controller
+class VoucherController extends Controller
 {
     private $pageTitle = 'Kupon Diskon';
 
@@ -16,21 +16,21 @@ class DiscountCouponController extends Controller
     {
         $data = [
             'title' => $this->pageTitle,
-            'css' => 'resources/css/pages/finance/discount-coupon/index.css',
-            'js' => 'resources/js/pages/finance/discount-coupon/index.js',
+            'css' => 'resources/css/pages/finance/voucher/index.css',
+            'js' => 'resources/js/pages/finance/voucher/index.js',
         ];
 
-        return view('finance.discount-coupon.index', $data);
+        return view('finance.voucher.index', $data);
     }
 
     public function datatable()
     {
-        return DiscountCouponService::datatable();
+        return VoucherService::datatable();
     }
 
     public function summary()
     {
-        $summary = DiscountCouponService::getSummary();
+        $summary = VoucherService::getSummary();
 
         return $this->successResponse('Success', [
             'total_kupon' => number_format($summary->total_kupon, 0, ',', '.'),
@@ -43,29 +43,29 @@ class DiscountCouponController extends Controller
     {
         $data = [
             'title' => $this->pageTitle,
-            'js' => 'resources/js/pages/finance/discount-coupon/form.js',
+            'js' => 'resources/js/pages/finance/voucher/form.js',
         ];
 
-        return view('finance.discount-coupon.form', $data);
+        return view('finance.voucher.form', $data);
     }
 
     public function edit($id)
     {
-        $coupon = DiscountCoupon::findOrFail($id);
+        $coupon = Voucher::findOrFail($id);
 
         $data = [
             'title' => $this->pageTitle,
-            'js' => 'resources/js/pages/finance/discount-coupon/form.js',
+            'js' => 'resources/js/pages/finance/voucher/form.js',
             'coupon' => $coupon,
         ];
 
-        return view('finance.discount-coupon.form', $data);
+        return view('finance.voucher.form', $data);
     }
 
-    public function store(StoreDiscountCouponRequest $request)
+    public function store(StoreVoucherRequest $request)
     {
         $validated = $request->validated();
-        $process = DiscountCouponService::store($validated);
+        $process = VoucherService::store($validated);
         $message = !empty($validated['id']) ? 'Kupon berhasil diupdate' : 'Kupon berhasil ditambahkan';
 
         return $process ? $this->successResponse($message) : $this->errorResponse('Terjadi kesalahan di sistem');
@@ -73,7 +73,7 @@ class DiscountCouponController extends Controller
 
     public function destroy(Request $request)
     {
-        $process = DiscountCouponService::destroy($request->id);
+        $process = VoucherService::destroy($request->id);
         return $process ? $this->successResponse('Kupon berhasil dihapus') : $this->errorResponse('Terjadi kesalahan');
     }
 }

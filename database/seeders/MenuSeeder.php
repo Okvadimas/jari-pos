@@ -197,7 +197,7 @@ class MenuSeeder extends Seeder
                 'parent'    => 'KU',
                 'name'      => 'Kupon Diskon',
                 'icon'      => 'ni ni-ticket-fill',
-                'url'       => '/finance/discount-coupon',
+                'url'       => '/finance/voucher',
             ],
             [
                 'code'      => 'KU-05',
